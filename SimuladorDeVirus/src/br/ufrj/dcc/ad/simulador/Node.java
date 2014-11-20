@@ -2,16 +2,20 @@ package br.ufrj.dcc.ad.simulador;
 
 public class Node {
     
+	private int nodeId;
     private State mState;
+    private static int id = 0;
 
     public Node(State state) {
-	super();
-	this.mState = state;
+		super();
+		this.mState = state;
+		this.nodeId = ++id;
     }
     
     public Node(){
-	super();
-	this.mState = State.suscetiveis;
+		super();
+		this.mState = State.Suscetiveis;
+		this.nodeId = ++id;
     }
 
     public State getState() {
@@ -21,19 +25,12 @@ public class Node {
     public void setState(State state) {
         this.mState = state;
     }
-    
-    public Double changeState(State state){
-	Double cost = 0.0;
-	switch(state){
-	case suscetiveis:
-	case propensos_a_falhas:
-	case falhos:
-	case em_rejuvenecimento:
-	default:
-	    break;
+
+	public int getNodeId() {
+		return nodeId;
 	}
-	
-	return cost;
-    }
-    
+
+	public void setNodeId(int nodeId) {
+		this.nodeId = nodeId;
+	} 
 }
