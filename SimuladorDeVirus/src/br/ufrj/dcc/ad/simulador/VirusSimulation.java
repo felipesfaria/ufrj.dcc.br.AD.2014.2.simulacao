@@ -1,5 +1,9 @@
 package br.ufrj.dcc.ad.simulador;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.DecimalFormat;
 
 public class VirusSimulation {
@@ -75,7 +79,13 @@ public class VirusSimulation {
 			System.out.println("Custo Total: "+dc.format(custoTotal));
 		}
 		if(printCSV){
-			System.out.println(dc.format(rates.getR4())+";"+dc.format(piO)+";"+dc.format(custoInfectado)+";"+dc.format(custoAmostragem)+";"+dc.format(custoTotal));
+//			System.out.println(dc.format(rates.getR4())+";"+dc.format(piO)+";"+dc.format(custoInfectado)+";"+dc.format(custoAmostragem)+";"+dc.format(custoTotal));
+			try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("output.csv", true)))) {
+			    out.println(dc.format(rates.getR4())+";"+dc.format(piO)+";"+dc.format(custoInfectado)+";"+dc.format(custoAmostragem)+";"+dc.format(custoTotal));
+			    out.close();
+			}catch (IOException e) {
+			    //exception handling left as an exercise for the reader 
+			} 
 		}
 		
 		return new Results(piO,piP);
@@ -145,8 +155,15 @@ public class VirusSimulation {
 				printSteps=true;
 			if(args[i]=="results")
 				printResult=true;
-			if(args[i]=="CSV")
+			if(args[i]=="CSV"){
 				printCSV=true;
+		    	try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("output.csv", true)))) {
+					out.println("R4;piO;cV;cS;cT");
+				    out.close();
+				}catch (IOException e) {
+				    //exception handling left as an exercise for the reader 
+				}
+			}
 		}
 	}
 	
