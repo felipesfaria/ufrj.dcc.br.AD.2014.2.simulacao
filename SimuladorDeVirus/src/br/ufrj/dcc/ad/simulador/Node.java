@@ -14,7 +14,7 @@ public class Node {
     
     public Node(){
 		super();
-		this.mState = State.Suscetiveis;
+		this.mState = State.O;
 		this.nodeId = ++id;
     }
 
