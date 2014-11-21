@@ -12,6 +12,7 @@ public class HelloVirus {
 	public static ExponencialGenerator genR3;
 	public static ExponencialGenerator genLambda;
 	public static ExponencialGenerator genR4; 
+	public static Tests tests = new Tests();
 	
 	
     public static void main(String[] args) {
