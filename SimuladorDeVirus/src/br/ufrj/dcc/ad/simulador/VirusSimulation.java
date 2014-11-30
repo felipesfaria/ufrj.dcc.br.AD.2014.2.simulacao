@@ -1,6 +1,8 @@
 package br.ufrj.dcc.ad.simulador;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 public class VirusSimulation {
 
@@ -15,6 +17,7 @@ public class VirusSimulation {
 	private Boolean printSteps = false;
 	private Boolean printResult = false;
 	private Boolean printCSV = false;
+	private Boolean printCDF = false;
 
 	private Rates rates;
 	private long MAX_EVENTS;
@@ -24,6 +27,12 @@ public class VirusSimulation {
 	private double totalTime;
 	private double initialTime;
 	private DecimalFormat dc = new DecimalFormat(",000.000000000");
+	private List<Integer> prePdf = new ArrayList<>();
+	private List<Double> pdf = new ArrayList<>();
+	private List<Double> cdf = new ArrayList<>();
+	private double tRec;
+	private double precision = 0.1;
+	
 	
 	FileUtil file1;
 	
@@ -49,6 +58,7 @@ public class VirusSimulation {
 		totalTime = 0;
 		initialTime = 0;
 		counter = 0;
+		tRec = 0;
 		
 		if(printSteps)
 			System.out.println("Event: "+counter+"\t"+"->"+State.O+"\tt:"+dc.format(initialTime));
@@ -85,6 +95,12 @@ public class VirusSimulation {
 					dc.format(custoAmostragem),
 					dc.format(custoTotal));
 		}
+		if(printCDF){
+			getProbabiltyFunctions();
+			for(int i=0;i<cdf.size();i++){
+				file1.saveInFile((i*precision)+"",cdf.get(i)+"");
+			}
+		}
 		
 		return new Results(piO,piP);
 	}
@@ -97,13 +113,22 @@ public class VirusSimulation {
 		
 		currentEvent = eventQueue.pop();
 		currentTime = currentEvent.getTime();
-		nd = currentEvent.getNd(); 
+		nd = currentEvent.getCurrentNd(); 
 				
 		switch(currentEvent.getNextState()){
 			case O:
 				delta = genR2.generate();
 				piO +=delta;
 				nextState = State.P;
+				if(printCDF){
+					Long index = Math.round(tRec/precision);
+					int i = index.intValue();
+					while(prePdf.size()<=i)
+						prePdf.add(0);
+					
+					prePdf.set(i, (prePdf.get(i) + 1));
+					tRec = 0; 
+				}
 				break;
 			case P:
 				deltaR = genR4.generate();
@@ -116,14 +141,23 @@ public class VirusSimulation {
 					nextState = State.F;
 				}
 				piP +=delta;
+				if(printCDF){
+					tRec += delta; 
+				}
 				break;
 			case R:
 				delta = genR3.generate();
 				nextState = State.O;
+				if(printCDF){
+					tRec += delta; 
+				}
 				break;
 			case F:
 				delta = genR1.generate();
 				nextState = State.O;
+				if(printCDF){
+					tRec += delta; 
+				}
 				break;
 			default:
 				System.out.println("You should not be here!");
@@ -131,7 +165,7 @@ public class VirusSimulation {
 		}
 		
 		nd.setState(currentEvent.getNextState());
-		totalTime += delta;
+		
 		nextTime = currentTime+delta;
 		nextEvent = new Event(nd,nextState,nextTime);
 		eventQueue.add(nextEvent);
@@ -147,6 +181,7 @@ public class VirusSimulation {
 	public void setPrint(Boolean print) {
 		this.printSteps = print;
 	}
+	
 	public void setPrintOptions(String args[]){
 		for(int i =0;i<args.length;i++){
 			if(args[i]=="steps")
@@ -156,7 +191,26 @@ public class VirusSimulation {
 			if(args[i]=="CSV"){
 				printCSV=true;
 			}
+			if(args[i]=="CDF"){
+				printCDF=true;
+			}
+				
 		}
 	}
+	
+	void getProbabiltyFunctions(){
+		int total = 0;
+		for(int i=0;i<prePdf.size();i++){
+			total+=prePdf.get(i);
+		}
+		for(int i=0;i<prePdf.size();i++){
+			pdf.add(prePdf.get(i)*1.0/total);
+		}
+		double acumulator=0;
+		for(int i=0;i<pdf.size();i++){
+			acumulator+=pdf.get(i);
+			cdf.add(acumulator);
+		}
+	};
 	
 }

@@ -1,15 +1,34 @@
 package br.ufrj.dcc.ad.simulador;
 
 public class Event implements Comparable<Event> {
-	Node nd;
+	Node currentNd;
+	Node infectorAgentNd;
 	State next;
 	Double time;
+	Double delta;
 	
 	public Event(Node nd, State next, double time) {
 		super();
-		this.nd = nd;
+		this.currentNd = nd;
 		this.next = next;
 		this.time = time;
+	}
+	
+	public Event(Node nd, State next, double time, double delta) {
+		super();
+		this.currentNd = nd;
+		this.next = next;
+		this.time = time;
+		this.delta = delta;
+	}
+	
+	public Event(Node nd, Node infect , State next, double time, double delta) {
+		super();
+		this.currentNd = nd;
+		this.infectorAgentNd = infect;
+		this.next = next;
+		this.time = time;
+		this.delta = delta;
 	}
 
 	@Override
@@ -19,20 +38,20 @@ public class Event implements Comparable<Event> {
 		return 0;
 	}
 
-	public Node getNd() {
-		return nd;
+	public Node getCurrentNd() {
+		return currentNd;
 	}
 
-	public void setNd(Node nd) {
-		this.nd = nd;
+	public void setCurrentNd(Node nd) {
+		this.currentNd = nd;
 	}
 
 	public State getCurrentState() {
-		return nd.getState();
+		return currentNd.getState();
 	}
 
 	public void setCurrent(State current) {
-		this.nd.setState(current);
+		this.currentNd.setState(current);
 	}
 
 	public State getNextState() {
@@ -49,6 +68,29 @@ public class Event implements Comparable<Event> {
 
 	public void setTime(double time) {
 		this.time = time;
+	}
+
+	public Node getInfectorAgentNd() {
+		return infectorAgentNd;
+	}
+
+	public void setInfectorAgentNd(Node infectorAgentNd) {
+		this.infectorAgentNd = infectorAgentNd;
+	}
+
+	public Double getDelta() {
+		return delta;
+	}
+
+	public void setDelta(Double delta) {
+		this.delta = delta;
+	}
+
+	@Override
+	public String toString() {
+		return "Event [currentNd=" + currentNd + ", infectorAgentNd="
+				+ infectorAgentNd + ", next=" + next + ", time=" + time
+				+ ", delta=" + delta + "]";
 	}
 	
 }

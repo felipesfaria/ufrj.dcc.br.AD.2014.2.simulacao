@@ -11,6 +11,12 @@ public class Node {
 		this.mState = state;
 		this.nodeId = ++id;
     }
+
+    public Node(State state, int id) {
+		super();
+		this.mState = state;
+		this.nodeId = id;
+    }
     
     public Node(){
 		super();
@@ -32,5 +38,12 @@ public class Node {
 
 	public void setNodeId(int nodeId) {
 		this.nodeId = nodeId;
-	} 
+	}
+
+	@Override
+	public String toString() {
+		return "Node [nodeId=" + nodeId + ", mState=" + mState + "]";
+	}
+	
+	
 }
