@@ -1,9 +1,5 @@
 package br.ufrj.dcc.ad.simulador;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.text.DecimalFormat;
 
 public class VirusSimulation {
@@ -29,7 +25,9 @@ public class VirusSimulation {
 	private double initialTime;
 	private DecimalFormat dc = new DecimalFormat(",000.000000000");
 	
-	public VirusSimulation(long me, Rates r){
+	FileUtil file1;
+	
+	public VirusSimulation(long me, Rates r, FileUtil file){
 		MAX_EVENTS = me;
 		rates=r;
         genR1 = new ExponencialGenerator(rates.getR1());
@@ -37,6 +35,7 @@ public class VirusSimulation {
         genR3 = new ExponencialGenerator(rates.getR3());
         genR4 = new ExponencialGenerator(rates.getR4());
         genLambda = new ExponencialGenerator(rates.getLAMBDA());
+        this.file1 = file; 
 	}
 	
 	public void setUpSimulation(){
@@ -80,12 +79,11 @@ public class VirusSimulation {
 		}
 		if(printCSV){
 //			System.out.println(dc.format(rates.getR4())+";"+dc.format(piO)+";"+dc.format(custoInfectado)+";"+dc.format(custoAmostragem)+";"+dc.format(custoTotal));
-			try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("output.csv", true)))) {
-			    out.println(dc.format(rates.getR4())+";"+dc.format(piO)+";"+dc.format(custoInfectado)+";"+dc.format(custoAmostragem)+";"+dc.format(custoTotal));
-			    out.close();
-			}catch (IOException e) {
-			    //exception handling left as an exercise for the reader 
-			} 
+			file1.saveInFile(dc.format(rates.getR4()),
+					dc.format(piO),
+					dc.format(custoInfectado),
+					dc.format(custoAmostragem),
+					dc.format(custoTotal));
 		}
 		
 		return new Results(piO,piP);
@@ -157,12 +155,6 @@ public class VirusSimulation {
 				printResult=true;
 			if(args[i]=="CSV"){
 				printCSV=true;
-		    	try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("output.csv", true)))) {
-					out.println("R4;piO;cV;cS;cT");
-				    out.close();
-				}catch (IOException e) {
-				    //exception handling left as an exercise for the reader 
-				}
 			}
 		}
 	}

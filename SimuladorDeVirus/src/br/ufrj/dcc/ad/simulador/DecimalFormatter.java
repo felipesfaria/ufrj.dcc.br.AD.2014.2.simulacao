@@ -1,5 +1,5 @@
 package br.ufrj.dcc.ad.simulador;
-import java.text.*;
+import java.text.DecimalFormat;
 
 public class DecimalFormatter {
 
