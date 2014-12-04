@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import br.ufrj.dcc.ad.simulador.interfaces.VirusSimulation;
 import br.ufrj.dcc.ad.simulador.model.Event;
 import br.ufrj.dcc.ad.simulador.model.EventQueue;
 import br.ufrj.dcc.ad.simulador.model.Node;
@@ -14,7 +15,7 @@ import br.ufrj.dcc.ad.simulador.model.State;
 import br.ufrj.dcc.ad.simulador.utils.ExponencialGenerator;
 import br.ufrj.dcc.ad.simulador.utils.FileUtil;
 
-public class VirusMeshSimulation {
+public class VirusMeshSimulation implements VirusSimulation {
 
 	public ExponencialGenerator genR1;
 	public ExponencialGenerator genBETA;

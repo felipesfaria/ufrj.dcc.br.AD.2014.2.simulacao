@@ -13,6 +13,7 @@ public class Event{
 		this.currentNd = nd;
 		this.nextState = next;
 		this.time = time;
+		delta = 0.0;
 	}
 	
 	public Event(Node nd, State next, double time, double delta) {
