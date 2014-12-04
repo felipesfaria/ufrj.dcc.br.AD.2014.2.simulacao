@@ -5,6 +5,15 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import br.ufrj.dcc.ad.simulador.model.Event;
+import br.ufrj.dcc.ad.simulador.model.EventQueue;
+import br.ufrj.dcc.ad.simulador.model.Node;
+import br.ufrj.dcc.ad.simulador.model.Rates;
+import br.ufrj.dcc.ad.simulador.model.Results;
+import br.ufrj.dcc.ad.simulador.model.State;
+import br.ufrj.dcc.ad.simulador.utils.ExponencialGenerator;
+import br.ufrj.dcc.ad.simulador.utils.FileUtil;
+
 public class VirusMeshSimulation {
 
 	public ExponencialGenerator genR1;
@@ -146,7 +155,7 @@ public class VirusMeshSimulation {
 			if (printSteps)
 				System.out.println("Event: " + counter
 						+ "\t" + "ndId: "+ currentEvent.getCurrentNd().getNodeId()
-						+ "\t" + currentEvent.getCurrentState()	+ "->" + currentEvent.getNextState()
+						+ "\t" + currentEvent.getCurrentNd().getState() + "->" + currentEvent.getNextState()
 						+ "\tt:" + dc.format(currentEvent.getTime()));
 			if(nd.getNodeId()==0){
 				acumulatePi(currentEvent);
@@ -162,7 +171,7 @@ public class VirusMeshSimulation {
 			if (printSteps)
 				System.out.println("Event: " + counter
 						+ "\t" + "ndId: "+ currentEvent.getCurrentNd().getNodeId()
-						+ "\t" + currentEvent.getCurrentState()	+ "->" + currentEvent.getNextState()
+						+ "\t" + currentEvent.getCurrentNd().getState()	+ "->" + currentEvent.getNextState()
 						+ "\tt:" + dc.format(currentEvent.getTime()));
 			if(nd.getNodeId()==0){
 				acumulatePi(currentEvent);
@@ -199,7 +208,7 @@ public class VirusMeshSimulation {
 			if (printSteps)
 				System.out.println("Event: " + counter
 						+ "\t" + "ndId: "+ currentEvent.getCurrentNd().getNodeId()
-						+ "\t" + currentEvent.getCurrentState()	+ "->" + currentEvent.getNextState()
+						+ "\t" + currentEvent.getCurrentNd().getState()	+ "->" + currentEvent.getNextState()
 						+ "\tt:" + dc.format(currentEvent.getTime()));
 			if(nd.getNodeId()==0){
 				acumulatePi(currentEvent);
@@ -219,7 +228,7 @@ public class VirusMeshSimulation {
 			if (printSteps)
 				System.out.println("Event: " + counter
 						+ "\t" + "ndId: "+ currentEvent.getCurrentNd().getNodeId()
-						+ "\t" + currentEvent.getCurrentState()	+ "->" + currentEvent.getNextState()
+						+ "\t" + currentEvent.getCurrentNd().getState()	+ "->" + currentEvent.getNextState()
 						+ "\tt:" + dc.format(currentEvent.getTime()));
 			if(nd.getNodeId()==0){
 				acumulatePi(currentEvent);
@@ -249,8 +258,8 @@ public class VirusMeshSimulation {
 		List<Event> toRemove = new ArrayList<Event>();
 		while (iteratorQueue.hasNext()) {
 			Event tmp = iteratorQueue.next();
-			if (tmp.getInfectorAgentNd() != null
-				&& tmp.getInfectorAgentNd().getNodeId() == nd.getNodeId()) {
+			if (tmp.getInfectionAgentNd() != null
+				&& tmp.getInfectionAgentNd().getNodeId() == nd.getNodeId()) {
 				toRemove.add(tmp);
 			}
 		}
@@ -367,7 +376,7 @@ public class VirusMeshSimulation {
 	}
 	
 	void acumulatePi(Event currentEvent){
-		switch (currentEvent.getCurrentState()) {
+		switch (currentEvent.getCurrentNd().getState()) {
 		case O:
 			tps.addPiO(currentEvent.getDelta());
 			break;

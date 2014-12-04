@@ -1,5 +1,9 @@
 package br.ufrj.dcc.ad.simulador;
 
+import br.ufrj.dcc.ad.simulador.model.Rates;
+import br.ufrj.dcc.ad.simulador.utils.ExponencialGenerator;
+import br.ufrj.dcc.ad.simulador.utils.FileUtil;
+
 public class HelloVirus {
 
 	public static double piZero = 0;
@@ -66,8 +70,9 @@ public class HelloVirus {
 		
 		while (r4 >= min_r4) {
 			Rates r = new Rates(r1, r2, r3, r4, LAMBDA);
-			simulation = new VirusSimulation(maxEvents, r, file);
-			simulation.setPrintOptions(new String[] { "CSV" });
+//			simulation = new VirusSimulation(maxEvents, r, file);
+			simulation = new VirusSimulation(maxEvents, r);
+			simulation.setPrintOptions(new String[] { "stepsQueue"});
 			simulation.setUpSimulation();
 			simulation.runFullSimulation();
 			r4 -= delta;

@@ -1,5 +1,7 @@
 package br.ufrj.dcc.ad.simulador;
 
+import br.ufrj.dcc.ad.simulador.utils.ExponencialGenerator;
+
 public class Tests {
 
 	public static ExponencialGenerator genR1;

@@ -4,6 +4,15 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.ufrj.dcc.ad.simulador.model.Event;
+import br.ufrj.dcc.ad.simulador.model.EventQueue;
+import br.ufrj.dcc.ad.simulador.model.Node;
+import br.ufrj.dcc.ad.simulador.model.Rates;
+import br.ufrj.dcc.ad.simulador.model.Results;
+import br.ufrj.dcc.ad.simulador.model.State;
+import br.ufrj.dcc.ad.simulador.utils.ExponencialGenerator;
+import br.ufrj.dcc.ad.simulador.utils.FileUtil;
+
 public class VirusSimulation {
 
 	public ExponencialGenerator genR1;
@@ -18,6 +27,7 @@ public class VirusSimulation {
 	private Boolean printResult = false;
 	private Boolean printCSV = false;
 	private Boolean printCDF = false;
+	private boolean printQueue = false;
 
 	private Rates rates;
 	private long MAX_EVENTS;
@@ -45,6 +55,16 @@ public class VirusSimulation {
         genR4 = new ExponencialGenerator(rates.getR4());
         genLambda = new ExponencialGenerator(rates.getLAMBDA());
         this.file1 = file; 
+	}
+	
+	public VirusSimulation(long me, Rates r){
+		MAX_EVENTS = me;
+		rates=r;
+        genR1 = new ExponencialGenerator(rates.getR1());
+        genR2 = new ExponencialGenerator(rates.getR2());
+        genR3 = new ExponencialGenerator(rates.getR3());
+        genR4 = new ExponencialGenerator(rates.getR4());
+        genLambda = new ExponencialGenerator(rates.getLAMBDA());
 	}
 	
 	public void setUpSimulation(){
@@ -88,7 +108,6 @@ public class VirusSimulation {
 			System.out.println("Custo Total: "+dc.format(custoTotal));
 		}
 		if(printCSV){
-//			System.out.println(dc.format(rates.getR4())+";"+dc.format(piO)+";"+dc.format(custoInfectado)+";"+dc.format(custoAmostragem)+";"+dc.format(custoTotal));
 			file1.saveInFile(dc.format(rates.getR4()),
 					dc.format(piO),
 					dc.format(custoInfectado),
@@ -171,6 +190,8 @@ public class VirusSimulation {
 		eventQueue.add(nextEvent);
 		if(printSteps)
 			System.out.println("Event: "+counter+"\t"+nd.getState()+"->"+nextState+"\tt:"+dc.format(nextTime));
+		if(printQueue)
+			eventQueue.printQueue();
 		counter++;
 	}
 
@@ -188,13 +209,12 @@ public class VirusSimulation {
 				printSteps=true;
 			if(args[i]=="results")
 				printResult=true;
-			if(args[i]=="CSV"){
+			if(args[i]=="CSV")
 				printCSV=true;
-			}
-			if(args[i]=="CDF"){
+			if(args[i]=="CDF")
 				printCDF=true;
-			}
-				
+			if(args[i]=="stepsQueue")
+				printQueue=true;
 		}
 	}
 	

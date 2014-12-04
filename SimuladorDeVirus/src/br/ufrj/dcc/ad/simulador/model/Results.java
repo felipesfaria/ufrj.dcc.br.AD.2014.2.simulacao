@@ -1,4 +1,4 @@
-package br.ufrj.dcc.ad.simulador;
+package br.ufrj.dcc.ad.simulador.model;
 
 public class Results {
 	double piO;

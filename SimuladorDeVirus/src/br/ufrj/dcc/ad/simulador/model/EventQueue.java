@@ -1,14 +1,14 @@
-package br.ufrj.dcc.ad.simulador;
+package br.ufrj.dcc.ad.simulador.model;
 
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.PriorityQueue;
+
+import br.ufrj.dcc.ad.simulador.model.comparator.EventComparator;
 
 
 public class EventQueue{
 	
-	Comparator<Event> comparator = new EventComparator();
-    PriorityQueue<Event> timeline = new PriorityQueue<Event>(16, comparator);
+    PriorityQueue<Event> timeline = new PriorityQueue<Event>(16, new EventComparator());
 
 	public void add(Event ev){
 		timeline.add(ev);
@@ -20,6 +20,14 @@ public class EventQueue{
 	
 	public Double getLastTime(){
 		return timeline.element().getTime();
+	}
+	
+	public void printQueue(){
+		Iterator<Event> iterator = timeline.iterator();
+		while (iterator.hasNext()){
+			Event e = iterator.next();
+			System.out.println(e);
+		}
 	}
 	
 	public Event get(int index){

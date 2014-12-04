@@ -1,4 +1,4 @@
-package br.ufrj.dcc.ad.simulador;
+package br.ufrj.dcc.ad.simulador.utils;
 
 import java.util.Random;
 
