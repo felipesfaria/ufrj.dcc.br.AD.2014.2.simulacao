@@ -42,9 +42,10 @@ public class HelloVirus {
 			min_r4 = Double.parseDouble(args[2]);
 		}
 		
-//		runMeshCostAnalysis();
+		runMeshCostAnalysis();
 //		runSingleNodeCostAnalysis();
-		runSingleNodeTimeAnalysis();
+//		runSingleNodeTimeAnalysis();
+		
 		System.out.println("Finished");
 	}
 
@@ -54,7 +55,7 @@ public class HelloVirus {
 
 		while (r4 >= min_r4) {
 			Rates r = new Rates(r1, r2, r3, r4, LAMBDA, BETA);
-			simulation = new VirusMeshSimulation(maxEvents, r, file);
+			simulation = new NewVirusMeshSimulation(maxEvents, r, file);
 			simulation.setPrintOptions(new String[] { "CSV", "steps" });
 			simulation.setUpSimulation();
 			simulation.runFullSimulation();

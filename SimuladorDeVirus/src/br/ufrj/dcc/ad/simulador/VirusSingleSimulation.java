@@ -1,11 +1,8 @@
 package br.ufrj.dcc.ad.simulador;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
 
 import br.ufrj.dcc.ad.simulador.interfaces.VirusSimulation;
-import br.ufrj.dcc.ad.simulador.model.CumulativeDensityFunctionCalculator;
 import br.ufrj.dcc.ad.simulador.model.Event;
 import br.ufrj.dcc.ad.simulador.model.EventQueue;
 import br.ufrj.dcc.ad.simulador.model.Node;
@@ -13,7 +10,7 @@ import br.ufrj.dcc.ad.simulador.model.Rates;
 import br.ufrj.dcc.ad.simulador.model.Results;
 import br.ufrj.dcc.ad.simulador.model.State;
 import br.ufrj.dcc.ad.simulador.model.Transition;
-import br.ufrj.dcc.ad.simulador.model.comparator.EventComparator;
+import br.ufrj.dcc.ad.simulador.utils.CumulativeDensityFunctionCalculator;
 import br.ufrj.dcc.ad.simulador.utils.ExponencialGenerator;
 import br.ufrj.dcc.ad.simulador.utils.FileUtil;
 
@@ -24,6 +21,7 @@ public class VirusSingleSimulation implements VirusSimulation {
 	public ExponencialGenerator genR3;
 	public ExponencialGenerator genLambda;
 	public ExponencialGenerator genR4;
+	
 	Node node = new Node();
 	EventQueue eventQueue = new EventQueue();
 
@@ -32,16 +30,18 @@ public class VirusSingleSimulation implements VirusSimulation {
 	private Boolean printCSV = false;
 	private Boolean printCDF = false;
 	private boolean printQueue = false;
+	private boolean printPDF = false;
 
 	private Rates rates;
+	
 	private long MAX_EVENTS;
 	private long counter;
 	private double piO;
 	private double piP;
 	private double totalTime;
 	private double initialTime;
+	
 	private DecimalFormat dc = new DecimalFormat(",000.000000000");
-	private double precision = 0.1;
 	CumulativeDensityFunctionCalculator cdfCalc;
 
 	FileUtil file1;
@@ -92,6 +92,8 @@ public class VirusSingleSimulation implements VirusSimulation {
 				printCSV = true;
 			if (args[i] == "CDF")
 				printCDF = true;
+			if (args[i] == "PDF")
+				printPDF = true;
 			if (args[i] == "stepsQueue")
 				printQueue = true;
 		}
@@ -141,9 +143,8 @@ public class VirusSingleSimulation implements VirusSimulation {
 					dc.format(custoAmostragem),
 					dc.format(custoTotal));
 		}
-		if (printCDF) {
-			cdfCalc.printCDF();
-		}
+		if (printCDF) { cdfCalc.printCDF(); }
+		if (printPDF) { cdfCalc.printPDF(); } 
 
 		return new Results(piO, piP);
 	}
@@ -169,24 +170,26 @@ public class VirusSingleSimulation implements VirusSimulation {
 		case P_TO_R:
 			piP += timeSpentInThisState;
 			nextEvent = generateRtoOEvent(cNode, now);
-			if(printCDF)
+			
+			if(printCDF || printPDF)
 				cdfCalc.inRecuperation(timeSpentInThisState);
+			
 			break;
 		case P_TO_F:
 			piP += timeSpentInThisState;
 			nextEvent = generateFtoOEvent(cNode, now);
-			if(printCDF)
+			
+			if(printCDF || printPDF)
 				cdfCalc.inRecuperation(timeSpentInThisState);
+			
 			break;
 		case R_TO_O:
-			nextEvent = generateOtoPEvent(cNode, now);
-			if(printCDF)
-				cdfCalc.recupered(timeSpentInThisState);
-			break;
 		case F_TO_O:
 			nextEvent = generateOtoPEvent(cNode, now);
-			if(printCDF)
+			
+			if(printCDF || printPDF)
 				cdfCalc.recupered(timeSpentInThisState);
+			
 			break;
 		default:
 			return;
@@ -236,82 +239,5 @@ public class VirusSingleSimulation implements VirusSimulation {
 		double nextPEventTime = genR1.generate();
 		return new Event(cNode, State.O, now + nextPEventTime, nextPEventTime);
 	}
-	
-
-//	public void stepSimulation() { // Ou executeEvent
-//		double currentTime, nextTime, delta, deltaR, deltaF;
-//		State nextState;
-//		Event currentEvent, nextEvent;
-//		Node nd;
-//
-//		currentEvent = eventQueue.pop();
-//		currentTime = currentEvent.getTime();
-//		nd = currentEvent.getCurrentNd();
-//
-//		switch (currentEvent.getNextState()) {
-//		case O:
-//			delta = genR2.generate();
-//			piO += delta;
-//			nextState = State.P;
-//			if (printCDF) {
-//				
-////				Long index = Math.round(tRec / precision);
-////				int i = index.intValue();
-////				while (prePdf.size() <= i)
-////					prePdf.add(0);
-////
-////				prePdf.set(i, (prePdf.get(i) + 1));
-////				tRec = 0;
-//			}
-//			break;
-//		case P:
-//			deltaR = genR4.generate();
-//			deltaF = genLambda.generate();
-//			if (deltaR < deltaF) {
-//				delta = deltaR;
-//				nextState = State.R;
-//			} else {
-//				delta = deltaF;
-//				nextState = State.F;
-//			}
-//			piP += delta;
-//			if (printCDF) {
-//				tRec += delta;
-//			}
-//			break;
-//		case R:
-//			delta = genR3.generate();
-//			nextState = State.O;
-//			if (printCDF) {
-//				tRec += delta;
-//			}
-//			break;
-//		case F:
-//			delta = genR1.generate();
-//			nextState = State.O;
-//			if (printCDF) {
-//				tRec += delta;
-//			}
-//			break;
-//		default:
-//			System.out.println("You should not be here!");
-//			return;
-//		}
-//
-//		nd.setState(currentEvent.getNextState());
-//
-//		totalTime += delta;
-//		nextTime = currentTime + delta;
-//		nextEvent = new Event(nd, nextState, nextTime);
-//		eventQueue.add(nextEvent);
-//		if (printSteps)
-//			System.out.println(currentEvent);
-//		//
-//		System.out.println("Event: " + counter + "\t" + nd.getState() + "->"
-//				+ nextState + "\tt:" + dc.format(nextTime));
-//		if (printQueue)
-//			eventQueue.printQueue();
-//		counter++;
-//	}
 
 }

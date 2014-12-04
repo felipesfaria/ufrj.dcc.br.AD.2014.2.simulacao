@@ -1,10 +1,7 @@
-package br.ufrj.dcc.ad.simulador.model;
+package br.ufrj.dcc.ad.simulador.utils;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-
-import br.ufrj.dcc.ad.simulador.utils.FileUtil;
 
 public class CumulativeDensityFunctionCalculator {
 
@@ -55,6 +52,16 @@ public class CumulativeDensityFunctionCalculator {
 	public void printCDF(){
 		List<Double> cdf = getCDF();
 		FileUtil file = new FileUtil("CDF.csv", "time;density");
+		for ( int i = 0; i < cdf.size();i++) {
+			file.saveInFile(i * PRECISION + "", 
+							cdf.get(i) + "");
+		}
+		
+	}
+	
+	public void printPDF(){
+		List<Double> cdf = getPDF();
+		FileUtil file = new FileUtil("PDF.csv", "time;probability");
 		for ( int i = 0; i < cdf.size();i++) {
 			file.saveInFile(i * PRECISION + "", 
 							cdf.get(i) + "");
