@@ -43,8 +43,9 @@ public class HelloVirus {
 		}
 		
 //		runMeshCostAnalysis();
-		runSingleNodeCostAnalysis();
-
+//		runSingleNodeCostAnalysis();
+		runSingleNodeTimeAnalysis();
+		System.out.println("Finished");
 	}
 
 	static void runMeshCostAnalysis() {
@@ -60,7 +61,6 @@ public class HelloVirus {
 			r4 -= delta;
 		}
 
-		System.out.println("Finished");
 	}
 
 	static void runSingleNodeCostAnalysis() {
@@ -76,7 +76,6 @@ public class HelloVirus {
 			r4 -= delta;
 		}
 
-		System.out.println("Finished");
 	}
 
 	static void runSingleNodeTimeAnalysis() {
