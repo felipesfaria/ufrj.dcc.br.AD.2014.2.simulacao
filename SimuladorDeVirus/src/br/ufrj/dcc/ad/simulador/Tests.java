@@ -1,23 +1,23 @@
 package br.ufrj.dcc.ad.simulador;
 
-import br.ufrj.dcc.ad.simulador.utils.ExponencialGenerator;
+import br.ufrj.dcc.ad.simulador.utils.ExponentialGenerator;
 
 public class Tests {
 
-	public static ExponencialGenerator genR1;
-	public static ExponencialGenerator genR2;
-	public static ExponencialGenerator genR3;
-	public static ExponencialGenerator genLambda;
-	public static ExponencialGenerator genR4; 
+	public static ExponentialGenerator genR1;
+	public static ExponentialGenerator genR2;
+	public static ExponentialGenerator genR3;
+	public static ExponentialGenerator genLambda;
+	public static ExponentialGenerator genR4;
     
     public static void testAverages(){
 
     	Double R1=2.0, R2 = 0.8, R3 = 3.0, R4 = 0.5, LAMBDA = 1.0/(12*24*30);
-        genR1 = new ExponencialGenerator(R1);
-        genR2 = new ExponencialGenerator(R2);
-        genR3 = new ExponencialGenerator(R3);
-        genR4 = new ExponencialGenerator(R4);
-        genLambda = new ExponencialGenerator(LAMBDA);
+        genR1 = new ExponentialGenerator(R1);
+        genR2 = new ExponentialGenerator(R2);
+        genR3 = new ExponentialGenerator(R3);
+        genR4 = new ExponentialGenerator(R4);
+        genLambda = new ExponentialGenerator(LAMBDA);
 
         double avgR1=0;
         double avgR2=0;

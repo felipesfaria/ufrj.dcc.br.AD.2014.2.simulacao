@@ -14,18 +14,18 @@ import br.ufrj.dcc.ad.simulador.model.Results;
 import br.ufrj.dcc.ad.simulador.model.State;
 import br.ufrj.dcc.ad.simulador.model.Transition;
 import br.ufrj.dcc.ad.simulador.utils.CumulativeDensityFunctionCalculator;
-import br.ufrj.dcc.ad.simulador.utils.ExponencialGenerator;
+import br.ufrj.dcc.ad.simulador.utils.ExponentialGenerator;
 import br.ufrj.dcc.ad.simulador.utils.FileUtil;
 
 public class NewVirusMeshSimulation implements VirusSimulation{
 
 	private final int NUM_OF_NODES = 10;
 	
-	public ExponencialGenerator genR1;
-	public ExponencialGenerator genR3;
-	public ExponencialGenerator genR4;
-	public ExponencialGenerator genLambda;
-	public ExponencialGenerator genBeta;
+	public ExponentialGenerator genR1;
+	public ExponentialGenerator genR3;
+	public ExponentialGenerator genR4;
+	public ExponentialGenerator genLambda;
+	public ExponentialGenerator genBeta;
 
 	EventQueue eventQueue = new EventQueue();
 	Node nodes[] = new Node[NUM_OF_NODES];
@@ -53,21 +53,21 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 	public NewVirusMeshSimulation(long me, Rates r) {
 		MAX_EVENTS = me;
 		rates = r;
-		genR1 = new ExponencialGenerator(rates.getR1());
-		genR3 = new ExponencialGenerator(rates.getR3());
-		genR4 = new ExponencialGenerator(rates.getR4());
-		genLambda = new ExponencialGenerator(rates.getLAMBDA());
-		genBeta = new ExponencialGenerator(rates.getBETA());
+		genR1 = new ExponentialGenerator(rates.getR1());
+		genR3 = new ExponentialGenerator(rates.getR3());
+		genR4 = new ExponentialGenerator(rates.getR4());
+		genLambda = new ExponentialGenerator(rates.getLAMBDA());
+		genBeta = new ExponentialGenerator(rates.getBETA());
 	}
 
 	public NewVirusMeshSimulation(long me, Rates r, FileUtil file) {
 		MAX_EVENTS = me;
 		rates = r;
-		genR1 = new ExponencialGenerator(rates.getR1());
-		genR3 = new ExponencialGenerator(rates.getR3());
-		genR4 = new ExponencialGenerator(rates.getR4());
-		genLambda = new ExponencialGenerator(rates.getLAMBDA());
-		genBeta = new ExponencialGenerator(rates.getBETA());
+		genR1 = new ExponentialGenerator(rates.getR1());
+		genR3 = new ExponentialGenerator(rates.getR3());
+		genR4 = new ExponentialGenerator(rates.getR4());
+		genLambda = new ExponentialGenerator(rates.getLAMBDA());
+		genBeta = new ExponentialGenerator(rates.getBETA());
 		this.file1 = file;
 	}
 

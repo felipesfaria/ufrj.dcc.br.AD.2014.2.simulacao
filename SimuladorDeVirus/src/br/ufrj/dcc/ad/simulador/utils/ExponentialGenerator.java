@@ -2,11 +2,11 @@ package br.ufrj.dcc.ad.simulador.utils;
 
 import java.util.Random;
 
-public class ExponencialGenerator {
+public class ExponentialGenerator {
 
 	private Random rand;
 	private Double rate;
-	public ExponencialGenerator(Double rate) {
+	public ExponentialGenerator(Double rate) {
 		super();
 		this.rand = new Random(System.currentTimeMillis());
 		this.rate = rate;

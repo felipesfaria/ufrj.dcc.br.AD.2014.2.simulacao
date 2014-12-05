@@ -2,7 +2,7 @@ package br.ufrj.dcc.ad.simulador;
 
 import br.ufrj.dcc.ad.simulador.interfaces.VirusSimulation;
 import br.ufrj.dcc.ad.simulador.model.Rates;
-import br.ufrj.dcc.ad.simulador.utils.ExponencialGenerator;
+import br.ufrj.dcc.ad.simulador.utils.ExponentialGenerator;
 import br.ufrj.dcc.ad.simulador.utils.FileUtil;
 
 public class HelloVirus {
@@ -12,11 +12,11 @@ public class HelloVirus {
 	public static double totalTime = 0;
 	public static double initialTime;
 	public static long MAX_EVENTS;
-	public static ExponencialGenerator genR1;
-	public static ExponencialGenerator genR2;
-	public static ExponencialGenerator genR3;
-	public static ExponencialGenerator genLambda;
-	public static ExponencialGenerator genR4;
+	public static ExponentialGenerator genR1;
+	public static ExponentialGenerator genR2;
+	public static ExponentialGenerator genR3;
+	public static ExponentialGenerator genLambda;
+	public static ExponentialGenerator genR4;
 	public static Tests tests = new Tests();
 	public static VirusSimulation simulation;
 
