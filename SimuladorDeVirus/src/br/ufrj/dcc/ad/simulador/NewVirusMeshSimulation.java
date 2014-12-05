@@ -41,10 +41,10 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 	private long MAX_EVENTS;
 	
 	private long counter;
-	private double piO;
-	private double piP;
-	private double totalTime;
-	private double initialTime;
+	private Double piO;
+	private Double piP;
+	private Double totalTime;
+	private Double initialTime;
 	private DecimalFormat dc = new DecimalFormat(",000.000000000");
 	CumulativeDensityFunctionCalculator cdfCalc;
 
@@ -73,10 +73,10 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 
 	@Override
 	public void setUpSimulation() {
-		piO = 0;
-		piP = 0;
-		totalTime = 0;
-		initialTime = 0;
+		piO = 0.0;
+		piP = 0.0;
+		totalTime = 0.0;
+		initialTime = 0.0;
 		counter = 0;
 		cdfCalc = new CumulativeDensityFunctionCalculator();
 
@@ -154,7 +154,7 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 		if (printCDF) { cdfCalc.printCDF(); }
 		if (printPDF) { cdfCalc.printPDF(); } 
 
-		return new Results(piO, piP);
+		return new Results(rates.getR4(), piO, piP,custoInfectado,custoAmostragem);
 	}
 
 	public void consumeEvent() {

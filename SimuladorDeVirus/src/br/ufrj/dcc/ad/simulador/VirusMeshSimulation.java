@@ -121,7 +121,7 @@ public class VirusMeshSimulation implements VirusSimulation {
 			}
 		}
 
-		return new Results(piO, piP);
+		return new Results(rates.getR4(), piO, piP, custoInfectado, custoAmostragem);
 	}
 
 	public void stepSimulation() { // Ou executeEvent

@@ -2,11 +2,16 @@ package br.ufrj.dcc.ad.simulador;
 
 import br.ufrj.dcc.ad.simulador.interfaces.VirusSimulation;
 import br.ufrj.dcc.ad.simulador.model.Rates;
+import br.ufrj.dcc.ad.simulador.model.Results;
 import br.ufrj.dcc.ad.simulador.utils.ExponentialGenerator;
 import br.ufrj.dcc.ad.simulador.utils.FileUtil;
 
+import java.io.File;
+import java.text.DecimalFormat;
+
 public class HelloVirus {
 
+	private static final int MAX_SIMULATION = 50;
 	public static double piZero = 0;
 	public static double piP = 0;
 	public static double totalTime = 0;
@@ -50,15 +55,49 @@ public class HelloVirus {
 	}
 
 	static void runMeshCostAnalysis() {
-		System.out.println("R4;piO;cV;cS;cT");
-		FileUtil file = new FileUtil("CostAnalysis.csv", "R4;piO;cV;cS;cT");
+		boolean printCSV = true;
+
+		FileUtil file = new FileUtil("CostAnalysis.csv", "r4;piO;cV;cS;cT");
+		DecimalFormat dc = new DecimalFormat(",000.000000000");
 
 		while (r4 >= min_r4) {
-			Rates r = new Rates(r1, r2, r3, r4, LAMBDA, BETA);
-			simulation = new NewVirusMeshSimulation(maxEvents, r, file);
-			simulation.setPrintOptions(new String[] { "CSV", "steps" });
-			simulation.setUpSimulation();
-			simulation.runFullSimulation();
+
+			Double piO = 0.0;
+			Double piP = 0.0;
+			Double infectedCost = 0.0;
+			Double samplingCost = 0.0;
+			Double totalCost = 0.0;
+
+			for (int i = 0; i < MAX_SIMULATION; i++) {
+				Rates r = new Rates(r1, r2, r3, r4, LAMBDA, BETA);
+				Results res = null;
+				simulation = new NewVirusMeshSimulation(maxEvents, r);
+				simulation.setPrintOptions(new String[]{});
+				simulation.setUpSimulation();
+				res = simulation.runFullSimulation();
+
+				piO += res.getPiO();
+				piP += res.getPiP();
+				infectedCost += res.getInfectedCost();
+				samplingCost += res.getSamplingCost();
+				totalCost += res.getTotalCost();
+			}
+
+			piO /= MAX_SIMULATION;
+			piP /= MAX_SIMULATION;
+			infectedCost /= MAX_SIMULATION;
+			samplingCost /= MAX_SIMULATION;
+			totalCost /= MAX_SIMULATION;
+
+			if (printCSV) {
+				file.saveInFile(
+						dc.format(r4),
+						dc.format(piO),
+						dc.format(infectedCost),
+						dc.format(samplingCost),
+						dc.format(totalCost));
+			}
+
 			r4 -= delta;
 		}
 

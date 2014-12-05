@@ -146,7 +146,7 @@ public class VirusSingleSimulation implements VirusSimulation {
 		if (printCDF) { cdfCalc.printCDF(); }
 		if (printPDF) { cdfCalc.printPDF(); } 
 
-		return new Results(piO, piP);
+		return new Results(rates.getR4(), piO, piP, custoInfectado, custoAmostragem);
 	}
 
 	public void consumeEvent() {
