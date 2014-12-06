@@ -16,7 +16,6 @@ public class Statistics {
 	static Double globalAcumulatedSamplingCost=0.0;
 	static Double globalAcumulatedTotalCost=0.0;
 	
-	Double r4;
 	Double timeInO=0.0;
 	Double timeInP=0.0;
 	Double timeInR=0.0;
@@ -111,7 +110,7 @@ public class Statistics {
 		totalCost=samplingCost+infectedCost;
 	}
 	public void printResult() {
-		System.out.println("Simulation finished.");
+		System.out.println("Simulation finished using: r4="+rates.getR4());
 		System.out.println("Steps: " + counter + "\tTime Simulated: " + dc.format(totalTime));
 		System.out.println("pi0: " + dc.format(piO) + "\tpiP: " + dc.format(piP));
 		System.out.println("Custo Infectado: " + dc.format(infectedCost) + "\t" + "Custo Amostragem: " + dc.format(samplingCost));

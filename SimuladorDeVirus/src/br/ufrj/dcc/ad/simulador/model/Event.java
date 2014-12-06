@@ -2,6 +2,9 @@ package br.ufrj.dcc.ad.simulador.model;
 
 
 public class Event{
+	static int ID=0;
+	@SuppressWarnings("unused")
+	private int myId;
 	private Node currentNd;
 	private Node infectionAgentNd;
 	private State nextState;
@@ -10,6 +13,7 @@ public class Event{
 	
 	public Event(Node nd, State next, Double time) {
 		super();
+		myId = ID++;
 		this.currentNd = nd;
 		this.nextState = next;
 		this.time = time;
@@ -55,8 +59,10 @@ public class Event{
 
 	@Override
 	public String toString() {
-		return "Event [nd=" + currentNd + ", infectionAgentNd=" + infectionAgentNd
-				+ ", nextState=" + nextState + ", time=" + time + "]";
+		if(nextState==State.P)
+			return "Event["+myId+"] nd[" + currentNd.getNodeId() + "] transicao[" + currentNd.getState() + "->" + nextState + "] Por[" + (infectionAgentNd==null?null:infectionAgentNd.getNodeId()) + "] @"+time;
+		else
+			return "Event["+myId+"] nd[" + currentNd.getNodeId() + "] transicao[" + currentNd.getState() + "->" + nextState + "] @ "+time;
 	}
 	
 	

@@ -12,7 +12,7 @@ import java.text.DecimalFormat;
 
 public class HelloVirus {
 
-	private static final int MAX_SIMULATION = 50;
+	private static final int MAX_SIMULATION = 5;
 	public static double piZero = 0;
 	public static double piP = 0;
 	public static double totalTime = 0;
@@ -32,8 +32,8 @@ public class HelloVirus {
 	public static final double LAMBDA = 1.0 / (12.0 * 24.0 * 30.0);
 	public static final double BETA = 0.08;	
 	
-	static Double r4 = 1.0;
-	static Double delta = 0.1;
+	static Double r4 = 0.02;
+	static Double delta = 0.001;
 	static Double min_r4 = 0.0;
 	
 	static int maxEvents = 10000;
@@ -66,8 +66,8 @@ public class HelloVirus {
 			for (int i = 0; i < MAX_SIMULATION; i++) {
 				Rates r = new Rates(r1, r2, r3, r4, LAMBDA, BETA);
 				Statistics stats = null;
-				simulation = new NewVirusMeshSimulation(maxEvents, r);
-				simulation.setPrintOptions(new PrintOptions[]{PrintOptions.steps,PrintOptions.states});
+				simulation = new NewVirusMeshSimulation(maxEvents, r,4);
+				simulation.setPrintOptions(new PrintOptions[]{PrintOptions.steps,PrintOptions.states,PrintOptions.results,PrintOptions.states});
 				simulation.setUpSimulation();
 				stats = simulation.runFullSimulation();
 				

@@ -19,8 +19,7 @@ import br.ufrj.dcc.ad.simulador.utils.FileUtil;
 import br.ufrj.dcc.ad.simulador.utils.Statistics;
 
 public class NewVirusMeshSimulation implements VirusSimulation{
-
-	private final int NUM_OF_NODES = 10;
+	private int NUM_OF_NODES = 10;
 	
 	public ExponentialGenerator genR1;
 	public ExponentialGenerator genR3;
@@ -29,7 +28,7 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 	public ExponentialGenerator genBeta;
 
 	EventQueue eventQueue = new EventQueue();
-	Node nodes[] = new Node[NUM_OF_NODES];
+	List<Node> nodes = new ArrayList<Node>();
 
 	private Boolean printSteps = false;
 	private Boolean printResult = false;
@@ -60,7 +59,30 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 		genBeta = new ExponentialGenerator(rates.getBETA());
 	}
 
+	public NewVirusMeshSimulation(long me, Rates r, int numberOfNodes) {
+		NUM_OF_NODES = numberOfNodes;
+		MAX_EVENTS = me;
+		rates = r;
+		genR1 = new ExponentialGenerator(rates.getR1());
+		genR3 = new ExponentialGenerator(rates.getR3());
+		genR4 = new ExponentialGenerator(rates.getR4());
+		genLambda = new ExponentialGenerator(rates.getLAMBDA());
+		genBeta = new ExponentialGenerator(rates.getBETA());
+	}
+
 	public NewVirusMeshSimulation(long me, Rates r, FileUtil file) {
+		MAX_EVENTS = me;
+		rates = r;
+		genR1 = new ExponentialGenerator(rates.getR1());
+		genR3 = new ExponentialGenerator(rates.getR3());
+		genR4 = new ExponentialGenerator(rates.getR4());
+		genLambda = new ExponentialGenerator(rates.getLAMBDA());
+		genBeta = new ExponentialGenerator(rates.getBETA());
+		this.file1 = file;
+	}
+	
+	public NewVirusMeshSimulation(long me, Rates r, FileUtil file, int numberOfNodes) {
+		NUM_OF_NODES = numberOfNodes;
 		MAX_EVENTS = me;
 		rates = r;
 		genR1 = new ExponentialGenerator(rates.getR1());
@@ -83,14 +105,14 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 	
 	private void generateNodes(){
 		for(int i = 0; i < NUM_OF_NODES; i++)
-			nodes[i] = new Node(State.O, i);
+			nodes.add(new Node(State.O, i));
 	}
 	
 	private void setUpFirstEvent(){
-		for (int i = 0; i < NUM_OF_NODES; i++) {
+		for(Node node : nodes){
 			if (printSteps)
 				System.out.println("Event: " + stats.getCounter() + "\t" + "->" + State.O+ "\tt:" + dc.format(initialTime));
-			Event firstEvent = new Event(nodes[i], State.P, initialTime);
+			Event firstEvent = new Event(node, State.P, initialTime);
 			eventQueue.add(firstEvent);	
 		}
 	}
@@ -161,15 +183,21 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 		State cState = cNode.getState();
 		boolean isObservedNode = cNode.getNodeId() == 0; 
 		State nState = cEvent.getNextState();
+		if(cState.equals(nState)){
+			System.out.println("WTF!!!");
+		}
 		Double now = cEvent.getTime();
 		Double timeSpentInThisState = cEvent.getDelta();
 		if(isObservedNode)
 			stats.addTimePerState(timeSpentInThisState, cState);
+
+		if(printSteps) { System.out.println("Event: "+stats.getCounter()+"\t" + "Event: " + cEvent); }
 		
+		cNode.setState(nState);
 		
 		switch (getTransition(cState, nState)) {
 		case O_TO_P:
-			
+
 			scheduleOutgoingInfections(cNode,now);
 			
 			Event pEvent = generatePtoFEvent(cNode, now);
@@ -199,23 +227,23 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 			scheduleIncomingInfections(cNode,now);
 			
 			if( eventQueue.isEmpty() && !isObservedNode){
-				stats.addTimePerState(timeSpentInThisState, nodes[0].getState());
+				stats.addTimePerState(timeSpentInThisState, nodes.get(0).getState());
 			}
 			
 			if(printCDF || printPDF)
 				cdfCalc.recupered(timeSpentInThisState);
-			//TODO Felipe: Porque esse 'count++;' estava aqui?
-			stats.count();
+			while(!eventQueue.isEmpty()&&!eventQueue.nextEventIsValid()){
+			}
 			return;
 		default:
-			System.out.println("Error: Ilegal transition.");
+			System.out.println("Error: Ilegal transition:"+cEvent);
 			return;
 		}
 		
-		cNode.setState(nState);
 		eventQueue.add(nextEvent);
-		
-		if(printSteps) { System.out.println("Event: "+stats.getCounter()+"\t" + "Event: " + cEvent); }
+		while(!eventQueue.nextEventIsValid()&&!eventQueue.isEmpty()){
+			
+		}
 		if(printQueue) { eventQueue.printQueue(); }
 		if(printStates){
 			String toPrint = "";
@@ -226,7 +254,6 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 		}
 		
 		stats.count();
-		
 	}
 	
 	private Transition getTransition(State cState, State nState){
@@ -239,24 +266,12 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 	}
 	
 	private void removeInfections(Node cNode) {
-		Iterator<Event> iteratorQueue = eventQueue.getIterator();
-		List<Event> toRemove = new ArrayList<Event>();
-		while (iteratorQueue.hasNext()) {
-			Event tmp = iteratorQueue.next();
-			if (tmp.getInfectionAgentNd() != null
-				&& tmp.getInfectionAgentNd().getNodeId() == cNode.getNodeId()) {
-				toRemove.add(tmp);
-			}
-		}
-		for (Event e : toRemove) {
-			eventQueue.removeEvent(e);
-		} 
-
+		eventQueue.removeInfectionsFrom(cNode);
 	}
 
 	private void scheduleIncomingInfections(Node cNode, Double now) {
 		for (Node neighbour : nodes) {
-			if (neighbour.getState() != State.O) {
+			if (neighbour.getState() != State.O && !eventQueue.hasScheduledInfection(cNode, neighbour)) {
 				Event evt = generateInfectionvent(cNode, neighbour, now);
 				eventQueue.add(evt);
 			}
@@ -265,7 +280,7 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 	
 	private void scheduleOutgoingInfections(Node cNode, Double now) {
 		for (Node neighbour : nodes) {
-			if (neighbour.getState() == State.O) {
+			if (neighbour.getState() == State.O && neighbour!=cNode &&!eventQueue.hasScheduledInfection(neighbour,cNode)) {
 				Event evt = generateInfectionvent(neighbour, cNode, now); 
 				eventQueue.add(evt);
 			}

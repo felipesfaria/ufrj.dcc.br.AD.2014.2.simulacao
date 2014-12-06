@@ -28,7 +28,25 @@ public class Node {
     }
 
     public void setState(State state) {
-        this.mState = state;
+    	State newState;
+    	switch(state){
+    	case O:
+    		newState = State.O;
+    		break;
+    	case P:
+    		newState = State.P;
+    		break;
+    	case R:
+    		newState = State.R;
+    		break;
+    	case F:
+    		newState = State.F;
+    		break;
+		default:
+			newState = null;
+			break;
+    	}
+        this.mState = newState;
     }
 
 	public int getNodeId() {
@@ -37,7 +55,7 @@ public class Node {
 
 	@Override
 	public String toString() {
-		return "Node [nodeId=" + nodeId + ", mState=" + mState + "]";
+		return "N[" + nodeId + "," + mState + "]";
 	}
 	
 	

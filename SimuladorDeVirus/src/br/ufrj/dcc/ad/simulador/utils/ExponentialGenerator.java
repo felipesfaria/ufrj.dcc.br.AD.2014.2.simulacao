@@ -9,6 +9,7 @@ public class ExponentialGenerator {
 	public ExponentialGenerator(Double rate) {
 		super();
 		this.rand = new Random(System.currentTimeMillis());
+		//this.rand = new Random(5);
 		this.rate = rate;
 	}
 	public Double generate(){
