@@ -6,30 +6,29 @@ import br.ufrj.dcc.ad.simulador.model.Results;
 import br.ufrj.dcc.ad.simulador.utils.ExponentialGenerator;
 import br.ufrj.dcc.ad.simulador.utils.FileUtil;
 
-import java.io.File;
 import java.text.DecimalFormat;
 
 public class HelloVirus {
 
 	private static final int MAX_SIMULATION = 50;
-	public static double piZero = 0;
-	public static double piP = 0;
-	public static double totalTime = 0;
-	public static double initialTime;
-	public static long MAX_EVENTS;
-	public static ExponentialGenerator genR1;
-	public static ExponentialGenerator genR2;
-	public static ExponentialGenerator genR3;
-	public static ExponentialGenerator genLambda;
-	public static ExponentialGenerator genR4;
-	public static Tests tests = new Tests();
+//	public static double piZero = 0;
+//	public static double piP = 0;
+//	public static double totalTime = 0;
+//	public static double initialTime;
+//	public static long MAX_EVENTS;
+//	public static ExponentialGenerator genR1;
+//	public static ExponentialGenerator genR2;
+//	public static ExponentialGenerator genR3;
+//	public static ExponentialGenerator genLambda;
+//	public static ExponentialGenerator genR4;
+//	public static Tests tests = new Tests();
 	public static VirusSimulation simulation;
 
 	public static final double r1 = 2.0;
 	public static final double r2 = 0.8;
 	public static final double r3 = 3.0;
 	public static final double LAMBDA = 1.0 / (12.0 * 24.0 * 30.0);
-	public static final double BETA = 3.0;
+	public static final double BETA = 0.08;
 
 	static Double r4 = 0.9;
 	static Double delta = 0.0001;
@@ -46,7 +45,8 @@ public class HelloVirus {
 			delta = Double.parseDouble(args[1]);
 			min_r4 = Double.parseDouble(args[2]);
 		}
-		
+
+//		runMeshOnce();
 		runMeshCostAnalysis();
 //		runSingleNodeCostAnalysis();
 //		runSingleNodeTimeAnalysis();
@@ -67,10 +67,11 @@ public class HelloVirus {
 			Double infectedCost = 0.0;
 			Double samplingCost = 0.0;
 			Double totalCost = 0.0;
+			Rates r = new Rates(r1, BETA, r3, r4, LAMBDA);
 
 			for (int i = 0; i < MAX_SIMULATION; i++) {
-				Rates r = new Rates(r1, r2, r3, r4, LAMBDA, BETA);
-				Results res = null;
+
+				Results res;
 				simulation = new NewVirusMeshSimulation(maxEvents, r);
 				simulation.setPrintOptions(new String[]{});
 				simulation.setUpSimulation();
@@ -90,18 +91,28 @@ public class HelloVirus {
 			totalCost /= MAX_SIMULATION;
 
 			if (printCSV) {
-				file.saveInFile(
-						dc.format(r4),
-						dc.format(piO),
-						dc.format(infectedCost),
-						dc.format(samplingCost),
-						dc.format(totalCost));
+						file.saveInFile(""+r.getR4(),
+								""+piO,
+								""+infectedCost,
+								""+samplingCost,
+								""+totalCost);
 			}
 
 			r4 -= delta;
 		}
 
 	}
+
+	static void runMeshOnce(){
+		FileUtil file = new FileUtil("CostAnalysis.csv", "r4;piO;cV;cS;cT");
+		Rates r = new Rates(r1, BETA, r3, r4, LAMBDA);
+		simulation = new NewVirusMeshSimulation(maxEvents, r, file);
+		simulation.setPrintOptions(new String[]{"CSV"});
+		simulation.setUpSimulation();
+		simulation.runFullSimulation();
+
+	}
+
 
 	static void runSingleNodeCostAnalysis() {
 		System.out.println("R4;piO;cV;cS;cT");

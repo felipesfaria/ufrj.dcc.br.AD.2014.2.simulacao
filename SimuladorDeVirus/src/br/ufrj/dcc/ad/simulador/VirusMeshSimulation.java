@@ -1,19 +1,14 @@
 package br.ufrj.dcc.ad.simulador;
 
+import br.ufrj.dcc.ad.simulador.interfaces.VirusSimulation;
+import br.ufrj.dcc.ad.simulador.model.*;
+import br.ufrj.dcc.ad.simulador.utils.ExponentialGenerator;
+import br.ufrj.dcc.ad.simulador.utils.FileUtil;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import br.ufrj.dcc.ad.simulador.interfaces.VirusSimulation;
-import br.ufrj.dcc.ad.simulador.model.Event;
-import br.ufrj.dcc.ad.simulador.model.EventQueue;
-import br.ufrj.dcc.ad.simulador.model.Node;
-import br.ufrj.dcc.ad.simulador.model.Rates;
-import br.ufrj.dcc.ad.simulador.model.Results;
-import br.ufrj.dcc.ad.simulador.model.State;
-import br.ufrj.dcc.ad.simulador.utils.ExponentialGenerator;
-import br.ufrj.dcc.ad.simulador.utils.FileUtil;
 
 public class VirusMeshSimulation implements VirusSimulation {
 
@@ -39,10 +34,10 @@ public class VirusMeshSimulation implements VirusSimulation {
 	private TimePerState tps;
 	private double initialTime;
 	private DecimalFormat dc = new DecimalFormat(",000.000000000");
-	private List<Integer> prePdf = new ArrayList<>();
-	private List<Double> pdf = new ArrayList<>();
-	private List<Double> cdf = new ArrayList<>();
-	private List<Node> nodes = new ArrayList<>();
+	private List<Integer> prePdf = new ArrayList<Integer>();
+	private List<Double> pdf = new ArrayList<Double>();
+	private List<Double> cdf = new ArrayList<Double>();
+	private List<Node> nodes = new ArrayList<Node>();
 	private double tRec;
 	private double precision = 0.1;
 

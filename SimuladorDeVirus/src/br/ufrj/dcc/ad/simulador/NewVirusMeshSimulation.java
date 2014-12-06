@@ -1,21 +1,15 @@
 package br.ufrj.dcc.ad.simulador;
 
+import br.ufrj.dcc.ad.simulador.interfaces.VirusSimulation;
+import br.ufrj.dcc.ad.simulador.model.*;
+import br.ufrj.dcc.ad.simulador.utils.CumulativeDensityFunctionCalculator;
+import br.ufrj.dcc.ad.simulador.utils.ExponentialGenerator;
+import br.ufrj.dcc.ad.simulador.utils.FileUtil;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import br.ufrj.dcc.ad.simulador.interfaces.VirusSimulation;
-import br.ufrj.dcc.ad.simulador.model.Event;
-import br.ufrj.dcc.ad.simulador.model.EventQueue;
-import br.ufrj.dcc.ad.simulador.model.Node;
-import br.ufrj.dcc.ad.simulador.model.Rates;
-import br.ufrj.dcc.ad.simulador.model.Results;
-import br.ufrj.dcc.ad.simulador.model.State;
-import br.ufrj.dcc.ad.simulador.model.Transition;
-import br.ufrj.dcc.ad.simulador.utils.CumulativeDensityFunctionCalculator;
-import br.ufrj.dcc.ad.simulador.utils.ExponentialGenerator;
-import br.ufrj.dcc.ad.simulador.utils.FileUtil;
 
 public class NewVirusMeshSimulation implements VirusSimulation{
 
@@ -45,7 +39,7 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 	private Double piP;
 	private Double totalTime;
 	private Double initialTime;
-	private DecimalFormat dc = new DecimalFormat(",000.000000000");
+//	private DecimalFormat dc = new DecimalFormat(",000.000000000");
 	CumulativeDensityFunctionCalculator cdfCalc;
 
 	FileUtil file1;
@@ -92,9 +86,9 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 	
 	private void setUpFirstEvent(){
 		for (int i = 0; i < NUM_OF_NODES; i++) {
-			if (printSteps)
-				System.out.println("Event: " + counter + "\t" + "->" + State.O+ "\tt:" + dc.format(initialTime));
-			Event firstEvent = new Event(nodes[i], State.P, initialTime);
+//			if (printSteps)
+//				System.out.println("Event: " + counter + "\t" + "->" + State.O+ "\tt:" + dc.format(initialTime));
+			Event firstEvent = new Event(nodes[i], State.P, initialTime, 0.0);
 			eventQueue.add(firstEvent);	
 		}
 	}
@@ -132,47 +126,56 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 		piO /= totalTime;
 		piP /= totalTime;
 		Double cV = 10.0, cS = 9.0;
-		Double custoInfectado = (1 - piO) * cV;
-		Double custoAmostragem = (piO + piP) * cS * rates.getR4();
-		Double custoTotal = custoInfectado + custoAmostragem;
+		Double infectedCost = (1 - piO) * cV;
+		Double samplingCost = (piO + piP) * cS * rates.getR4();
+		Double totalCost = infectedCost + samplingCost;
 
 		if (printResult) {
-			System.out.println("Simulation finished.");
-			System.out.println("Steps: " + counter + "\tTime Simulated: " + dc.format(totalTime));
-			System.out.println("pi0: " + dc.format(piO) + "\tpiP: " + dc.format(piP));
-			System.out.println("Custo Infectado: " + dc.format(custoInfectado) + "\t" + "Custo Amostragem: " + dc.format(custoAmostragem));
-			System.out.println("Custo Total: " + dc.format(custoTotal));
+//			System.out.println("Simulation finished.");
+//			System.out.println("Steps: " + counter + "\tTime Simulated: " + dc.format(totalTime));
+//			System.out.println("pi0: " + dc.format(piO) + "\tpiP: " + dc.format(piP));
+//			System.out.println("Custo Infectado: " + dc.format(infectedCost) + "\t" + "Custo Amostragem: " + dc.format(samplingCost));
+//			System.out.println("Custo Total: " + dc.format(totalCost));
 		}
 		if (printCSV) {
-			file1.saveInFile(
-					dc.format(rates.getR4()), 
-					dc.format(piO),
-					dc.format(custoInfectado),
-					dc.format(custoAmostragem),
-					dc.format(custoTotal));
+//			file1.saveInFile(
+//					dc.format(rates.getR4()),
+//					dc.format(piO),
+//					dc.format(infectedCost),
+//					dc.format(samplingCost),
+//					dc.format(totalCost));
+			file1.saveInFile(""+rates.getR4(),
+							""+piO,
+							""+infectedCost,
+							""+samplingCost,
+							""+totalCost);
 		}
 		if (printCDF) { cdfCalc.printCDF(); }
 		if (printPDF) { cdfCalc.printPDF(); } 
 
-		return new Results(rates.getR4(), piO, piP,custoInfectado,custoAmostragem);
+		return new Results(rates.getR4(), piO, piP,infectedCost,samplingCost);
 	}
 
 	public void consumeEvent() {
 		Event cEvent = eventQueue.pop();
-		Event nextEvent = null;
+		Event nextEvent;
 		Node cNode = cEvent.getCurrentNd();
 		State cState = cNode.getState();
-		boolean isObservedNode = cNode.getNodeId() == 0; 
 		State nState = cEvent.getNextState();
 		Double now = cEvent.getTime();
 		Double timeSpentInThisState = cEvent.getDelta();
 		totalTime += timeSpentInThisState;
+
+		boolean isObservedNode = cNode.getNodeId() == 0;
 		
 		
 		switch (getTransition(cState, nState)) {
 		case O_TO_P:
-			if(isObservedNode) { piO += timeSpentInThisState; }
-			
+			if(isObservedNode) {
+				piO += timeSpentInThisState;
+			}
+
+			removeIncomingInfections(cNode);
 			scheduleOutgoingInfections(cNode,now);
 			
 			Event pEvent = generatePtoFEvent(cNode, now);
@@ -180,36 +183,41 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 			nextEvent = chooseMin(pEvent, fEvent);
 			break;
 		case P_TO_R:
-			if(isObservedNode) { piP += timeSpentInThisState; }
+			if(isObservedNode) {
+				piP += timeSpentInThisState;
+			}
 			nextEvent = generateRtoOEvent(cNode, now);
 			
-			if(printCDF || printPDF)
-				cdfCalc.inRecuperation(timeSpentInThisState);
+//			if(printCDF || printPDF)
+//				cdfCalc.inRecuperation(timeSpentInThisState);
 			
 			break;
 		case P_TO_F:
-			if(isObservedNode) { piP += timeSpentInThisState; }
+			if(isObservedNode) {
+				piP += timeSpentInThisState;
+			}
 			nextEvent = generateFtoOEvent(cNode, now);
 			
-			if(printCDF || printPDF)
-				cdfCalc.inRecuperation(timeSpentInThisState);
+//			if(printCDF || printPDF)
+//				cdfCalc.inRecuperation(timeSpentInThisState);
 			
 			break;
 		case R_TO_O:
 		case F_TO_O:
 			// We need to remove all infections created by this person, he is
 			// cured now.
-			removeInfections(cNode);
+			removeOutgoingInfections(cNode);
 			// Now we have to schedule incoming infections
 			scheduleIncomingInfections(cNode,now);
-			
+
 			if( eventQueue.isEmpty() && !isObservedNode){
 				if( nodes[0].getState() == State.O ){ piO += timeSpentInThisState; }
 				else if( nodes[0].getState() == State.P ){ piP += timeSpentInThisState; }
 			}
-			
-			if(printCDF || printPDF)
-				cdfCalc.recupered(timeSpentInThisState);
+
+//			if(printCDF || printPDF)
+//				cdfCalc.recupered(timeSpentInThisState);
+			cNode.setState(nState);
 			counter++;
 			return;
 		default:
@@ -225,6 +233,7 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 		counter++;
 		
 	}
+
 	private Transition getTransition(State cState, State nState){
 		if	   ( cState == State.O && nState == State.P) {return Transition.O_TO_P;}
 		else if( cState == State.P && nState == State.R) {return Transition.P_TO_R;}
@@ -233,8 +242,24 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 		else if( cState == State.F && nState == State.O) {return Transition.F_TO_O;}
 		return Transition.ILEGAL;
 	}
+
+	private void removeIncomingInfections(Node cNode) {
+		Iterator<Event> iteratorQueue = eventQueue.getIterator();
+		List<Event> toRemove = new ArrayList<>();
+		while (iteratorQueue.hasNext()) {
+			Event tmp = iteratorQueue.next();
+			if (tmp.getCurrentNd() != null
+					&& tmp.getCurrentNd().getNodeId() == cNode.getNodeId()
+					&& tmp.getNextState() == State.P) {
+				toRemove.add(tmp);
+			}
+		}
+		for (Event e : toRemove) {
+			eventQueue.removeEvent(e);
+		}
+	}
 	
-	private void removeInfections(Node cNode) {
+	private void removeOutgoingInfections(Node cNode) {
 		Iterator<Event> iteratorQueue = eventQueue.getIterator();
 		List<Event> toRemove = new ArrayList<Event>();
 		while (iteratorQueue.hasNext()) {
@@ -253,7 +278,7 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 	private void scheduleIncomingInfections(Node cNode, Double now) {
 		for (Node neighbour : nodes) {
 			if (neighbour.getState() != State.O) {
-				Event evt = generateInfectionvent(cNode, neighbour, now);
+				Event evt = generateInfectionEvent(cNode, neighbour, now);
 				eventQueue.add(evt);
 			}
 		}
@@ -262,7 +287,7 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 	private void scheduleOutgoingInfections(Node cNode, Double now) {
 		for (Node neighbour : nodes) {
 			if (neighbour.getState() == State.O) {
-				Event evt = generateInfectionvent(neighbour, cNode, now); 
+				Event evt = generateInfectionEvent(neighbour, cNode, now);
 				eventQueue.add(evt);
 			}
 		}
@@ -272,7 +297,7 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 		return ( (pEvent.getTime() - fEvent.getTime()) < 0.0 )? pEvent:fEvent;
 	}
 
-	private Event generateInfectionvent(Node cNode, Node infectAgent,Double now) {
+	private Event generateInfectionEvent(Node cNode, Node infectAgent, Double now) {
 		double nextPEventTime = genBeta.generate();
 		return new Event(cNode, infectAgent, State.P, now + nextPEventTime, nextPEventTime);
 	}

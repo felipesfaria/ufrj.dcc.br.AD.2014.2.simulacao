@@ -1,18 +1,12 @@
 package br.ufrj.dcc.ad.simulador;
 
-import java.text.DecimalFormat;
-
 import br.ufrj.dcc.ad.simulador.interfaces.VirusSimulation;
-import br.ufrj.dcc.ad.simulador.model.Event;
-import br.ufrj.dcc.ad.simulador.model.EventQueue;
-import br.ufrj.dcc.ad.simulador.model.Node;
-import br.ufrj.dcc.ad.simulador.model.Rates;
-import br.ufrj.dcc.ad.simulador.model.Results;
-import br.ufrj.dcc.ad.simulador.model.State;
-import br.ufrj.dcc.ad.simulador.model.Transition;
+import br.ufrj.dcc.ad.simulador.model.*;
 import br.ufrj.dcc.ad.simulador.utils.CumulativeDensityFunctionCalculator;
 import br.ufrj.dcc.ad.simulador.utils.ExponentialGenerator;
 import br.ufrj.dcc.ad.simulador.utils.FileUtil;
+
+import java.text.DecimalFormat;
 
 public class VirusSingleSimulation implements VirusSimulation {
 
@@ -105,7 +99,7 @@ public class VirusSingleSimulation implements VirusSimulation {
 	private void setUpFirstEvent(){
 		if (printSteps)
 			System.out.println("Event: " + counter + "\t" + "->" + State.O+ "\tt:" + dc.format(initialTime));
-		Event firstEvent = new Event(node, State.O, initialTime);
+		Event firstEvent = new Event(node, State.O, initialTime, 0.0);
 		eventQueue.add(firstEvent);
 	}
 	

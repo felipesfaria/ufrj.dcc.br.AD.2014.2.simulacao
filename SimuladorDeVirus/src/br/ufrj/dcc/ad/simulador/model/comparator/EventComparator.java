@@ -1,8 +1,8 @@
 package br.ufrj.dcc.ad.simulador.model.comparator;
 
-import java.util.Comparator;
-
 import br.ufrj.dcc.ad.simulador.model.Event;
+
+import java.util.Comparator;
 
 public class EventComparator implements Comparator<Event> {
 
