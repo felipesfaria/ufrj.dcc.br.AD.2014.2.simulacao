@@ -24,11 +24,13 @@ public class Printer {
 	public Printer(){
 		this(null);
 	}
+	
 	public Printer(PrintOptions args[]){
 		setPrintOptions(args);
 	}
 	
 	public void setPrintOptions(PrintOptions args[]) {
+		if(args==null) return;
 		for (PrintOptions option : args){
 			switch(option){
 			case steps:
@@ -138,6 +140,7 @@ public class Printer {
 		}
 		
 	}
+	
 	public void printCDF(VirusSimulation vSim) {
 		if (printCDF) { vSim.getCDFCalculator().printCDF(); }
 	}
@@ -146,12 +149,15 @@ public class Printer {
 		if (printPDF) { vSim.getCDFCalculator().printPDF(); }
 		
 	}
+	
 	public void printSteps(Statistics stats,Event event) {
 		if(printSteps) { System.out.println("Event: "+stats.getCounter()+"\t" + "Event: " + event); }
 	}
+	
 	public void printQueue(EventQueue eventQueue) {
 		if(printQueue) { eventQueue.printQueue(); }
 	}
+	
 	public void printStates(List<Node> nodes) {
 		if(printStates){
 			String toPrint = "";
