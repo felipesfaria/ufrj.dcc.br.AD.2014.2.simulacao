@@ -1,18 +1,16 @@
 package br.ufrj.dcc.ad.simulador;
 
-import java.text.DecimalFormat;
-
 import br.ufrj.dcc.ad.simulador.interfaces.VirusSimulation;
 import br.ufrj.dcc.ad.simulador.model.Event;
 import br.ufrj.dcc.ad.simulador.model.EventQueue;
 import br.ufrj.dcc.ad.simulador.model.Node;
-import br.ufrj.dcc.ad.simulador.model.PrintOptions;
 import br.ufrj.dcc.ad.simulador.model.Rates;
 import br.ufrj.dcc.ad.simulador.model.State;
 import br.ufrj.dcc.ad.simulador.model.Transition;
 import br.ufrj.dcc.ad.simulador.utils.CumulativeDensityFunctionCalculator;
 import br.ufrj.dcc.ad.simulador.utils.ExponentialGenerator;
 import br.ufrj.dcc.ad.simulador.utils.FileUtil;
+import br.ufrj.dcc.ad.simulador.utils.Printer;
 import br.ufrj.dcc.ad.simulador.utils.Statistics;
 
 public class VirusSingleSimulation implements VirusSimulation {
@@ -26,19 +24,12 @@ public class VirusSingleSimulation implements VirusSimulation {
 	Node node = new Node();
 	EventQueue eventQueue = new EventQueue();
 
-	private Boolean printSteps = false;
-	private Boolean printResult = false;
-	private Boolean printCSV = false;
-	private Boolean printCDF = false;
-	private boolean printQueue = false;
-	private boolean printPDF = false;
-
 	private Rates rates;
 	
 	private long MAX_EVENTS;
 	private Statistics stats;
 	
-	private DecimalFormat dc = new DecimalFormat(",000.000000000");
+	private Printer printer = new Printer();
 	CumulativeDensityFunctionCalculator cdfCalc;
 
 	FileUtil file1;
@@ -74,40 +65,10 @@ public class VirusSingleSimulation implements VirusSimulation {
 		stats.count();
 	}
 	
-	@Override
-	public void setPrintOptions(PrintOptions args[]) {
-		for (int i = 0; i < args.length; i++) {
-			switch(args[i]){
-			case steps:
-				printSteps = true;
-				break;
-			case results:
-				printResult = true;
-				break;
-			case CSV:
-				printCSV = true;
-				break;
-			case CDF:
-				printCDF = true;
-				break;
-			case PDF:
-				printPDF = true;
-				break;
-			case stepsQueue:
-				printQueue = true;
-				break;
-			default:
-				break;
-			}
-		}
-	}
-	
 	private void generateNodes(){
 		node = new Node(State.F);
 	}
 	private void setUpFirstEvent(){
-		if (printSteps)
-			System.out.println("Event: " + stats.getCounter() + "\t" + "->" + State.O+ "\tt:" + dc.format(0.0));
 		Event firstEvent = new Event(node, State.O, 0.0);
 		eventQueue.add(firstEvent);
 	}
@@ -124,22 +85,12 @@ public class VirusSingleSimulation implements VirusSimulation {
 			consumeEvent();
 		}
 		stats.finish();
-		if (printResult) {
-			stats.printResult();
-		}
-		if (printCSV) {
-			file1.saveInFile(
-					dc.format(rates.getR4()), 
-					dc.format(stats.getPiO()),
-					dc.format(stats.getPiP()),
-					dc.format(stats.getPiR()),
-					dc.format(stats.getPiF()),
-					dc.format(stats.getInfectedCost()),
-					dc.format(stats.getSamplingCost()),
-					dc.format(stats.getTotalCost()));
-		}
-		if (printCDF) { cdfCalc.printCDF(); }
-		if (printPDF) { cdfCalc.printPDF(); } 
+		
+		printer.printResults(this);
+
+		printer.printCSV(this);
+		printer.printCDF(this);
+		printer.printPDF(this);
 
 		return stats;
 	}
@@ -164,29 +115,25 @@ public class VirusSingleSimulation implements VirusSimulation {
 		case P_TO_R:
 			nextEvent = generateRtoOEvent(cNode, now);
 			
-			if(printCDF || printPDF)
-				cdfCalc.inRecuperation(timeSpentInThisState);
+			cdfCalc.inRecuperation(timeSpentInThisState);
 			
 			break;
 		case P_TO_F:
 			nextEvent = generateFtoOEvent(cNode, now);
 			
-			if(printCDF || printPDF)
-				cdfCalc.inRecuperation(timeSpentInThisState);
+			cdfCalc.inRecuperation(timeSpentInThisState);
 			
 			break;
 		case R_TO_O:
 			nextEvent = generateOtoPEvent(cNode, now);
 			
-			if(printCDF || printPDF)
-				cdfCalc.recupered(timeSpentInThisState);
+			cdfCalc.recupered(timeSpentInThisState);
 			
 			break;
 		case F_TO_O:
 			nextEvent = generateOtoPEvent(cNode, now);
 			
-			if(printCDF || printPDF)
-				cdfCalc.recupered(timeSpentInThisState);
+			cdfCalc.recupered(timeSpentInThisState);
 			
 			break;
 		default:
@@ -196,8 +143,8 @@ public class VirusSingleSimulation implements VirusSimulation {
 		cNode.setState(nState);
 		eventQueue.add(nextEvent);
 		
-		if(printSteps) { System.out.println("Event: "+stats.getCounter()+"\t" + "Event: " + cEvent); }
-		if(printQueue) { eventQueue.printQueue(); }
+		printer.printSteps(stats, cEvent);
+		printer.printQueue(eventQueue);
 		
 		stats.count();
 		
@@ -236,6 +183,26 @@ public class VirusSingleSimulation implements VirusSimulation {
 	private Event generateFtoOEvent(Node cNode, Double now){
 		double nextPEventTime = genR1.generate();
 		return new Event(cNode, State.O, now + nextPEventTime, nextPEventTime);
+	}
+
+	@Override
+	public FileUtil getFile() {
+		return file1;
+	}
+
+	@Override
+	public Statistics getStats() {
+		return stats;
+	}
+
+	@Override
+	public Rates getRates() {
+		return rates;
+	}
+
+	@Override
+	public CumulativeDensityFunctionCalculator getCDFCalculator() {
+		return cdfCalc;
 	}
 
 }

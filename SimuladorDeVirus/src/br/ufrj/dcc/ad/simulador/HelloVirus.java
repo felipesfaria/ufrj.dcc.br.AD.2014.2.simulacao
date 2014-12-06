@@ -7,6 +7,7 @@ import br.ufrj.dcc.ad.simulador.model.PrintOptions;
 import br.ufrj.dcc.ad.simulador.model.Rates;
 import br.ufrj.dcc.ad.simulador.utils.ExponentialGenerator;
 import br.ufrj.dcc.ad.simulador.utils.FileUtil;
+import br.ufrj.dcc.ad.simulador.utils.Printer;
 import br.ufrj.dcc.ad.simulador.utils.Statistics;
 
 public class HelloVirus {
@@ -36,9 +37,12 @@ public class HelloVirus {
 	static Double min_r4 = 0.0;
 	
 	static int maxEvents = 10000;
+	
+	public static Printer printer = new Printer();
 
 	public static void main(String[] args) {
-
+		printer = new Printer();
+		
 		// System.out.println("Welcome to the best assignment in the world!");
 
 		if (args.length == 3) {
@@ -66,7 +70,7 @@ public class HelloVirus {
 				Rates r = new Rates(r1, r2, r3, r4, LAMBDA, BETA);
 				Statistics stats = null;
 				simulation = new NewVirusMeshSimulation(maxEvents, r,4);
-				simulation.setPrintOptions(new PrintOptions[]{PrintOptions.steps,PrintOptions.states,PrintOptions.results,PrintOptions.states});
+				printer.setPrintOptions(new PrintOptions[]{PrintOptions.steps,PrintOptions.states,PrintOptions.results,PrintOptions.states});
 				simulation.setUpSimulation();
 				stats = simulation.runFullSimulation();
 				
@@ -99,7 +103,7 @@ public class HelloVirus {
 		while (r4 >= min_r4) {
 			Rates r = new Rates(r1, r2, r3, r4, LAMBDA);
 			simulation = new VirusSingleSimulation(maxEvents, r, file);
-			simulation.setPrintOptions(new PrintOptions[] { PrintOptions.CSV });
+			printer.setPrintOptions(new PrintOptions[] { PrintOptions.CSV });
 			simulation.setUpSimulation();
 			simulation.runFullSimulation();
 			r4 -= delta;
@@ -112,7 +116,7 @@ public class HelloVirus {
 		Rates r = new Rates(r1, r2, r3, 0.14, LAMBDA); // TODO melhorar
 													  //TODO Felipe: melhorar o que?
 		simulation = new VirusSingleSimulation(maxEvents, r, file);
-		simulation.setPrintOptions(new PrintOptions[] { PrintOptions.CSV, PrintOptions.CDF });
+		printer.setPrintOptions(new PrintOptions[] { PrintOptions.CSV, PrintOptions.CDF });
 		simulation.setUpSimulation();
 		simulation.runFullSimulation();
 	}
