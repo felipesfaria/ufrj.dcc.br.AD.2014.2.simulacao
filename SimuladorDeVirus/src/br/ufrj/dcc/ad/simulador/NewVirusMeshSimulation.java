@@ -9,8 +9,9 @@ import br.ufrj.dcc.ad.simulador.interfaces.VirusSimulation;
 import br.ufrj.dcc.ad.simulador.model.Event;
 import br.ufrj.dcc.ad.simulador.model.EventQueue;
 import br.ufrj.dcc.ad.simulador.model.Node;
+import br.ufrj.dcc.ad.simulador.model.PrintOptions;
 import br.ufrj.dcc.ad.simulador.model.Rates;
-import br.ufrj.dcc.ad.simulador.model.Results;
+import br.ufrj.dcc.ad.simulador.model.Statistics;
 import br.ufrj.dcc.ad.simulador.model.State;
 import br.ufrj.dcc.ad.simulador.model.Transition;
 import br.ufrj.dcc.ad.simulador.utils.CumulativeDensityFunctionCalculator;
@@ -36,17 +37,16 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 	private Boolean printCDF = false;
 	private boolean printQueue = false;
 	private boolean printPDF = false;
+	private boolean printStates = false;
 
 	private Rates rates;
 	private long MAX_EVENTS;
 	
-	private long counter;
-	private Double piO;
-	private Double piP;
-	private Double totalTime;
 	private Double initialTime;
 	private DecimalFormat dc = new DecimalFormat(",000.000000000");
 	CumulativeDensityFunctionCalculator cdfCalc;
+	
+	Statistics stats;
 
 	FileUtil file1;
 
@@ -73,16 +73,12 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 
 	@Override
 	public void setUpSimulation() {
-		piO = 0.0;
-		piP = 0.0;
-		totalTime = 0.0;
+		stats = new Statistics(rates);
 		initialTime = 0.0;
-		counter = 0;
 		cdfCalc = new CumulativeDensityFunctionCalculator();
 
 		generateNodes();
 		setUpFirstEvent();
-		counter++;
 	}
 	
 	private void generateNodes(){
@@ -93,27 +89,37 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 	private void setUpFirstEvent(){
 		for (int i = 0; i < NUM_OF_NODES; i++) {
 			if (printSteps)
-				System.out.println("Event: " + counter + "\t" + "->" + State.O+ "\tt:" + dc.format(initialTime));
+				System.out.println("Event: " + stats.getCounter() + "\t" + "->" + State.O+ "\tt:" + dc.format(initialTime));
 			Event firstEvent = new Event(nodes[i], State.P, initialTime);
 			eventQueue.add(firstEvent);	
 		}
 	}
-	
+
 	@Override
-	public void setPrintOptions(String args[]) {
+	public void setPrintOptions(PrintOptions args[]) {
 		for (int i = 0; i < args.length; i++) {
-			if (args[i] == "steps")
+			switch(args[i]){
+			case steps:
 				printSteps = true;
-			if (args[i] == "results")
+				break;
+			case results:
 				printResult = true;
-			if (args[i] == "CSV")
+				break;
+			case CSV:
 				printCSV = true;
-			if (args[i] == "CDF")
+				break;
+			case CDF:
 				printCDF = true;
-			if (args[i] == "PDF")
+				break;
+			case PDF:
 				printPDF = true;
-			if (args[i] == "stepsQueue")
+				break;
+			case stepsQueue:
 				printQueue = true;
+				break;
+			default:
+				break;
+			}
 		}
 	}
 	
@@ -124,37 +130,28 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 	 * br.ufrj.dcc.ad.simulador.VirusSimulationInterface#runFullSimulation()
 	 */
 	@Override
-	public Results runFullSimulation() {
-		while (counter < MAX_EVENTS && !eventQueue.isEmpty()) {
+	public Statistics runFullSimulation() {
+		while (stats.getCounter() < MAX_EVENTS && !eventQueue.isEmpty()) {
 			consumeEvent();
 		}
 
-		piO /= totalTime;
-		piP /= totalTime;
-		Double cV = 10.0, cS = 9.0;
-		Double custoInfectado = (1 - piO) * cV;
-		Double custoAmostragem = (piO + piP) * cS * rates.getR4();
-		Double custoTotal = custoInfectado + custoAmostragem;
+		stats.finish();
 
 		if (printResult) {
-			System.out.println("Simulation finished.");
-			System.out.println("Steps: " + counter + "\tTime Simulated: " + dc.format(totalTime));
-			System.out.println("pi0: " + dc.format(piO) + "\tpiP: " + dc.format(piP));
-			System.out.println("Custo Infectado: " + dc.format(custoInfectado) + "\t" + "Custo Amostragem: " + dc.format(custoAmostragem));
-			System.out.println("Custo Total: " + dc.format(custoTotal));
+			stats.printResult();
 		}
 		if (printCSV) {
 			file1.saveInFile(
 					dc.format(rates.getR4()), 
-					dc.format(piO),
-					dc.format(custoInfectado),
-					dc.format(custoAmostragem),
-					dc.format(custoTotal));
+					dc.format(stats.getPiO()),
+					dc.format(stats.getInfectedCost()),
+					dc.format(stats.getSamplingCost()),
+					dc.format(stats.getTotalCost()));
 		}
 		if (printCDF) { cdfCalc.printCDF(); }
 		if (printPDF) { cdfCalc.printPDF(); } 
 
-		return new Results(rates.getR4(), piO, piP,custoInfectado,custoAmostragem);
+		return stats;
 	}
 
 	public void consumeEvent() {
@@ -166,12 +163,12 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 		State nState = cEvent.getNextState();
 		Double now = cEvent.getTime();
 		Double timeSpentInThisState = cEvent.getDelta();
-		totalTime += timeSpentInThisState;
+		if(isObservedNode)
+			stats.addTimePerState(timeSpentInThisState, cState);
 		
 		
 		switch (getTransition(cState, nState)) {
 		case O_TO_P:
-			if(isObservedNode) { piO += timeSpentInThisState; }
 			
 			scheduleOutgoingInfections(cNode,now);
 			
@@ -180,7 +177,6 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 			nextEvent = chooseMin(pEvent, fEvent);
 			break;
 		case P_TO_R:
-			if(isObservedNode) { piP += timeSpentInThisState; }
 			nextEvent = generateRtoOEvent(cNode, now);
 			
 			if(printCDF || printPDF)
@@ -188,7 +184,6 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 			
 			break;
 		case P_TO_F:
-			if(isObservedNode) { piP += timeSpentInThisState; }
 			nextEvent = generateFtoOEvent(cNode, now);
 			
 			if(printCDF || printPDF)
@@ -204,27 +199,36 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 			scheduleIncomingInfections(cNode,now);
 			
 			if( eventQueue.isEmpty() && !isObservedNode){
-				if( nodes[0].getState() == State.O ){ piO += timeSpentInThisState; }
-				else if( nodes[0].getState() == State.P ){ piP += timeSpentInThisState; }
+				stats.addTimePerState(timeSpentInThisState, nodes[0].getState());
 			}
 			
 			if(printCDF || printPDF)
 				cdfCalc.recupered(timeSpentInThisState);
-			counter++;
+			//TODO Felipe: Porque esse 'count++;' estava aqui?
+			stats.count();
 			return;
 		default:
+			System.out.println("Error: Ilegal transition.");
 			return;
 		}
 		
 		cNode.setState(nState);
 		eventQueue.add(nextEvent);
 		
-		if(printSteps) { System.out.println("Event: "+counter+"\t" + "Event: " + cEvent); }
+		if(printSteps) { System.out.println("Event: "+stats.getCounter()+"\t" + "Event: " + cEvent); }
 		if(printQueue) { eventQueue.printQueue(); }
+		if(printStates){
+			String toPrint = "";
+			for (Node node : nodes){
+				toPrint+="["+node.getState()+"]";
+			}
+			System.out.println(toPrint);
+		}
 		
-		counter++;
+		stats.count();
 		
 	}
+	
 	private Transition getTransition(State cState, State nState){
 		if	   ( cState == State.O && nState == State.P) {return Transition.O_TO_P;}
 		else if( cState == State.P && nState == State.R) {return Transition.P_TO_R;}

@@ -1,8 +1,9 @@
 package br.ufrj.dcc.ad.simulador;
 
 import br.ufrj.dcc.ad.simulador.interfaces.VirusSimulation;
+import br.ufrj.dcc.ad.simulador.model.PrintOptions;
 import br.ufrj.dcc.ad.simulador.model.Rates;
-import br.ufrj.dcc.ad.simulador.model.Results;
+import br.ufrj.dcc.ad.simulador.model.Statistics;
 import br.ufrj.dcc.ad.simulador.utils.ExponentialGenerator;
 import br.ufrj.dcc.ad.simulador.utils.FileUtil;
 
@@ -29,10 +30,10 @@ public class HelloVirus {
 	public static final double r2 = 0.8;
 	public static final double r3 = 3.0;
 	public static final double LAMBDA = 1.0 / (12.0 * 24.0 * 30.0);
-	public static final double BETA = 3.0;
-
-	static Double r4 = 0.9;
-	static Double delta = 0.0001;
+	public static final double BETA = 0.08;	
+	
+	static Double r4 = 1.0;
+	static Double delta = 0.001;
 	static Double min_r4 = 0.0;
 	
 	static int maxEvents = 10000;
@@ -57,7 +58,7 @@ public class HelloVirus {
 	static void runMeshCostAnalysis() {
 		boolean printCSV = true;
 
-		FileUtil file = new FileUtil("CostAnalysis.csv", "r4;piO;cV;cS;cT");
+		FileUtil file = new FileUtil("CostAnalysis.csv", "r4;piO;piP;piR;piF;cV;cS;cT");
 		DecimalFormat dc = new DecimalFormat(",000.000000000");
 
 		while (r4 >= min_r4) {
@@ -70,17 +71,17 @@ public class HelloVirus {
 
 			for (int i = 0; i < MAX_SIMULATION; i++) {
 				Rates r = new Rates(r1, r2, r3, r4, LAMBDA, BETA);
-				Results res = null;
+				Statistics stats = null;
 				simulation = new NewVirusMeshSimulation(maxEvents, r);
-				simulation.setPrintOptions(new String[]{});
+				simulation.setPrintOptions(new PrintOptions[]{PrintOptions.steps,PrintOptions.states});
 				simulation.setUpSimulation();
-				res = simulation.runFullSimulation();
+				stats = simulation.runFullSimulation();
 
-				piO += res.getPiO();
-				piP += res.getPiP();
-				infectedCost += res.getInfectedCost();
-				samplingCost += res.getSamplingCost();
-				totalCost += res.getTotalCost();
+				piO += stats.getPiO();
+				piP += stats.getPiP();
+				infectedCost += stats.getInfectedCost();
+				samplingCost += stats.getSamplingCost();
+				totalCost += stats.getTotalCost();
 			}
 
 			piO /= MAX_SIMULATION;
@@ -110,7 +111,7 @@ public class HelloVirus {
 		while (r4 >= min_r4) {
 			Rates r = new Rates(r1, r2, r3, r4, LAMBDA);
 			simulation = new VirusSingleSimulation(maxEvents, r, file);
-			simulation.setPrintOptions(new String[] { "CSV" });
+			simulation.setPrintOptions(new PrintOptions[] { PrintOptions.CSV });
 			simulation.setUpSimulation();
 			simulation.runFullSimulation();
 			r4 -= delta;
@@ -121,8 +122,9 @@ public class HelloVirus {
 	static void runSingleNodeTimeAnalysis() {
 		FileUtil file = new FileUtil("TimeAnalysis.csv", "t;P(t<T)");
 		Rates r = new Rates(r1, r2, r3, 0.14, LAMBDA); // TODO melhorar
+													  //TODO Felipe: melhorar o que?
 		simulation = new VirusSingleSimulation(maxEvents, r, file);
-		simulation.setPrintOptions(new String[] { "CSV", "CDF" });
+		simulation.setPrintOptions(new PrintOptions[] { PrintOptions.CSV, PrintOptions.CDF });
 		simulation.setUpSimulation();
 		simulation.runFullSimulation();
 	}

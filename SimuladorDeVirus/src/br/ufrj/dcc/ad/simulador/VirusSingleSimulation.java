@@ -6,8 +6,9 @@ import br.ufrj.dcc.ad.simulador.interfaces.VirusSimulation;
 import br.ufrj.dcc.ad.simulador.model.Event;
 import br.ufrj.dcc.ad.simulador.model.EventQueue;
 import br.ufrj.dcc.ad.simulador.model.Node;
+import br.ufrj.dcc.ad.simulador.model.PrintOptions;
 import br.ufrj.dcc.ad.simulador.model.Rates;
-import br.ufrj.dcc.ad.simulador.model.Results;
+import br.ufrj.dcc.ad.simulador.model.Statistics;
 import br.ufrj.dcc.ad.simulador.model.State;
 import br.ufrj.dcc.ad.simulador.model.Transition;
 import br.ufrj.dcc.ad.simulador.utils.CumulativeDensityFunctionCalculator;
@@ -35,11 +36,7 @@ public class VirusSingleSimulation implements VirusSimulation {
 	private Rates rates;
 	
 	private long MAX_EVENTS;
-	private long counter;
-	private double piO;
-	private double piP;
-	private double totalTime;
-	private double initialTime;
+	private Statistics stats;
 	
 	private DecimalFormat dc = new DecimalFormat(",000.000000000");
 	CumulativeDensityFunctionCalculator cdfCalc;
@@ -69,33 +66,39 @@ public class VirusSingleSimulation implements VirusSimulation {
 
 	@Override
 	public void setUpSimulation() {
-		piO = 0;
-		piP = 0;
-		totalTime = 0;
-		initialTime = 0;
-		counter = 0;
+		stats = new Statistics(rates);
 		cdfCalc = new CumulativeDensityFunctionCalculator();
 
 		generateNodes();
 		setUpFirstEvent();
-		counter++;
+		stats.count();
 	}
 	
 	@Override
-	public void setPrintOptions(String args[]) {
+	public void setPrintOptions(PrintOptions args[]) {
 		for (int i = 0; i < args.length; i++) {
-			if (args[i] == "steps")
+			switch(args[i]){
+			case steps:
 				printSteps = true;
-			if (args[i] == "results")
+				break;
+			case results:
 				printResult = true;
-			if (args[i] == "CSV")
+				break;
+			case CSV:
 				printCSV = true;
-			if (args[i] == "CDF")
+				break;
+			case CDF:
 				printCDF = true;
-			if (args[i] == "PDF")
+				break;
+			case PDF:
 				printPDF = true;
-			if (args[i] == "stepsQueue")
+				break;
+			case stepsQueue:
 				printQueue = true;
+				break;
+			default:
+				break;
+			}
 		}
 	}
 	
@@ -104,8 +107,8 @@ public class VirusSingleSimulation implements VirusSimulation {
 	}
 	private void setUpFirstEvent(){
 		if (printSteps)
-			System.out.println("Event: " + counter + "\t" + "->" + State.O+ "\tt:" + dc.format(initialTime));
-		Event firstEvent = new Event(node, State.O, initialTime);
+			System.out.println("Event: " + stats.getCounter() + "\t" + "->" + State.O+ "\tt:" + dc.format(0.0));
+		Event firstEvent = new Event(node, State.O, 0.0);
 		eventQueue.add(firstEvent);
 	}
 	
@@ -116,37 +119,29 @@ public class VirusSingleSimulation implements VirusSimulation {
 	 * br.ufrj.dcc.ad.simulador.VirusSimulationInterface#runFullSimulation()
 	 */
 	@Override
-	public Results runFullSimulation() {
-		while (counter < MAX_EVENTS) {
+	public Statistics runFullSimulation() {
+		while (stats.getCounter() < MAX_EVENTS) {
 			consumeEvent();
 		}
-
-		piO /= totalTime;
-		piP /= totalTime;
-		Double cV = 10.0, cS = 9.0;
-		Double custoInfectado = (1 - piO) * cV;
-		Double custoAmostragem = (piO + piP) * cS * rates.getR4();
-		Double custoTotal = custoInfectado + custoAmostragem;
-
+		stats.finish();
 		if (printResult) {
-			System.out.println("Simulation finished.");
-			System.out.println("Steps: " + counter + "\tTime Simulated: " + dc.format(totalTime));
-			System.out.println("pi0: " + dc.format(piO) + "\tpiP: " + dc.format(piP));
-			System.out.println("Custo Infectado: " + dc.format(custoInfectado) + "\t" + "Custo Amostragem: " + dc.format(custoAmostragem));
-			System.out.println("Custo Total: " + dc.format(custoTotal));
+			stats.printResult();
 		}
 		if (printCSV) {
 			file1.saveInFile(
 					dc.format(rates.getR4()), 
-					dc.format(piO),
-					dc.format(custoInfectado),
-					dc.format(custoAmostragem),
-					dc.format(custoTotal));
+					dc.format(stats.getPiO()),
+					dc.format(stats.getPiP()),
+					dc.format(stats.getPiR()),
+					dc.format(stats.getPiF()),
+					dc.format(stats.getInfectedCost()),
+					dc.format(stats.getSamplingCost()),
+					dc.format(stats.getTotalCost()));
 		}
 		if (printCDF) { cdfCalc.printCDF(); }
 		if (printPDF) { cdfCalc.printPDF(); } 
 
-		return new Results(rates.getR4(), piO, piP, custoInfectado, custoAmostragem);
+		return stats;
 	}
 
 	public void consumeEvent() {
@@ -157,18 +152,16 @@ public class VirusSingleSimulation implements VirusSimulation {
 		State nState = cEvent.getNextState();
 		Double now = cEvent.getTime();
 		Double timeSpentInThisState = cEvent.getDelta();
-		totalTime += timeSpentInThisState;
 		
+		stats.addTimePerState(timeSpentInThisState, cState);
 		
 		switch (getTransition(cState, nState)) {
 		case O_TO_P:
-			piO += timeSpentInThisState;
 			Event pEvent = generatePtoFEvent(cNode, now);
 			Event fEvent = generatePtoREvent(cNode, now);
 			nextEvent = chooseMin(pEvent, fEvent);
 			break;
 		case P_TO_R:
-			piP += timeSpentInThisState;
 			nextEvent = generateRtoOEvent(cNode, now);
 			
 			if(printCDF || printPDF)
@@ -176,7 +169,6 @@ public class VirusSingleSimulation implements VirusSimulation {
 			
 			break;
 		case P_TO_F:
-			piP += timeSpentInThisState;
 			nextEvent = generateFtoOEvent(cNode, now);
 			
 			if(printCDF || printPDF)
@@ -184,6 +176,12 @@ public class VirusSingleSimulation implements VirusSimulation {
 			
 			break;
 		case R_TO_O:
+			nextEvent = generateOtoPEvent(cNode, now);
+			
+			if(printCDF || printPDF)
+				cdfCalc.recupered(timeSpentInThisState);
+			
+			break;
 		case F_TO_O:
 			nextEvent = generateOtoPEvent(cNode, now);
 			
@@ -198,10 +196,10 @@ public class VirusSingleSimulation implements VirusSimulation {
 		cNode.setState(nState);
 		eventQueue.add(nextEvent);
 		
-		if(printSteps) { System.out.println("Event: "+counter+"\t" + "Event: " + cEvent); }
+		if(printSteps) { System.out.println("Event: "+stats.getCounter()+"\t" + "Event: " + cEvent); }
 		if(printQueue) { eventQueue.printQueue(); }
 		
-		counter++;
+		stats.count();
 		
 	}
 	private Transition getTransition(State cState, State nState){
