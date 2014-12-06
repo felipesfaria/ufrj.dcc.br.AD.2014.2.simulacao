@@ -120,8 +120,9 @@ public class VirusSingleSimulation implements VirusSimulation {
 
 		if (printResult) {
 			System.out.println("Simulation finished.");
-			System.out.println("Steps: " + counter + "\tTime Simulated: "
-					+ dc.format(totalTime));
+			System.out.println("Steps: " + counter
+					+ "\tTime Simulated: "+ dc.format(totalTime)
+					+ "\tR4: "+ rates.getR4());
 			System.out.println("pi0: " + dc.format(piO) + "\tpiP: "
 					+ dc.format(piP));
 			System.out.println("Custo Infectado: " + dc.format(custoInfectado)
