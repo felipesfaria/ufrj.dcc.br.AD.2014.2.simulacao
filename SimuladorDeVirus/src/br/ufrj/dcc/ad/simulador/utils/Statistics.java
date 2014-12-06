@@ -1,8 +1,21 @@
-package br.ufrj.dcc.ad.simulador.model;
+package br.ufrj.dcc.ad.simulador.utils;
 
 import java.text.DecimalFormat;
 
+import br.ufrj.dcc.ad.simulador.model.Rates;
+import br.ufrj.dcc.ad.simulador.model.State;
+
 public class Statistics {
+	
+	static int simulations=0;
+	static Double globalAcumulatedPiO=0.0;
+	static Double globalAcumulatedPiP=0.0;
+	static Double globalAcumulatedPiR=0.0;
+	static Double globalAcumulatedPiF=0.0;
+	static Double globalAcumulatedInfectedCost=0.0;
+	static Double globalAcumulatedSamplingCost=0.0;
+	static Double globalAcumulatedTotalCost=0.0;
+	
 	Double r4;
 	Double timeInO=0.0;
 	Double timeInP=0.0;
@@ -103,6 +116,40 @@ public class Statistics {
 		System.out.println("pi0: " + dc.format(piO) + "\tpiP: " + dc.format(piP));
 		System.out.println("Custo Infectado: " + dc.format(infectedCost) + "\t" + "Custo Amostragem: " + dc.format(samplingCost));
 		System.out.println("Custo Total: " + dc.format(totalCost));
+	}
+	public static void acumulatePiO(Double piO){
+		globalAcumulatedPiO+=piO;
+	}
+	public static void acumulatePiP(Double piP){
+		globalAcumulatedPiP+=piP;
+	}
+	public static Double getGlobalAveragePiO(){
+		return globalAcumulatedPiO/simulations;
+	}
+	public static Double getGlobalAveragePiP(){
+		return globalAcumulatedPiP/simulations;
+	}
+	public static void acumulateInfectedCost(Double InfectedCost){
+		globalAcumulatedInfectedCost+=InfectedCost;
+	}
+	public static void acumulateSamplingCost(Double SamplingCost){
+		globalAcumulatedSamplingCost+=SamplingCost;
+	}
+	public static void acumulateTotalCost(Double TotalCost){
+		globalAcumulatedTotalCost+=TotalCost;
+	}
+	public static Double getGlobalAverageInfectedCost(){
+		return globalAcumulatedInfectedCost/simulations;
+	}
+	public static Double getGlobalAverageSamplingCost(){
+		return globalAcumulatedSamplingCost/simulations;
+	}
+	public static Double getGlobalAverageTotalCost(){
+		return globalAcumulatedTotalCost/simulations;
+	}
+	
+	public static void incrementSimulation(){
+		simulations++;
 	}
 
 }

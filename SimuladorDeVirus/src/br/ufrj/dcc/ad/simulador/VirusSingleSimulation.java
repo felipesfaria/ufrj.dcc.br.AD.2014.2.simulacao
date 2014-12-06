@@ -8,12 +8,12 @@ import br.ufrj.dcc.ad.simulador.model.EventQueue;
 import br.ufrj.dcc.ad.simulador.model.Node;
 import br.ufrj.dcc.ad.simulador.model.PrintOptions;
 import br.ufrj.dcc.ad.simulador.model.Rates;
-import br.ufrj.dcc.ad.simulador.model.Statistics;
 import br.ufrj.dcc.ad.simulador.model.State;
 import br.ufrj.dcc.ad.simulador.model.Transition;
 import br.ufrj.dcc.ad.simulador.utils.CumulativeDensityFunctionCalculator;
 import br.ufrj.dcc.ad.simulador.utils.ExponentialGenerator;
 import br.ufrj.dcc.ad.simulador.utils.FileUtil;
+import br.ufrj.dcc.ad.simulador.utils.Statistics;
 
 public class VirusSingleSimulation implements VirusSimulation {
 
