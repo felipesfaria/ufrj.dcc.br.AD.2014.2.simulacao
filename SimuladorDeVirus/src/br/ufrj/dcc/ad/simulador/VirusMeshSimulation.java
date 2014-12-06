@@ -12,16 +12,16 @@ import br.ufrj.dcc.ad.simulador.model.Node;
 import br.ufrj.dcc.ad.simulador.model.Rates;
 import br.ufrj.dcc.ad.simulador.model.Results;
 import br.ufrj.dcc.ad.simulador.model.State;
-import br.ufrj.dcc.ad.simulador.utils.ExponencialGenerator;
+import br.ufrj.dcc.ad.simulador.utils.ExponentialGenerator;
 import br.ufrj.dcc.ad.simulador.utils.FileUtil;
 
 public class VirusMeshSimulation implements VirusSimulation {
 
-	public ExponencialGenerator genR1;
-	public ExponencialGenerator genBETA;
-	public ExponencialGenerator genR3;
-	public ExponencialGenerator genLambda;
-	public ExponencialGenerator genR4;
+	public ExponentialGenerator genR1;
+	public ExponentialGenerator genBETA;
+	public ExponentialGenerator genR3;
+	public ExponentialGenerator genLambda;
+	public ExponentialGenerator genR4;
 	Node node;
 	EventQueue eventQueue = new EventQueue();
 
@@ -51,11 +51,11 @@ public class VirusMeshSimulation implements VirusSimulation {
 	public VirusMeshSimulation(long me, Rates r, FileUtil file) {
 		MAX_EVENTS = me;
 		rates = r;
-		genR1 = new ExponencialGenerator(rates.getR1());
-		genBETA = new ExponencialGenerator(rates.getBETA());
-		genR3 = new ExponencialGenerator(rates.getR3());
-		genR4 = new ExponencialGenerator(rates.getR4());
-		genLambda = new ExponencialGenerator(rates.getLAMBDA());
+		genR1 = new ExponentialGenerator(rates.getR1());
+		genBETA = new ExponentialGenerator(rates.getBETA());
+		genR3 = new ExponentialGenerator(rates.getR3());
+		genR4 = new ExponentialGenerator(rates.getR4());
+		genLambda = new ExponentialGenerator(rates.getLAMBDA());
 		this.file1 = file;
 	}
 
@@ -121,7 +121,7 @@ public class VirusMeshSimulation implements VirusSimulation {
 			}
 		}
 
-		return new Results(piO, piP);
+		return new Results(rates.getR4(), piO, piP, custoInfectado, custoAmostragem);
 	}
 
 	public void stepSimulation() { // Ou executeEvent
