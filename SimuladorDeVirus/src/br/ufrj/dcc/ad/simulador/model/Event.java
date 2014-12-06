@@ -3,7 +3,6 @@ package br.ufrj.dcc.ad.simulador.model;
 
 public class Event{
 	static int ID=0;
-	@SuppressWarnings("unused")
 	private int myId;
 	private Node currentNd;
 	private Node infectionAgentNd;

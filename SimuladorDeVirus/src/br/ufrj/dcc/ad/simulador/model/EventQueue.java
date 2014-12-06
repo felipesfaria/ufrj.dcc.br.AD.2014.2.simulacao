@@ -3,9 +3,6 @@ package br.ufrj.dcc.ad.simulador.model;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.PriorityQueue;
-
-import br.ufrj.dcc.ad.simulador.model.comparator.EventComparator;
 
 
 public class EventQueue{
@@ -75,8 +72,6 @@ public class EventQueue{
 		State cState = nEvent.getCurrentNd().getState();
 		State nState = nEvent.getNextState();
 		if(nState==State.P&&cState!=State.O){
-			System.out.println("Discareded nextEvent: "+nEvent);
-			timeline.remove(0);
 			return false;
 		}else{
 			return true;
@@ -101,6 +96,10 @@ public class EventQueue{
 			ret+=e+"\n";
 		}
 		return ret;
+	}
+
+	public void remove(int index) {
+		timeline.remove(index);
 	}
 
 }

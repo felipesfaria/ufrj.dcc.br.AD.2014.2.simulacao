@@ -1,14 +1,13 @@
 package br.ufrj.dcc.ad.simulador;
 
+import java.text.DecimalFormat;
+
 import br.ufrj.dcc.ad.simulador.interfaces.VirusSimulation;
 import br.ufrj.dcc.ad.simulador.model.PrintOptions;
 import br.ufrj.dcc.ad.simulador.model.Rates;
 import br.ufrj.dcc.ad.simulador.utils.ExponentialGenerator;
 import br.ufrj.dcc.ad.simulador.utils.FileUtil;
 import br.ufrj.dcc.ad.simulador.utils.Statistics;
-
-import java.io.File;
-import java.text.DecimalFormat;
 
 public class HelloVirus {
 
