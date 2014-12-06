@@ -1,7 +1,7 @@
 package br.ufrj.dcc.ad.simulador.interfaces;
 
 import br.ufrj.dcc.ad.simulador.model.PrintOptions;
-import br.ufrj.dcc.ad.simulador.model.Statistics;
+import br.ufrj.dcc.ad.simulador.utils.Statistics;
 
 public interface VirusSimulation {
 

@@ -3,9 +3,9 @@ package br.ufrj.dcc.ad.simulador;
 import br.ufrj.dcc.ad.simulador.interfaces.VirusSimulation;
 import br.ufrj.dcc.ad.simulador.model.PrintOptions;
 import br.ufrj.dcc.ad.simulador.model.Rates;
-import br.ufrj.dcc.ad.simulador.model.Statistics;
 import br.ufrj.dcc.ad.simulador.utils.ExponentialGenerator;
 import br.ufrj.dcc.ad.simulador.utils.FileUtil;
+import br.ufrj.dcc.ad.simulador.utils.Statistics;
 
 import java.io.File;
 import java.text.DecimalFormat;
@@ -33,7 +33,7 @@ public class HelloVirus {
 	public static final double BETA = 0.08;	
 	
 	static Double r4 = 1.0;
-	static Double delta = 0.001;
+	static Double delta = 0.1;
 	static Double min_r4 = 0.0;
 	
 	static int maxEvents = 10000;
@@ -58,16 +58,10 @@ public class HelloVirus {
 	static void runMeshCostAnalysis() {
 		boolean printCSV = true;
 
-		FileUtil file = new FileUtil("CostAnalysis.csv", "r4;piO;piP;piR;piF;cV;cS;cT");
+		FileUtil file = new FileUtil("MeshCostAnalysis.csv", "r4;piO;piP;piR;piF;cV;cS;cT");
 		DecimalFormat dc = new DecimalFormat(",000.000000000");
 
 		while (r4 >= min_r4) {
-
-			Double piO = 0.0;
-			Double piP = 0.0;
-			Double infectedCost = 0.0;
-			Double samplingCost = 0.0;
-			Double totalCost = 0.0;
 
 			for (int i = 0; i < MAX_SIMULATION; i++) {
 				Rates r = new Rates(r1, r2, r3, r4, LAMBDA, BETA);
@@ -76,27 +70,22 @@ public class HelloVirus {
 				simulation.setPrintOptions(new PrintOptions[]{PrintOptions.steps,PrintOptions.states});
 				simulation.setUpSimulation();
 				stats = simulation.runFullSimulation();
-
-				piO += stats.getPiO();
-				piP += stats.getPiP();
-				infectedCost += stats.getInfectedCost();
-				samplingCost += stats.getSamplingCost();
-				totalCost += stats.getTotalCost();
+				
+				Statistics.incrementSimulation();
+				Statistics.acumulatePiO(stats.getPiO());
+				Statistics.acumulatePiP(stats.getPiP());
+				Statistics.acumulateInfectedCost(stats.getInfectedCost());
+				Statistics.acumulateSamplingCost(stats.getSamplingCost());
+				Statistics.acumulateTotalCost(stats.getTotalCost());
 			}
-
-			piO /= MAX_SIMULATION;
-			piP /= MAX_SIMULATION;
-			infectedCost /= MAX_SIMULATION;
-			samplingCost /= MAX_SIMULATION;
-			totalCost /= MAX_SIMULATION;
 
 			if (printCSV) {
 				file.saveInFile(
 						dc.format(r4),
-						dc.format(piO),
-						dc.format(infectedCost),
-						dc.format(samplingCost),
-						dc.format(totalCost));
+						dc.format(Statistics.getGlobalAveragePiO()),
+						dc.format(Statistics.getGlobalAverageInfectedCost()),
+						dc.format(Statistics.getGlobalAverageSamplingCost()),
+						dc.format(Statistics.getGlobalAverageTotalCost()));
 			}
 
 			r4 -= delta;
