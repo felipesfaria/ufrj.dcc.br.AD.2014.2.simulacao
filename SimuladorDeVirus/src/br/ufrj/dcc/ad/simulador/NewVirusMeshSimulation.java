@@ -183,9 +183,6 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 		State cState = cNode.getState();
 		boolean isObservedNode = cNode.getNodeId() == 0; 
 		State nState = cEvent.getNextState();
-		if(cState.equals(nState)){
-			System.out.println("WTF!!!");
-		}
 		Double now = cEvent.getTime();
 		Double timeSpentInThisState = cEvent.getDelta();
 		if(isObservedNode)

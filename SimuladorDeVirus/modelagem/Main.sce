@@ -17,6 +17,6 @@ delta=0.001;
 min_r4 = 0.0;
 printf('r4\tpiO\tpiP\tpiR\tpiF\tcV\tcS\tcT\n');
 while r4>min_r4;
-    runSingleNodeModule(r4);
+    runTwoNodeModel(r4)
     r4=r4-delta;
 end;

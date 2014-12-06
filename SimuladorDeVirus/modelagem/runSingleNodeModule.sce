@@ -11,6 +11,14 @@ M = {1,1,1,1;
     r2,-r4-lmbd,0,0;
     0,r4,-r3,0;
     0,lmbd,0,-r1};
+size=4;
+M = zeros(size,size);
+for j=1:size
+for i=1:size
+M(j,j)=M(j,j)+Q(j,i);
+M(j,i)=M(j,i)-Q(i,j);
+end
+end
 //A={M(1:3,1:4);M(5:5,1:4)}
 A=M(1:4,1:4);
 b={1;0;0;0};
