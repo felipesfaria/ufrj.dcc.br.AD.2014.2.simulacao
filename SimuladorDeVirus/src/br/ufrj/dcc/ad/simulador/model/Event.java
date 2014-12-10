@@ -8,13 +8,13 @@ public class Event{
 	private Double time;
 	Double delta;
 	
-//	public Event(Node nd, State next, Double time) {
-//		super();
-//		this.currentNd = nd;
-//		this.nextState = next;
-//		this.time = time;
-//		delta = 0.0;
-//	}
+	public Event(Node nd, State next, Double time) {
+		super();
+		this.currentNd = nd;
+		this.nextState = next;
+		this.time = time;
+		delta = 0.0;
+	}
 	
 	public Event(Node nd, State next, double time, double delta) {
 		super();

@@ -5,8 +5,8 @@ import java.util.List;
 
 public class CumulativeDensityFunctionCalculator {
 
-	private List<Integer> prePdf = new ArrayList<Integer>();
-	private List<Double> cdf = new ArrayList<Double>();
+	private List<Integer> prePdf = new ArrayList<>();
+	private List<Double> cdf = new ArrayList<>();
 	
 	private double timeToRecuparation;
 	int totalCount = 0;
@@ -26,7 +26,7 @@ public class CumulativeDensityFunctionCalculator {
 	}
 
 	public List<Double> getPDF() {
-		List<Double> pdf = new ArrayList<Double>();
+		List<Double> pdf = new ArrayList<>();
 		for (int i = 0; i < prePdf.size(); i++) {
 			pdf.add((prePdf.get(i) * 1.0) / totalCount);
 		}

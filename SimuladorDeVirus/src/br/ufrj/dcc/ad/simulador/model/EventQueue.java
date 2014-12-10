@@ -1,9 +1,9 @@
 package br.ufrj.dcc.ad.simulador.model;
 
-import br.ufrj.dcc.ad.simulador.model.comparator.EventComparator;
-
 import java.util.Iterator;
 import java.util.PriorityQueue;
+
+import br.ufrj.dcc.ad.simulador.model.comparator.EventComparator;
 
 
 public class EventQueue{
