@@ -19,6 +19,6 @@ Pi=x'
 Cv=(1-Pi(O))*cv
 Cs=(Pi(O)+Pi(P))*cs*r4
 Ct=Cv+Cs
-printf('%f\t%f\t%f\t%f\t%f\n',r4,Pi(O),Cv,Cs,Ct);
+printf('%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\n',r4,Pi(O),Pi(P),Pi(R),Pi(F),Cv,Cs,Ct);
 RET={r4;Pi(O);Cv;Cs;Ct}
 endfunction

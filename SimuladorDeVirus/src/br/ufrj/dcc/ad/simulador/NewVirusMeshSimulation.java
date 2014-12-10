@@ -167,12 +167,10 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 		State nState = cEvent.getNextState();
 		Double now = cEvent.getTime();
 		Double timeSpentInThisState = cEvent.getDelta();
-		totalTime += timeSpentInThisState;
 
 		boolean isObservedNode = cNode.getNodeId() == 0;
 
-		
-		
+
 		switch (getTransition(cState, nState)) {
 		case O_TO_P:
 			if(isObservedNode)

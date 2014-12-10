@@ -98,7 +98,7 @@ public class HelloVirus {
 		FileUtil file = new FileUtil("CostAnalysis.csv", "r4;piO;cV;cS;cT");
 		Rates r = new Rates(r1, BETA, r3, r4, LAMBDA);
 		simulation = new NewVirusMeshSimulation(maxEvents, r, file);
-		simulation.setPrintOptions(new String[]{"CSV"});
+		simulation.setPrintOptions(new PrintOptions[] { PrintOptions.CSV });
 		simulation.setUpSimulation();
 		simulation.runFullSimulation();
 

@@ -176,6 +176,12 @@ public class VirusSingleSimulation implements VirusSimulation {
 			
 			break;
 		case R_TO_O:
+			nextEvent = generateOtoPEvent(cNode, now);
+			
+			if(printCDF || printPDF)
+				cdfCalc.recupered(timeSpentInThisState);
+			
+			break;
 		case F_TO_O:
 			nextEvent = generateOtoPEvent(cNode, now);
 			
