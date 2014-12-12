@@ -1,5 +1,10 @@
 package br.ufrj.dcc.ad.simulador;
 
+import br.ufrj.dcc.ad.simulador.interfaces.VirusSimulation;
+import br.ufrj.dcc.ad.simulador.utils.CumulativeDensityFunctionCalculator;
+import br.ufrj.dcc.ad.simulador.utils.ExponentialGenerator;
+import br.ufrj.dcc.ad.simulador.utils.FileUtil;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -156,20 +161,22 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 
 	public void consumeEvent() {
 		Event cEvent = eventQueue.pop();
-		Event nextEvent = null;
+		Event nextEvent;
 		Node cNode = cEvent.getCurrentNd();
 		State cState = cNode.getState();
-		boolean isObservedNode = cNode.getNodeId() == 0; 
 		State nState = cEvent.getNextState();
 		Double now = cEvent.getTime();
 		Double timeSpentInThisState = cEvent.getDelta();
-		if(isObservedNode)
-			stats.addTimePerState(timeSpentInThisState, cState);
-		
-		
+
+		boolean isObservedNode = cNode.getNodeId() == 0;
+
+
 		switch (getTransition(cState, nState)) {
 		case O_TO_P:
-			
+			if(isObservedNode)
+				stats.addTimePerState(timeSpentInThisState, cState);
+
+			removeIncomingInfections(cNode);
 			scheduleOutgoingInfections(cNode,now);
 			
 			Event pEvent = generatePtoFEvent(cNode, now);
@@ -177,6 +184,9 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 			nextEvent = chooseMin(pEvent, fEvent);
 			break;
 		case P_TO_R:
+			if(isObservedNode)
+				stats.addTimePerState(timeSpentInThisState, cState);
+
 			nextEvent = generateRtoOEvent(cNode, now);
 			
 			if(printCDF || printPDF)
@@ -184,6 +194,8 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 			
 			break;
 		case P_TO_F:
+			if(isObservedNode)
+					stats.addTimePerState(timeSpentInThisState, cState);
 			nextEvent = generateFtoOEvent(cNode, now);
 			
 			if(printCDF || printPDF)
@@ -194,7 +206,7 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 		case F_TO_O:
 			// We need to remove all infections created by this person, he is
 			// cured now.
-			removeInfections(cNode);
+			removeOutgoingInfections(cNode);
 			// Now we have to schedule incoming infections
 			scheduleIncomingInfections(cNode,now);
 			
@@ -205,6 +217,7 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 			if(printCDF || printPDF)
 				cdfCalc.recupered(timeSpentInThisState);
 			//TODO Felipe: Porque esse 'count++;' estava aqui?
+			// Bruno: por que ele da return logo abaixo e não break
 			stats.count();
 			return;
 		default:
@@ -237,8 +250,24 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 		else if( cState == State.F && nState == State.O) {return Transition.F_TO_O;}
 		return Transition.ILEGAL;
 	}
+
+	private void removeIncomingInfections(Node cNode) {
+		Iterator<Event> iteratorQueue = eventQueue.getIterator();
+		List<Event> toRemove = new ArrayList<>();
+		while (iteratorQueue.hasNext()) {
+			Event tmp = iteratorQueue.next();
+			if (tmp.getCurrentNd() != null
+					&& tmp.getCurrentNd().getNodeId() == cNode.getNodeId()
+					&& tmp.getNextState() == State.P) {
+				toRemove.add(tmp);
+			}
+		}
+		for (Event e : toRemove) {
+			eventQueue.removeEvent(e);
+		}
+	}
 	
-	private void removeInfections(Node cNode) {
+	private void removeOutgoingInfections(Node cNode) {
 		Iterator<Event> iteratorQueue = eventQueue.getIterator();
 		List<Event> toRemove = new ArrayList<Event>();
 		while (iteratorQueue.hasNext()) {
@@ -257,7 +286,7 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 	private void scheduleIncomingInfections(Node cNode, Double now) {
 		for (Node neighbour : nodes) {
 			if (neighbour.getState() != State.O) {
-				Event evt = generateInfectionvent(cNode, neighbour, now);
+				Event evt = generateInfectionEvent(cNode, neighbour, now);
 				eventQueue.add(evt);
 			}
 		}
@@ -266,7 +295,7 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 	private void scheduleOutgoingInfections(Node cNode, Double now) {
 		for (Node neighbour : nodes) {
 			if (neighbour.getState() == State.O) {
-				Event evt = generateInfectionvent(neighbour, cNode, now); 
+				Event evt = generateInfectionEvent(neighbour, cNode, now);
 				eventQueue.add(evt);
 			}
 		}
@@ -276,7 +305,7 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 		return ( (pEvent.getTime() - fEvent.getTime()) < 0.0 )? pEvent:fEvent;
 	}
 
-	private Event generateInfectionvent(Node cNode, Node infectAgent,Double now) {
+	private Event generateInfectionEvent(Node cNode, Node infectAgent, Double now) {
 		double nextPEventTime = genBeta.generate();
 		return new Event(cNode, infectAgent, State.P, now + nextPEventTime, nextPEventTime);
 	}

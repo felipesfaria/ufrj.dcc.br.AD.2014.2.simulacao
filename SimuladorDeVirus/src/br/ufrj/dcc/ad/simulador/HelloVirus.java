@@ -47,7 +47,8 @@ public class HelloVirus {
 			delta = Double.parseDouble(args[1]);
 			min_r4 = Double.parseDouble(args[2]);
 		}
-		
+
+//		runMeshOnce();
 		runMeshCostAnalysis();
 //		runSingleNodeCostAnalysis();
 //		runSingleNodeTimeAnalysis();
@@ -92,6 +93,17 @@ public class HelloVirus {
 		}
 
 	}
+
+	static void runMeshOnce(){
+		FileUtil file = new FileUtil("CostAnalysis.csv", "r4;piO;cV;cS;cT");
+		Rates r = new Rates(r1, BETA, r3, r4, LAMBDA);
+		simulation = new NewVirusMeshSimulation(maxEvents, r, file);
+		simulation.setPrintOptions(new PrintOptions[] { PrintOptions.CSV });
+		simulation.setUpSimulation();
+		simulation.runFullSimulation();
+
+	}
+
 
 	static void runSingleNodeCostAnalysis() {
 		System.out.println("R4;piO;cV;cS;cT");
