@@ -7,12 +7,11 @@ import br.ufrj.dcc.ad.simulador.utils.ExponentialGenerator;
 import br.ufrj.dcc.ad.simulador.utils.FileUtil;
 import br.ufrj.dcc.ad.simulador.utils.Statistics;
 
-import java.io.File;
 import java.text.DecimalFormat;
 
 public class HelloVirus {
 
-	private static final int MAX_SIMULATION = 50;
+	private static final int MAX_SIMULATION = 100;
 	public static double piZero = 0;
 	public static double piP = 0;
 	public static double totalTime = 0;
@@ -33,7 +32,7 @@ public class HelloVirus {
 	public static final double BETA = 0.08;	
 	
 	static Double r4 = 1.0;
-	static Double delta = 0.1;
+	static Double delta = 0.01;
 	static Double min_r4 = 0.0;
 	
 	static int maxEvents = 10000;
@@ -68,22 +67,27 @@ public class HelloVirus {
 				Rates r = new Rates(r1, r2, r3, r4, LAMBDA, BETA);
 				Statistics stats = null;
 				simulation = new NewVirusMeshSimulation(maxEvents, r);
-				simulation.setPrintOptions(new PrintOptions[]{PrintOptions.steps,PrintOptions.states});
+				simulation.setPrintOptions(new PrintOptions[]{});
 				simulation.setUpSimulation();
 				stats = simulation.runFullSimulation();
 				
 				Statistics.incrementSimulation();
-				Statistics.acumulatePiO(stats.getPiO());
-				Statistics.acumulatePiP(stats.getPiP());
-				Statistics.acumulateInfectedCost(stats.getInfectedCost());
-				Statistics.acumulateSamplingCost(stats.getSamplingCost());
-				Statistics.acumulateTotalCost(stats.getTotalCost());
+				Statistics.accumulatePiO(stats.getPiO());
+				Statistics.accumulatePiP(stats.getPiP());
+				Statistics.accumulatePiR(stats.getPiR());
+				Statistics.accumulatePiF(stats.getPiF());
+				Statistics.accumulateInfectedCost(stats.getInfectedCost());
+				Statistics.accumulateSamplingCost(stats.getSamplingCost());
+				Statistics.accumulateTotalCost(stats.getTotalCost());
 			}
 
 			if (printCSV) {
 				file.saveInFile(
 						dc.format(r4),
 						dc.format(Statistics.getGlobalAveragePiO()),
+						dc.format(Statistics.getGlobalAveragePiP()),
+						dc.format(Statistics.getGlobalAveragePiR()),
+						dc.format(Statistics.getGlobalAveragePiF()),
 						dc.format(Statistics.getGlobalAverageInfectedCost()),
 						dc.format(Statistics.getGlobalAverageSamplingCost()),
 						dc.format(Statistics.getGlobalAverageTotalCost()));

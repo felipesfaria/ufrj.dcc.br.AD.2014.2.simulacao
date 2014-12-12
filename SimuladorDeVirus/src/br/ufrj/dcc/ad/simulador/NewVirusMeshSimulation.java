@@ -170,15 +170,21 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 
 		boolean isObservedNode = cNode.getNodeId() == 0;
 
+		Transition trans = getTransition(cState, nState);
 
-		switch (getTransition(cState, nState)) {
+		cNode.setState(nState); //We must do the transition before we remove Events from the queue
+
+		switch (trans) {
 		case O_TO_P:
 			if(isObservedNode)
 				stats.addTimePerState(timeSpentInThisState, cState);
 
+			//We have to remove incoming infections because the node is now infected
 			removeIncomingInfections(cNode);
+
+			//now we can infect other nodes
 			scheduleOutgoingInfections(cNode,now);
-			
+
 			Event pEvent = generatePtoFEvent(cNode, now);
 			Event fEvent = generatePtoREvent(cNode, now);
 			nextEvent = chooseMin(pEvent, fEvent);
@@ -186,6 +192,12 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 		case P_TO_R:
 			if(isObservedNode)
 				stats.addTimePerState(timeSpentInThisState, cState);
+
+			//We have to remove incoming infections because the node is now infected
+			removeIncomingInfections(cNode);
+
+			//now we can infect other nodes
+			scheduleOutgoingInfections(cNode,now);
 
 			nextEvent = generateRtoOEvent(cNode, now);
 			
@@ -196,6 +208,13 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 		case P_TO_F:
 			if(isObservedNode)
 					stats.addTimePerState(timeSpentInThisState, cState);
+
+			//We have to remove incoming infections because the node is now infected
+			removeIncomingInfections(cNode);
+
+			//now we can infect other nodes
+			scheduleOutgoingInfections(cNode,now);
+
 			nextEvent = generateFtoOEvent(cNode, now);
 			
 			if(printCDF || printPDF)
@@ -209,7 +228,7 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 			removeOutgoingInfections(cNode);
 			// Now we have to schedule incoming infections
 			scheduleIncomingInfections(cNode,now);
-			
+
 			if( eventQueue.isEmpty() && !isObservedNode){
 				stats.addTimePerState(timeSpentInThisState, nodes[0].getState());
 			}
@@ -225,7 +244,7 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 			return;
 		}
 		
-		cNode.setState(nState);
+
 		eventQueue.add(nextEvent);
 		
 		if(printSteps) { System.out.println("Event: "+stats.getCounter()+"\t" + "Event: " + cEvent); }

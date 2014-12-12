@@ -117,27 +117,32 @@ public class Statistics {
 		System.out.println("Custo Infectado: " + dc.format(infectedCost) + "\t" + "Custo Amostragem: " + dc.format(samplingCost));
 		System.out.println("Custo Total: " + dc.format(totalCost));
 	}
-	public static void acumulatePiO(Double piO){
+	public static void accumulatePiO(Double piO){
 		globalAcumulatedPiO+=piO;
 	}
-	public static void acumulatePiP(Double piP){
+	public static void accumulatePiP(Double piP){
 		globalAcumulatedPiP+=piP;
 	}
+	public static void accumulatePiR(Double piR) { globalAcumulatedPiR+=piR; }
+	public static void accumulatePiF(Double piF) { globalAcumulatedPiR+=piF; }
+
 	public static Double getGlobalAveragePiO(){
 		return globalAcumulatedPiO/simulations;
 	}
-	public static Double getGlobalAveragePiP(){
-		return globalAcumulatedPiP/simulations;
-	}
-	public static void acumulateInfectedCost(Double InfectedCost){
+	public static Double getGlobalAveragePiP(){ return globalAcumulatedPiP/simulations; }
+	public static Double getGlobalAveragePiR(){ return globalAcumulatedPiR/simulations; }
+	public static Double getGlobalAveragePiF(){ return globalAcumulatedPiF/simulations; }
+
+	public static void accumulateInfectedCost(Double InfectedCost){
 		globalAcumulatedInfectedCost+=InfectedCost;
 	}
-	public static void acumulateSamplingCost(Double SamplingCost){
+	public static void accumulateSamplingCost(Double SamplingCost){
 		globalAcumulatedSamplingCost+=SamplingCost;
 	}
-	public static void acumulateTotalCost(Double TotalCost){
+	public static void accumulateTotalCost(Double TotalCost){
 		globalAcumulatedTotalCost+=TotalCost;
 	}
+
 	public static Double getGlobalAverageInfectedCost(){
 		return globalAcumulatedInfectedCost/simulations;
 	}
@@ -151,5 +156,6 @@ public class Statistics {
 	public static void incrementSimulation(){
 		simulations++;
 	}
+
 
 }
