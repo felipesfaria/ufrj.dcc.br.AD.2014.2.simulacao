@@ -1,17 +1,26 @@
 package br.ufrj.dcc.ad.simulador;
 
-import br.ufrj.dcc.ad.simulador.interfaces.VirusSimulation;
-import br.ufrj.dcc.ad.simulador.model.*;
-import br.ufrj.dcc.ad.simulador.utils.*;
-
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class VirusMeshEndogenousSimulation implements VirusSimulation{
-	private int NUM_OF_NODES = 10;
+import br.ufrj.dcc.ad.simulador.interfaces.VirusSimulation;
+import br.ufrj.dcc.ad.simulador.model.Event;
+import br.ufrj.dcc.ad.simulador.model.EventQueue;
+import br.ufrj.dcc.ad.simulador.model.Node;
+import br.ufrj.dcc.ad.simulador.model.Rates;
+import br.ufrj.dcc.ad.simulador.model.State;
+import br.ufrj.dcc.ad.simulador.model.Transition;
+import br.ufrj.dcc.ad.simulador.utils.CumulativeDensityFunctionCalculator;
+import br.ufrj.dcc.ad.simulador.utils.ExponentialGenerator;
+import br.ufrj.dcc.ad.simulador.utils.FileUtil;
+import br.ufrj.dcc.ad.simulador.utils.Printer;
+import br.ufrj.dcc.ad.simulador.utils.Statistics;
 
+public class VirusRingEndogenousSimulation implements VirusSimulation{
+	private int NUM_OF_NODES = 10;
+	
 	public ExponentialGenerator genR1;
 	public ExponentialGenerator genR2;
 	public ExponentialGenerator genR3;
@@ -24,22 +33,22 @@ public class VirusMeshEndogenousSimulation implements VirusSimulation{
 
 	private Rates rates;
 	private long MAX_EVENTS;
-
+	
 	private Double initialTime;
 	private DecimalFormat dc = new DecimalFormat(",000.000000000");
 	CumulativeDensityFunctionCalculator cdfCalc;
-
+	
 	Statistics stats;
 
 	FileUtil file1;
-
+	
 	Printer printer = new Printer();
 
-	public VirusMeshEndogenousSimulation(long me, Rates r) {
+	public VirusRingEndogenousSimulation(long me, Rates r) {
 		this( me, r, 10);
 	}
 
-	public VirusMeshEndogenousSimulation(long me, Rates r, int numberOfNodes) {
+	public VirusRingEndogenousSimulation(long me, Rates r, int numberOfNodes) {
 		NUM_OF_NODES = numberOfNodes;
 		MAX_EVENTS = me;
 		rates = r;
@@ -51,11 +60,11 @@ public class VirusMeshEndogenousSimulation implements VirusSimulation{
 		genBeta = new ExponentialGenerator(rates.getBETA());
 	}
 
-	public VirusMeshEndogenousSimulation(long me, Rates r, FileUtil file) {
+	public VirusRingEndogenousSimulation(long me, Rates r, FileUtil file) {
 		this(me, r, file, 10);
 	}
-
-	public VirusMeshEndogenousSimulation(long me, Rates r, FileUtil file, int numberOfNodes) {
+	
+	public VirusRingEndogenousSimulation(long me, Rates r, FileUtil file, int numberOfNodes) {
 		NUM_OF_NODES = numberOfNodes;
 		MAX_EVENTS = me;
 		rates = r;
@@ -183,7 +192,7 @@ public class VirusMeshEndogenousSimulation implements VirusSimulation{
 			scheduleIncomingInfections(cNode,now);
 
 			scheduleEndogenousInfections(cNode,now);
-
+			
 			if( eventQueue.isEmpty() && !isObservedNode){
 				stats.addTimePerState(timeSpentInThisState, nodes.get(0).getState());
 			}
@@ -243,14 +252,23 @@ public class VirusMeshEndogenousSimulation implements VirusSimulation{
 		}
 		for (Event e : toRemove) {
 			eventQueue.removeEvent(e);
-		} 
-
+		}
 	}
 
 	private void scheduleIncomingInfections(Node cNode, Double now) {
 		for (Node neighbour : nodes) {
-			if (neighbour.getState() != State.O) {
+			if (neighbour.getState() != State.O
+					&& cNode.isRingNeighbour(neighbour, nodes.size())) {
 				Event evt = generateInfectionEvent(cNode, neighbour, now);
+				eventQueue.add(evt);
+			}
+		}
+	}
+	
+	private void scheduleOutgoingInfections(Node cNode, Double now) {
+		for (Node neighbour : nodes) {
+			if (neighbour.getState() == State.O && cNode.isRingNeighbour(neighbour, nodes.size())) {
+				Event evt = generateInfectionEvent(neighbour, cNode, now);
 				eventQueue.add(evt);
 			}
 		}
@@ -259,15 +277,6 @@ public class VirusMeshEndogenousSimulation implements VirusSimulation{
 	private void scheduleEndogenousInfections(Node cNode, Double now) {
 			Event evt = generateEndogenousInfectionEvent(cNode, now);
 			eventQueue.add(evt);
-	}
-	
-	private void scheduleOutgoingInfections(Node cNode, Double now) {
-		for (Node neighbour : nodes) {
-			if (neighbour.getState() == State.O) {
-				Event evt = generateInfectionEvent(neighbour, cNode, now);
-				eventQueue.add(evt);
-			}
-		}
 	}
 
 	private Event chooseMin(Event pEvent, Event fEvent) {

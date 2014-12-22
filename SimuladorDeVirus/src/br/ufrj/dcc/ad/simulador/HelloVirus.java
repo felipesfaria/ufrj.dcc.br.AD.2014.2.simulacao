@@ -53,11 +53,55 @@ public class HelloVirus {
 //		runRingCostAnalysis();
 //		runMeshOnce();
 //		runMeshCostAnalysis();
-		runEndogenousMeshCostAnalysis();
+//		runEndogenousMeshCostAnalysis();
+		runEndogenousRingCostAnalysis();
 //		runSingleNodeCostAnalysis();
 //		runSingleNodeTimeAnalysis();
 		
 		System.out.println("Finished");
+	}
+
+	static void runEndogenousRingCostAnalysis() {
+		boolean printCSV = true;
+
+		FileUtil file = new FileUtil("EndogenousRingCostAnalysis.csv", "r4;piO;piP;piR;piF;cV;cS;cT");
+		DecimalFormat dc = new DecimalFormat(",000.000000000");
+
+		while (r4 >= min_r4) {
+
+			for (int i = 0; i < MAX_SIMULATION; i++) {
+				Rates r = new Rates(r1, r2, r3, r4, LAMBDA, BETA);
+				Statistics stats = null;
+				simulation = new VirusRingSimulation(maxEvents, r,file,10);
+				//printer.setPrintOptions(new PrintOptions[]{PrintOptions.CSV});
+				simulation.setUpSimulation();
+				stats = simulation.runFullSimulation();
+				
+				Statistics.incrementSimulation();
+				Statistics.accumulatePiO(stats.getPiO());
+				Statistics.accumulatePiP(stats.getPiP());
+				Statistics.accumulatePiR(stats.getPiR());
+				Statistics.accumulatePiF(stats.getPiF());
+				Statistics.accumulateInfectedCost(stats.getInfectedCost());
+				Statistics.accumulateSamplingCost(stats.getSamplingCost());
+				Statistics.accumulateTotalCost(stats.getTotalCost());
+			}
+
+			if (printCSV) {
+				file.saveInFile(
+						dc.format(r4),
+						dc.format(Statistics.getGlobalAveragePiO()),
+						dc.format(Statistics.getGlobalAveragePiP()),
+						dc.format(Statistics.getGlobalAveragePiR()),
+						dc.format(Statistics.getGlobalAveragePiF()),
+						dc.format(Statistics.getGlobalAverageInfectedCost()),
+						dc.format(Statistics.getGlobalAverageSamplingCost()),
+						dc.format(Statistics.getGlobalAverageTotalCost()));
+			}
+
+			r4 -= delta;
+		}
+
 	}
 
 	static void runRingCostAnalysis() {
