@@ -1,10 +1,5 @@
 package br.ufrj.dcc.ad.simulador;
 
-import br.ufrj.dcc.ad.simulador.interfaces.VirusSimulation;
-import br.ufrj.dcc.ad.simulador.utils.CumulativeDensityFunctionCalculator;
-import br.ufrj.dcc.ad.simulador.utils.ExponentialGenerator;
-import br.ufrj.dcc.ad.simulador.utils.FileUtil;
-
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -14,18 +9,17 @@ import br.ufrj.dcc.ad.simulador.interfaces.VirusSimulation;
 import br.ufrj.dcc.ad.simulador.model.Event;
 import br.ufrj.dcc.ad.simulador.model.EventQueue;
 import br.ufrj.dcc.ad.simulador.model.Node;
-import br.ufrj.dcc.ad.simulador.model.PrintOptions;
 import br.ufrj.dcc.ad.simulador.model.Rates;
 import br.ufrj.dcc.ad.simulador.model.State;
 import br.ufrj.dcc.ad.simulador.model.Transition;
 import br.ufrj.dcc.ad.simulador.utils.CumulativeDensityFunctionCalculator;
 import br.ufrj.dcc.ad.simulador.utils.ExponentialGenerator;
 import br.ufrj.dcc.ad.simulador.utils.FileUtil;
+import br.ufrj.dcc.ad.simulador.utils.Printer;
 import br.ufrj.dcc.ad.simulador.utils.Statistics;
 
 public class NewVirusMeshSimulation implements VirusSimulation{
-
-	private final int NUM_OF_NODES = 10;
+	private int NUM_OF_NODES = 10;
 	
 	public ExponentialGenerator genR1;
 	public ExponentialGenerator genR3;
@@ -34,15 +28,7 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 	public ExponentialGenerator genBeta;
 
 	EventQueue eventQueue = new EventQueue();
-	Node nodes[] = new Node[NUM_OF_NODES];
-
-	private Boolean printSteps = false;
-	private Boolean printResult = false;
-	private Boolean printCSV = false;
-	private Boolean printCDF = false;
-	private boolean printQueue = false;
-	private boolean printPDF = false;
-	private boolean printStates = false;
+	List<Node> nodes = new ArrayList<Node>();
 
 	private Rates rates;
 	private long MAX_EVENTS;
@@ -54,8 +40,15 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 	Statistics stats;
 
 	FileUtil file1;
+	
+	Printer printer = new Printer();
 
 	public NewVirusMeshSimulation(long me, Rates r) {
+		this( me, r, 10);
+	}
+
+	public NewVirusMeshSimulation(long me, Rates r, int numberOfNodes) {
+		NUM_OF_NODES = numberOfNodes;
 		MAX_EVENTS = me;
 		rates = r;
 		genR1 = new ExponentialGenerator(rates.getR1());
@@ -66,6 +59,11 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 	}
 
 	public NewVirusMeshSimulation(long me, Rates r, FileUtil file) {
+		this(me, r, file, 10);
+	}
+	
+	public NewVirusMeshSimulation(long me, Rates r, FileUtil file, int numberOfNodes) {
+		NUM_OF_NODES = numberOfNodes;
 		MAX_EVENTS = me;
 		rates = r;
 		genR1 = new ExponentialGenerator(rates.getR1());
@@ -88,43 +86,13 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 	
 	private void generateNodes(){
 		for(int i = 0; i < NUM_OF_NODES; i++)
-			nodes[i] = new Node(State.O, i);
+			nodes.add(new Node(State.O, i));
 	}
 	
 	private void setUpFirstEvent(){
-		for (int i = 0; i < NUM_OF_NODES; i++) {
-			if (printSteps)
-				System.out.println("Event: " + stats.getCounter() + "\t" + "->" + State.O+ "\tt:" + dc.format(initialTime));
-			Event firstEvent = new Event(nodes[i], State.P, initialTime);
+		for(Node node : nodes){
+			Event firstEvent = new Event(node, State.P, initialTime);
 			eventQueue.add(firstEvent);	
-		}
-	}
-
-	@Override
-	public void setPrintOptions(PrintOptions args[]) {
-		for (int i = 0; i < args.length; i++) {
-			switch(args[i]){
-			case steps:
-				printSteps = true;
-				break;
-			case results:
-				printResult = true;
-				break;
-			case CSV:
-				printCSV = true;
-				break;
-			case CDF:
-				printCDF = true;
-				break;
-			case PDF:
-				printPDF = true;
-				break;
-			case stepsQueue:
-				printQueue = true;
-				break;
-			default:
-				break;
-			}
 		}
 	}
 	
@@ -141,20 +109,13 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 		}
 
 		stats.finish();
+		
+		printer.printResults(this);
+		
+		printer.printCSV(this);
 
-		if (printResult) {
-			stats.printResult();
-		}
-		if (printCSV) {
-			file1.saveInFile(
-					dc.format(rates.getR4()), 
-					dc.format(stats.getPiO()),
-					dc.format(stats.getInfectedCost()),
-					dc.format(stats.getSamplingCost()),
-					dc.format(stats.getTotalCost()));
-		}
-		if (printCDF) { cdfCalc.printCDF(); }
-		if (printPDF) { cdfCalc.printPDF(); } 
+		printer.printCDF(this);
+		printer.printPDF(this); 
 
 		return stats;
 	}
@@ -201,8 +162,7 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 
 			nextEvent = generateRtoOEvent(cNode, now);
 			
-			if(printCDF || printPDF)
-				cdfCalc.inRecuperation(timeSpentInThisState);
+			cdfCalc.inRecuperation(timeSpentInThisState);
 			
 			break;
 		case P_TO_F:
@@ -217,8 +177,7 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 
 			nextEvent = generateFtoOEvent(cNode, now);
 			
-			if(printCDF || printPDF)
-				cdfCalc.inRecuperation(timeSpentInThisState);
+			cdfCalc.inRecuperation(timeSpentInThisState);
 			
 			break;
 		case R_TO_O:
@@ -230,32 +189,23 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 			scheduleIncomingInfections(cNode,now);
 
 			if( eventQueue.isEmpty() && !isObservedNode){
-				stats.addTimePerState(timeSpentInThisState, nodes[0].getState());
+				stats.addTimePerState(timeSpentInThisState, nodes.get(0).getState());
 			}
 			
-			if(printCDF || printPDF)
-				cdfCalc.recupered(timeSpentInThisState);
+			cdfCalc.recupered(timeSpentInThisState);
 			//TODO Felipe: Porque esse 'count++;' estava aqui?
 			// Bruno: por que ele da return logo abaixo e não break
 			stats.count();
 			return;
 		default:
-			System.out.println("Error: Ilegal transition.");
+			System.out.println("Error: Ilegal transition:"+cEvent);
 			return;
 		}
 		
-
+		
 		eventQueue.add(nextEvent);
 		
-		if(printSteps) { System.out.println("Event: "+stats.getCounter()+"\t" + "Event: " + cEvent); }
-		if(printQueue) { eventQueue.printQueue(); }
-		if(printStates){
-			String toPrint = "";
-			for (Node node : nodes){
-				toPrint+="["+node.getState()+"]";
-			}
-			System.out.println(toPrint);
-		}
+		printer.printStates(nodes);
 		
 		stats.count();
 		
@@ -346,5 +296,22 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 		double nextPEventTime = genR1.generate();
 		return new Event(cNode, State.O, now + nextPEventTime, nextPEventTime);
 	}
+	
+	public Statistics getStats(){
+		return stats;
+	}
+	
+	public FileUtil getFile(){
+		return file1;
+	}
+	
+	public Rates getRates(){
+		return rates;
+	}
+	
+	public CumulativeDensityFunctionCalculator getCDFCalculator(){
+		return cdfCalc;
+	}
+
 
 }
