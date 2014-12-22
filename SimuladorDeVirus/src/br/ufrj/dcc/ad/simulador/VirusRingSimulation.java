@@ -18,7 +18,7 @@ import br.ufrj.dcc.ad.simulador.utils.FileUtil;
 import br.ufrj.dcc.ad.simulador.utils.Printer;
 import br.ufrj.dcc.ad.simulador.utils.Statistics;
 
-public class NewVirusMeshSimulation implements VirusSimulation{
+public class VirusRingSimulation implements VirusSimulation{
 	private int NUM_OF_NODES = 10;
 	
 	public ExponentialGenerator genR1;
@@ -43,11 +43,11 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 	
 	Printer printer = new Printer();
 
-	public NewVirusMeshSimulation(long me, Rates r) {
+	public VirusRingSimulation(long me, Rates r) {
 		this( me, r, 10);
 	}
 
-	public NewVirusMeshSimulation(long me, Rates r, int numberOfNodes) {
+	public VirusRingSimulation(long me, Rates r, int numberOfNodes) {
 		NUM_OF_NODES = numberOfNodes;
 		MAX_EVENTS = me;
 		rates = r;
@@ -58,11 +58,11 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 		genBeta = new ExponentialGenerator(rates.getBETA());
 	}
 
-	public NewVirusMeshSimulation(long me, Rates r, FileUtil file) {
+	public VirusRingSimulation(long me, Rates r, FileUtil file) {
 		this(me, r, file, 10);
 	}
 	
-	public NewVirusMeshSimulation(long me, Rates r, FileUtil file, int numberOfNodes) {
+	public VirusRingSimulation(long me, Rates r, FileUtil file, int numberOfNodes) {
 		NUM_OF_NODES = numberOfNodes;
 		MAX_EVENTS = me;
 		rates = r;
@@ -122,6 +122,7 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 
 	public void consumeEvent() {
 		Event cEvent = eventQueue.pop();
+		printer.printSteps(getStats(), cEvent);
 		Event nextEvent;
 		Node cNode = cEvent.getCurrentNd();
 		State cState = cNode.getState();
@@ -248,13 +249,13 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 		}
 		for (Event e : toRemove) {
 			eventQueue.removeEvent(e);
-		} 
-
+		}
 	}
 
 	private void scheduleIncomingInfections(Node cNode, Double now) {
 		for (Node neighbour : nodes) {
-			if (neighbour.getState() != State.O) {
+			if (neighbour.getState() != State.O
+					&& cNode.isRingNeighbour(neighbour, nodes.size())) {
 				Event evt = generateInfectionEvent(cNode, neighbour, now);
 				eventQueue.add(evt);
 			}
@@ -263,7 +264,7 @@ public class NewVirusMeshSimulation implements VirusSimulation{
 	
 	private void scheduleOutgoingInfections(Node cNode, Double now) {
 		for (Node neighbour : nodes) {
-			if (neighbour.getState() == State.O) {
+			if (neighbour.getState() == State.O && cNode.isRingNeighbour(neighbour, nodes.size())) {
 				Event evt = generateInfectionEvent(neighbour, cNode, now);
 				eventQueue.add(evt);
 			}

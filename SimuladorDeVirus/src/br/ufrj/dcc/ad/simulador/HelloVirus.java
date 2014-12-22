@@ -50,13 +50,56 @@ public class HelloVirus {
 			delta = Double.parseDouble(args[1]);
 			min_r4 = Double.parseDouble(args[2]);
 		}
-
+		runRingCostAnalysis();
 //		runMeshOnce();
-		runMeshCostAnalysis();
+//		runMeshCostAnalysis();
 //		runSingleNodeCostAnalysis();
 //		runSingleNodeTimeAnalysis();
 		
 		System.out.println("Finished");
+	}
+
+	static void runRingCostAnalysis() {
+		boolean printCSV = true;
+
+		FileUtil file = new FileUtil("RingCostAnalysis.csv", "r4;piO;piP;piR;piF;cV;cS;cT");
+		DecimalFormat dc = new DecimalFormat(",000.000000000");
+
+		while (r4 >= min_r4) {
+
+			for (int i = 0; i < MAX_SIMULATION; i++) {
+				Rates r = new Rates(r1, r2, r3, r4, LAMBDA, BETA);
+				Statistics stats = null;
+				simulation = new VirusRingSimulation(maxEvents, r,file,10);
+				//printer.setPrintOptions(new PrintOptions[]{PrintOptions.CSV});
+				simulation.setUpSimulation();
+				stats = simulation.runFullSimulation();
+				
+				Statistics.incrementSimulation();
+				Statistics.accumulatePiO(stats.getPiO());
+				Statistics.accumulatePiP(stats.getPiP());
+				Statistics.accumulatePiR(stats.getPiR());
+				Statistics.accumulatePiF(stats.getPiF());
+				Statistics.accumulateInfectedCost(stats.getInfectedCost());
+				Statistics.accumulateSamplingCost(stats.getSamplingCost());
+				Statistics.accumulateTotalCost(stats.getTotalCost());
+			}
+
+			if (printCSV) {
+				file.saveInFile(
+						dc.format(r4),
+						dc.format(Statistics.getGlobalAveragePiO()),
+						dc.format(Statistics.getGlobalAveragePiP()),
+						dc.format(Statistics.getGlobalAveragePiR()),
+						dc.format(Statistics.getGlobalAveragePiF()),
+						dc.format(Statistics.getGlobalAverageInfectedCost()),
+						dc.format(Statistics.getGlobalAverageSamplingCost()),
+						dc.format(Statistics.getGlobalAverageTotalCost()));
+			}
+
+			r4 -= delta;
+		}
+
 	}
 
 	static void runMeshCostAnalysis() {
@@ -70,8 +113,8 @@ public class HelloVirus {
 			for (int i = 0; i < MAX_SIMULATION; i++) {
 				Rates r = new Rates(r1, r2, r3, r4, LAMBDA, BETA);
 				Statistics stats = null;
-				simulation = new NewVirusMeshSimulation(maxEvents, r,10);
-				printer.setPrintOptions(new PrintOptions[]{PrintOptions.steps,PrintOptions.states,PrintOptions.results,PrintOptions.states});
+				simulation = new VirusMeshSimulation(maxEvents, r,10);
+				//printer.setPrintOptions(new PrintOptions[]{PrintOptions.steps,PrintOptions.states,PrintOptions.results,PrintOptions.states});
 				simulation.setUpSimulation();
 				stats = simulation.runFullSimulation();
 				
@@ -105,7 +148,7 @@ public class HelloVirus {
 	static void runMeshOnce(){
 		FileUtil file = new FileUtil("CostAnalysis.csv", "r4;piO;cV;cS;cT");
 		Rates r = new Rates(r1, BETA, r3, r4, LAMBDA);
-		simulation = new NewVirusMeshSimulation(maxEvents, r, file);
+		simulation = new VirusMeshSimulation(maxEvents, r, file);
 		printer.setPrintOptions(new PrintOptions[] { PrintOptions.CSV });
 		simulation.setUpSimulation();
 		simulation.runFullSimulation();

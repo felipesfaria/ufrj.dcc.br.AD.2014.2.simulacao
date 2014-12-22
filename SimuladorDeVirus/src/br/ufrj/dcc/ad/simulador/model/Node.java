@@ -34,6 +34,14 @@ public class Node {
 	public int getNodeId() {
 		return nodeId;
 	}
+	
+	public boolean isRingNeighbour(Node otherNode, int totalNodes){
+		if( otherNode.getNodeId()==(this.getNodeId()+1)%totalNodes
+			|| this.getNodeId()==(otherNode.getNodeId()+1)%totalNodes ){
+			return true;
+		}
+		return false;
+	}
 
 	@Override
 	public String toString() {
