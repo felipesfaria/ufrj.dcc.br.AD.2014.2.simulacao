@@ -12,7 +12,7 @@ import java.text.DecimalFormat;
 
 public class HelloVirus {
 
-	private static final int MAX_SIMULATION = 100;
+	private static final int MAX_SIMULATION = 1;
 	public static double piZero = 0;
 	public static double piP = 0;
 	public static double totalTime = 0;
@@ -50,9 +50,10 @@ public class HelloVirus {
 			delta = Double.parseDouble(args[1]);
 			min_r4 = Double.parseDouble(args[2]);
 		}
-		runRingCostAnalysis();
+//		runRingCostAnalysis();
 //		runMeshOnce();
 //		runMeshCostAnalysis();
+		runEndogenousMeshCostAnalysis();
 //		runSingleNodeCostAnalysis();
 //		runSingleNodeTimeAnalysis();
 		
@@ -118,6 +119,49 @@ public class HelloVirus {
 				simulation.setUpSimulation();
 				stats = simulation.runFullSimulation();
 				
+				Statistics.incrementSimulation();
+				Statistics.accumulatePiO(stats.getPiO());
+				Statistics.accumulatePiP(stats.getPiP());
+				Statistics.accumulatePiR(stats.getPiR());
+				Statistics.accumulatePiF(stats.getPiF());
+				Statistics.accumulateInfectedCost(stats.getInfectedCost());
+				Statistics.accumulateSamplingCost(stats.getSamplingCost());
+				Statistics.accumulateTotalCost(stats.getTotalCost());
+			}
+
+			if (printCSV) {
+				file.saveInFile(
+						dc.format(r4),
+						dc.format(Statistics.getGlobalAveragePiO()),
+						dc.format(Statistics.getGlobalAveragePiP()),
+						dc.format(Statistics.getGlobalAveragePiR()),
+						dc.format(Statistics.getGlobalAveragePiF()),
+						dc.format(Statistics.getGlobalAverageInfectedCost()),
+						dc.format(Statistics.getGlobalAverageSamplingCost()),
+						dc.format(Statistics.getGlobalAverageTotalCost()));
+			}
+
+			r4 -= delta;
+		}
+
+	}
+
+	static void runEndogenousMeshCostAnalysis() {
+		boolean printCSV = true;
+
+		FileUtil file = new FileUtil("EndogenousMeshCostAnalysis.csv", "r4;piO;piP;piR;piF;cV;cS;cT");
+		DecimalFormat dc = new DecimalFormat(",000.000000000");
+
+		while (r4 >= min_r4) {
+
+			for (int i = 0; i < MAX_SIMULATION; i++) {
+				Rates r = new Rates(r1, r2, r3, r4, LAMBDA, BETA);
+				Statistics stats = null;
+				simulation = new VirusMeshEndogenousSimulation(maxEvents, r,10);
+				//printer.setPrintOptions(new PrintOptions[]{PrintOptions.steps,PrintOptions.states,PrintOptions.results,PrintOptions.states});
+				simulation.setUpSimulation();
+				stats = simulation.runFullSimulation();
+
 				Statistics.incrementSimulation();
 				Statistics.accumulatePiO(stats.getPiO());
 				Statistics.accumulatePiP(stats.getPiP());
