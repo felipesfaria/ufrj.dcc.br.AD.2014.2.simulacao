@@ -7,7 +7,7 @@ import br.ufrj.dcc.ad.simulador.utils.Statistics;
 
 public interface VirusSimulation {
 
-	public abstract Statistics runFullSimulation();
+	public Statistics runFullSimulation();
 	
 	public void setUpSimulation();
 
