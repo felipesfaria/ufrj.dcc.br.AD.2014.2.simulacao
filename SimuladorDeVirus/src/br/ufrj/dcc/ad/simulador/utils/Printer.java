@@ -1,5 +1,6 @@
 package br.ufrj.dcc.ad.simulador.utils;
 
+import java.io.File;
 import java.text.DecimalFormat;
 import java.util.List;
 
@@ -139,6 +140,20 @@ public class Printer {
 					dc.format(stats.getTotalCost()));
 		}
 		
+	}
+	
+	public void printGlobalStats(FileUtil file, Double r4){
+		if (printCSV) {
+			file.saveInFile(
+					dc.format(r4),
+					dc.format(Statistics.getGlobalAveragePiO()),
+					dc.format(Statistics.getGlobalAveragePiP()),
+					dc.format(Statistics.getGlobalAveragePiR()),
+					dc.format(Statistics.getGlobalAveragePiF()),
+					dc.format(Statistics.getGlobalAverageInfectedCost()),
+					dc.format(Statistics.getGlobalAverageSamplingCost()),
+					dc.format(Statistics.getGlobalAverageTotalCost()));
+		}
 	}
 	
 	public void printCDF(VirusSimulation vSim) {

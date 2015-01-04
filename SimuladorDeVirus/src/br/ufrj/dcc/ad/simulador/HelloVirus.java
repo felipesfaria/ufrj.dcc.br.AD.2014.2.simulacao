@@ -9,10 +9,11 @@ import br.ufrj.dcc.ad.simulador.utils.Printer;
 import br.ufrj.dcc.ad.simulador.utils.Statistics;
 
 import java.text.DecimalFormat;
+import java.util.Map;
 
 public class HelloVirus {
 
-	private static final int MAX_SIMULATION = 1;
+	private static final int MAX_SIMULATION = 1000;
 	public static double piZero = 0;
 	public static double piP = 0;
 	public static double totalTime = 0;
@@ -30,7 +31,7 @@ public class HelloVirus {
 	public static final double r2 = 0.8;
 	public static final double r3 = 3.0;
 	public static final double LAMBDA = 1.0 / (12.0 * 24.0 * 30.0);
-	public static final double BETA = 0.08;	
+	public static final double BETA = 0.08;
 	
 	static Double r4 = 1.0;
 	static Double delta = 0.01;
@@ -52,9 +53,9 @@ public class HelloVirus {
 		}
 //		runRingCostAnalysis();
 //		runMeshOnce();
-//		runMeshCostAnalysis();
-//		runEndogenousMeshCostAnalysis();
-		runEndogenousRingCostAnalysis();
+		runMeshCostAnalysis();
+//      runEndogenousMeshCostAnalysis();
+//		runEndogenousRingCostAnalysis();
 //		runSingleNodeCostAnalysis();
 //		runSingleNodeTimeAnalysis();
 		
@@ -129,19 +130,10 @@ public class HelloVirus {
 				Statistics.accumulateSamplingCost(stats.getSamplingCost());
 				Statistics.accumulateTotalCost(stats.getTotalCost());
 			}
-
-			if (printCSV) {
-				file.saveInFile(
-						dc.format(r4),
-						dc.format(Statistics.getGlobalAveragePiO()),
-						dc.format(Statistics.getGlobalAveragePiP()),
-						dc.format(Statistics.getGlobalAveragePiR()),
-						dc.format(Statistics.getGlobalAveragePiF()),
-						dc.format(Statistics.getGlobalAverageInfectedCost()),
-						dc.format(Statistics.getGlobalAverageSamplingCost()),
-						dc.format(Statistics.getGlobalAverageTotalCost()));
-			}
-
+			
+			printer.printGlobalStats(file, r4);
+			Statistics.resetGlobalStatistics();
+			Statistics.GetIntervaloDeConfiança(r4);
 			r4 -= delta;
 		}
 
@@ -172,18 +164,10 @@ public class HelloVirus {
 				Statistics.accumulateSamplingCost(stats.getSamplingCost());
 				Statistics.accumulateTotalCost(stats.getTotalCost());
 			}
-
-			if (printCSV) {
-				file.saveInFile(
-						dc.format(r4),
-						dc.format(Statistics.getGlobalAveragePiO()),
-						dc.format(Statistics.getGlobalAveragePiP()),
-						dc.format(Statistics.getGlobalAveragePiR()),
-						dc.format(Statistics.getGlobalAveragePiF()),
-						dc.format(Statistics.getGlobalAverageInfectedCost()),
-						dc.format(Statistics.getGlobalAverageSamplingCost()),
-						dc.format(Statistics.getGlobalAverageTotalCost()));
-			}
+			
+			printer.printGlobalStats(file, r4);
+			Statistics.resetGlobalStatistics();
+			Map<String,Double> intervaloDeConfianca = Statistics.GetIntervalosDeConfiança(r4);
 
 			r4 -= delta;
 		}

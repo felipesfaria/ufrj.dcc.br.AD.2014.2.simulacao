@@ -140,6 +140,7 @@ public class VirusSingleSimulation implements VirusSimulation {
 			
 			break;
 		default:
+			System.out.println("Error: Ilegal transition:"+cEvent);
 			return;
 		}
 		
