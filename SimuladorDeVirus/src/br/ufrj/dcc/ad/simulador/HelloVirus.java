@@ -51,6 +51,7 @@ public class HelloVirus {
 			delta = Double.parseDouble(args[1]);
 			min_r4 = Double.parseDouble(args[2]);
 		}
+		
 //		runRingCostAnalysis();
 //		runMeshOnce();
 		runMeshCostAnalysis();
@@ -87,19 +88,10 @@ public class HelloVirus {
 				Statistics.accumulateSamplingCost(stats.getSamplingCost());
 				Statistics.accumulateTotalCost(stats.getTotalCost());
 			}
-
-			if (printCSV) {
-				file.saveInFile(
-						dc.format(r4),
-						dc.format(Statistics.getGlobalAveragePiO()),
-						dc.format(Statistics.getGlobalAveragePiP()),
-						dc.format(Statistics.getGlobalAveragePiR()),
-						dc.format(Statistics.getGlobalAveragePiF()),
-						dc.format(Statistics.getGlobalAverageInfectedCost()),
-						dc.format(Statistics.getGlobalAverageSamplingCost()),
-						dc.format(Statistics.getGlobalAverageTotalCost()));
-			}
-
+			
+			printer.printGlobalStats(file, r4);
+			Statistics.resetGlobalStatistics();
+			Statistics.GetIntervaloDeConfiança(r4);
 			r4 -= delta;
 		}
 
@@ -199,19 +191,10 @@ public class HelloVirus {
 				Statistics.accumulateSamplingCost(stats.getSamplingCost());
 				Statistics.accumulateTotalCost(stats.getTotalCost());
 			}
-
-			if (printCSV) {
-				file.saveInFile(
-						dc.format(r4),
-						dc.format(Statistics.getGlobalAveragePiO()),
-						dc.format(Statistics.getGlobalAveragePiP()),
-						dc.format(Statistics.getGlobalAveragePiR()),
-						dc.format(Statistics.getGlobalAveragePiF()),
-						dc.format(Statistics.getGlobalAverageInfectedCost()),
-						dc.format(Statistics.getGlobalAverageSamplingCost()),
-						dc.format(Statistics.getGlobalAverageTotalCost()));
-			}
-
+			
+			printer.printGlobalStats(file, r4);
+			Statistics.resetGlobalStatistics();
+			Statistics.GetIntervaloDeConfiança(r4);
 			r4 -= delta;
 		}
 
@@ -245,8 +228,7 @@ public class HelloVirus {
 
 	static void runSingleNodeTimeAnalysis() {
 		FileUtil file = new FileUtil("TimeAnalysis.csv", "t;P(t<T)");
-		Rates r = new Rates(r1, r2, r3, 0.14, LAMBDA); // TODO melhorar
-													  //TODO Felipe: melhorar o que?
+		Rates r = new Rates(r1, r2, r3, 0.14, LAMBDA);
 		simulation = new VirusSingleSimulation(maxEvents, r, file);
 		printer.setPrintOptions(new PrintOptions[] { PrintOptions.CSV, PrintOptions.CDF });
 		simulation.setUpSimulation();
