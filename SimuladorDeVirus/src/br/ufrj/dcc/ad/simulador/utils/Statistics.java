@@ -20,7 +20,7 @@ public class Statistics {
 	static Double globalAcumulatedInfectedCost=0.0;
 	static Double globalAcumulatedSamplingCost=0.0;
 	static Double globalAcumulatedTotalCost=0.0;
-	
+
 	Double r4;
 	Double timeInO=0.0;
 	Double timeInP=0.0;
@@ -30,7 +30,7 @@ public class Statistics {
 	Double piP;
 	Double piR;
 	Double piF;
-	//Pra cada r4 tem um arraylist dos resultados da simulação
+	//Pra cada r4 tem um arraylist dos resultados da simulaï¿½ï¿½o
 	static Map<Double,ArrayList<Result>> completeResults = new HashMap<Double,ArrayList<Result>>();
 	Result result;
 	
@@ -129,16 +129,16 @@ public class Statistics {
 		}
 	}
 	
-	public static double GetIntervaloDeConfiança(Double r4){
-		double intervaloDeConfiança;
+	public static double GetIntervaloDeConfianca(Double r4){
+		double intervaloDeConfianca;
 		double variancia = GetVariancia(r4);
 		
-		intervaloDeConfiança = 2*1.96*Math.sqrt(variancia)/Math.sqrt(completeResults.get(r4).size());
+		intervaloDeConfianca = 2*1.96*Math.sqrt(variancia)/Math.sqrt(completeResults.get(r4).size());
 		
-		return intervaloDeConfiança;
+		return intervaloDeConfianca;
 	}
 	
-	public static Map<String,Double>  GetIntervalosDeConfiança(Double r4){
+	public static Map<String,Double>  GetIntervalosDeConfianca(Double r4){
 		Map<String,Double> intervalosDeConfianca = new HashMap<String, Double>();
 		Map<String,Double> variancias = GetVariancias(r4);
 		intervalosDeConfianca.put("piO",2*1.96*Math.sqrt(variancias.get("piO"))/Math.sqrt(completeResults.get(r4).size()));
@@ -182,22 +182,22 @@ public class Statistics {
 		for(Result result : results){
 			n++;
 			custoInfectadoAcumulado+=result.getInfectedCost();
-			medias.replace("piO",medias.get("piO")+result.getPiO());
-			medias.replace("piP",medias.get("piP")+result.getPiP());
-			medias.replace("piR",medias.get("piR")+result.getPiR());
-			medias.replace("piF",medias.get("piF")+result.getPiF());
-			medias.replace("CustoInfectado",medias.get("CustoInfectado")+result.getInfectedCost());
-			medias.replace("CustoAmostragem",medias.get("CustoAmostragem")+result.getSamplingCost());
-			medias.replace("CustoTotal",medias.get("CustoTotal")+result.getTotalCost());
+			medias.put("piO",medias.get("piO")+result.getPiO());
+			medias.put("piP",medias.get("piP")+result.getPiP());
+			medias.put("piR",medias.get("piR")+result.getPiR());
+			medias.put("piF",medias.get("piF")+result.getPiF());
+			medias.put("CustoInfectado",medias.get("CustoInfectado")+result.getInfectedCost());
+			medias.put("CustoAmostragem",medias.get("CustoAmostragem")+result.getSamplingCost());
+			medias.put("CustoTotal",medias.get("CustoTotal")+result.getTotalCost());
 		}
 		mediaDeCustoInfectado = custoInfectadoAcumulado/n;
-		medias.replace("piO",medias.get("piO")/n);
-		medias.replace("piP",medias.get("piP")/n);
-		medias.replace("piR",medias.get("piR")/n);
-		medias.replace("piF",medias.get("piF")/n);
-		medias.replace("CustoInfectado",medias.get("CustoInfectado")/n);
-		medias.replace("CustoAmostragem",medias.get("CustoAmostragem")/n);
-		medias.replace("CustoTotal",medias.get("CustoTotal")/n);
+		medias.put("piO",medias.get("piO")/n);
+		medias.put("piP",medias.get("piP")/n);
+		medias.put("piR",medias.get("piR")/n);
+		medias.put("piF",medias.get("piF")/n);
+		medias.put("CustoInfectado",medias.get("CustoInfectado")/n);
+		medias.put("CustoAmostragem",medias.get("CustoAmostragem")/n);
+		medias.put("CustoTotal",medias.get("CustoTotal")/n);
 		return medias;
 	}
 	
@@ -230,21 +230,21 @@ public class Statistics {
 		variancias.put("CustoTotal",0.0);
 		for(Result result : results){
 			n++;
-			variancias.replace("piO",variancias.get("piO")+Math.pow(result.getPiO()-medias.get("piO"),2));
-			variancias.replace("piP",variancias.get("piP")+Math.pow(result.getPiP()-medias.get("piP"),2));
-			variancias.replace("piR",variancias.get("piR")+Math.pow(result.getPiR()-medias.get("piR"),2));
-			variancias.replace("piF",variancias.get("piF")+Math.pow(result.getPiF()-medias.get("piF"),2));
-			variancias.replace("CustoInfectado",variancias.get("CustoInfectado")+Math.pow(result.getInfectedCost()-medias.get("CustoInfectado"),2));
-			variancias.replace("CustoAmostragem",variancias.get("CustoAmostragem")+Math.pow(result.getSamplingCost()-medias.get("CustoAmostragem"),2));
-			variancias.replace("CustoTotal",variancias.get("CustoTotal")+Math.pow(result.getTotalCost()-medias.get("CustoTotal"),2));
+			variancias.put("piO",variancias.get("piO")+Math.pow(result.getPiO()-medias.get("piO"),2));
+			variancias.put("piP",variancias.get("piP")+Math.pow(result.getPiP()-medias.get("piP"),2));
+			variancias.put("piR",variancias.get("piR")+Math.pow(result.getPiR()-medias.get("piR"),2));
+			variancias.put("piF",variancias.get("piF")+Math.pow(result.getPiF()-medias.get("piF"),2));
+			variancias.put("CustoInfectado",variancias.get("CustoInfectado")+Math.pow(result.getInfectedCost()-medias.get("CustoInfectado"),2));
+			variancias.put("CustoAmostragem",variancias.get("CustoAmostragem")+Math.pow(result.getSamplingCost()-medias.get("CustoAmostragem"),2));
+			variancias.put("CustoTotal",variancias.get("CustoTotal")+Math.pow(result.getTotalCost()-medias.get("CustoTotal"),2));
 		}
-		variancias.replace("piO",variancias.get("piO")/(n-1));
-		variancias.replace("piP",variancias.get("piP")/(n-1));
-		variancias.replace("piR",variancias.get("piR")/(n-1));
-		variancias.replace("piF",variancias.get("piF")/(n-1));
-		variancias.replace("CustoInfectado",variancias.get("CustoInfectado")/(n-1));
-		variancias.replace("CustoAmostragem",variancias.get("CustoAmostragem")/(n-1));
-		variancias.replace("CustoTotal",variancias.get("CustoTotal")/(n-1));
+		variancias.put("piO",variancias.get("piO")/(n-1));
+		variancias.put("piP",variancias.get("piP")/(n-1));
+		variancias.put("piR",variancias.get("piR")/(n-1));
+		variancias.put("piF",variancias.get("piF")/(n-1));
+		variancias.put("CustoInfectado",variancias.get("CustoInfectado")/(n-1));
+		variancias.put("CustoAmostragem",variancias.get("CustoAmostragem")/(n-1));
+		variancias.put("CustoTotal",variancias.get("CustoTotal")/(n-1));
 		return variancias;
 	}
 	

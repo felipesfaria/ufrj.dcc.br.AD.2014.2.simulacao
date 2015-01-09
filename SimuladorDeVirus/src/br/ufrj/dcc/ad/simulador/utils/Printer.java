@@ -12,21 +12,28 @@ import br.ufrj.dcc.ad.simulador.model.PrintOptions;
 import br.ufrj.dcc.ad.simulador.model.Rates;
 
 public class Printer {
-	private static Boolean printSteps = false;
-	private static Boolean printResult = false;
-	private static Boolean printCSV = false;
-	private static Boolean printCDF = false;
-	private static Boolean printQueue = false;
-	private static Boolean printPDF = false;
-	private static Boolean printStates = false;
+	private Boolean printSteps;
+	private Boolean printResult;
+	private Boolean printCSV;
+	private Boolean printCDF;
+	private Boolean printQueue;
+	private Boolean printPDF;
+	private Boolean printStates;
 
 	private DecimalFormat dc = new DecimalFormat(",000.000000000");
 	
 	public Printer(){
 		this(null);
 	}
-	
+
 	public Printer(PrintOptions args[]){
+		printSteps = false;
+		printResult = false;
+		printCSV = false;
+		printCDF = false;
+		printQueue = false;
+		printPDF = false;
+		printStates = false;
 		setPrintOptions(args);
 	}
 	
@@ -128,10 +135,10 @@ public class Printer {
 	}
 	
 	public void printCSV(VirusSimulation vSim) {
-		FileUtil file1 = vSim.getFile();
-		Rates rates = vSim.getRates();
-		Statistics stats = vSim.getStats();
 		if (printCSV) {
+			FileUtil file1 = vSim.getFile();
+			Rates rates = vSim.getRates();
+			Statistics stats = vSim.getStats();
 			file1.saveInFile(
 					dc.format(rates.getR4()), 
 					dc.format(stats.getPiO()),
@@ -157,7 +164,7 @@ public class Printer {
 	}
 	
 	public void printCDF(VirusSimulation vSim) {
-		if (printCDF) { vSim.getCDFCalculator().printCDF(); }
+		if (printCDF) { vSim.getCDFCalculator().printCDF(vSim.getRates().getR4()); }
 	}
 	
 	public void printPDF(VirusSimulation vSim) {

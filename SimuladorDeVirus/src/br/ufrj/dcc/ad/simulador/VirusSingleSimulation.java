@@ -32,7 +32,7 @@ public class VirusSingleSimulation implements VirusSimulation {
 	private long MAX_EVENTS;
 	private Statistics stats;
 	
-	private Printer printer = new Printer();
+	private Printer printer;
 	CumulativeDensityFunctionCalculator cdfCalc;
 
 	FileUtil file1;
@@ -45,9 +45,10 @@ public class VirusSingleSimulation implements VirusSimulation {
 		genR3 = new ExponentialGenerator(rates.getR3());
 		genR4 = new ExponentialGenerator(rates.getR4());
 		genLambda = new ExponentialGenerator(rates.getLAMBDA());
+		printer = new Printer();
 	}
 
-	public VirusSingleSimulation(long me, Rates r, FileUtil file) {
+	public VirusSingleSimulation(long me, Rates r, FileUtil file, Printer prt) {
 		MAX_EVENTS = me;
 		rates = r;
 		genR1 = new ExponentialGenerator(rates.getR1());
@@ -55,7 +56,18 @@ public class VirusSingleSimulation implements VirusSimulation {
 		genR3 = new ExponentialGenerator(rates.getR3());
 		genR4 = new ExponentialGenerator(rates.getR4());
 		genLambda = new ExponentialGenerator(rates.getLAMBDA());
+		printer = prt;
 		this.file1 = file;
+	}
+	public VirusSingleSimulation(long me, Rates r, Printer prt) {
+		MAX_EVENTS = me;
+		rates = r;
+		genR1 = new ExponentialGenerator(rates.getR1());
+		genR2 = new ExponentialGenerator(rates.getR2());
+		genR3 = new ExponentialGenerator(rates.getR3());
+		genR4 = new ExponentialGenerator(rates.getR4());
+		genLambda = new ExponentialGenerator(rates.getLAMBDA());
+		printer = prt;
 	}
 
 	@Override

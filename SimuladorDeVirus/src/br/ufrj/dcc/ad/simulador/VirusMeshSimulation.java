@@ -41,7 +41,7 @@ public class VirusMeshSimulation implements VirusSimulation{
 
 	FileUtil file1;
 	
-	Printer printer = new Printer();
+	Printer printer;
 
 	public VirusMeshSimulation(long me, Rates r) {
 		this( me, r, 10);
@@ -56,6 +56,7 @@ public class VirusMeshSimulation implements VirusSimulation{
 		genR4 = new ExponentialGenerator(rates.getR4());
 		genLambda = new ExponentialGenerator(rates.getLAMBDA());
 		genBeta = new ExponentialGenerator(rates.getBETA());
+		printer = new Printer();
 	}
 
 	public VirusMeshSimulation(long me, Rates r, FileUtil file) {
@@ -71,7 +72,24 @@ public class VirusMeshSimulation implements VirusSimulation{
 		genR4 = new ExponentialGenerator(rates.getR4());
 		genLambda = new ExponentialGenerator(rates.getLAMBDA());
 		genBeta = new ExponentialGenerator(rates.getBETA());
+		printer = new Printer();
 		this.file1 = file;
+	}
+
+	public VirusMeshSimulation(long me, Rates r, Printer prt) {
+		this(me, r, 10, prt);
+	}
+
+	public VirusMeshSimulation(long me, Rates r, int numberOfNodes, Printer prt) {
+		NUM_OF_NODES = numberOfNodes;
+		MAX_EVENTS = me;
+		rates = r;
+		genR1 = new ExponentialGenerator(rates.getR1());
+		genR3 = new ExponentialGenerator(rates.getR3());
+		genR4 = new ExponentialGenerator(rates.getR4());
+		genLambda = new ExponentialGenerator(rates.getLAMBDA());
+		genBeta = new ExponentialGenerator(rates.getBETA());
+		printer = prt;
 	}
 
 	@Override
