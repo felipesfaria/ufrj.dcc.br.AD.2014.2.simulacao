@@ -17,10 +17,11 @@ public class Statistics {
 	static Double globalAcumulatedInfectedCost=0.0;
 	static Double globalAcumulatedSamplingCost=0.0;
 	static Double globalAcumulatedTotalCost=0.0;
-	static CumulativeDensityFunctionCalculator cdfCalc;
+	static CumulativeDensityFunctionCalculator mCDFCalc;
 	//static List<Double> globalCDFResult = new ArrayList<Double>();
 
 
+	List<Integer> mPrePDF;
 
 	Double r4;
 	Double timeInO=0.0;
@@ -31,7 +32,6 @@ public class Statistics {
 	Double piP;
 	Double piR;
 	Double piF;
-	List<Double> mCDFResult;
 	//Pra cada r4 tem um arraylist dos resultados da simula��o
 	static Map<Double,ArrayList<Result>> completeResults = new HashMap<Double,ArrayList<Result>>();
 	Result result;
@@ -93,11 +93,12 @@ public class Statistics {
 	public Double getInfectedCost() { return infectedCost; }
 	public Double getSamplingCost() { return samplingCost; }
 	public Double getTotalCost() { return totalCost; }
-	public List<Double> getCDF() { return mCDFResult; }
-		
+
 	public int getCounter() {
 		return counter;
 	}
+
+	public List<Integer> getPrePDF(){ return mPrePDF; }
 
 	public Double getR4() {
 		return rates.getR4();
@@ -273,6 +274,7 @@ public class Statistics {
 	public static Double getGlobalAveragePiP(){ return globalAcumulatedPiP/simulations; }
 	public static Double getGlobalAveragePiR(){ return globalAcumulatedPiR/simulations; }
 	public static Double getGlobalAveragePiF(){ return globalAcumulatedPiF/simulations; }
+	public static List<Double> getGlobalCDF() { return mCDFCalc.getCDF(); }
 
 	public static void accumulateInfectedCost(Double InfectedCost){
 		globalAcumulatedInfectedCost+=InfectedCost;
@@ -283,8 +285,8 @@ public class Statistics {
 	public static void accumulateTotalCost(Double TotalCost){
 		globalAcumulatedTotalCost+=TotalCost;
 	}
-	public static void accumulateDateCDFCalc(List<Double> data){
-
+	public static void accumulatePrePDF(List<Integer> prePDF){
+		mCDFCalc.accumulatePrePDF(prePDF);
 	}
 	public static void accumulatePDF(List<Double> cdf) {
 //		List<Double> newGlobalCDF = new ArrayList<Double>();
@@ -324,6 +326,7 @@ public class Statistics {
 	public static Double getGlobalAverageTotalCost(){
 		return globalAcumulatedTotalCost/simulations;
 	}
+
 	public static List<Double> getGlobalAverageCDF(){
 //		List<Double> newGlobalCDF = new ArrayList<Double>();
 //		Double value = 0.0;
@@ -347,14 +350,21 @@ public class Statistics {
 		globalAcumulatedInfectedCost=0.0;
 		globalAcumulatedSamplingCost=0.0;
 		globalAcumulatedTotalCost=0.0;
-		cdfCalc = new CumulativeDensityFunctionCalculator();
+		mCDFCalc = new CumulativeDensityFunctionCalculator();
 //		globalCDFResult = new ArrayList<>();
 	}
 
 
-	public void addCDFResults(CumulativeDensityFunctionCalculator cdfCalc) {
-		mCDFResult = cdfCalc.getCDF();
+//	public void addCDFResults(CumulativeDensityFunctionCalculator cdfCalc) {
+//		mCDFResult = cdfCalc.getPrePdf();
+//	}
+
+
+	public void addCDFData(CumulativeDensityFunctionCalculator cdfCalc) {
+		mCDFCalc.accumulatePrePDF( cdfCalc.getPrePdf() );
 	}
 
-
+	public void setPrePDF(List<Integer> prePdf) {
+		mPrePDF = prePdf;
+	}
 }

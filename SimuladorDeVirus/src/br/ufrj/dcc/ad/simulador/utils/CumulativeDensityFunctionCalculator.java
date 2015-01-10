@@ -12,6 +12,10 @@ public class CumulativeDensityFunctionCalculator {
 	int totalCount = 0;
 	double PRECISION = 0.01;
 
+	public List<Integer> getPrePdf() {
+		return prePdf;
+	}
+
 	public List<Double> getCDF() {
 		
 		List<Double> pdf = getPDF();
@@ -80,4 +84,32 @@ public class CumulativeDensityFunctionCalculator {
 		
 	}
 
+	public void accumulatePrePDF(List<Integer> prePdf) {
+		List<Integer> newGlobalCDF = new ArrayList<Integer>();
+
+		if( this.prePdf.size() > prePdf.size() ){
+			Integer value = 0;
+			for (int i = 0; i < prePdf.size(); i++) {
+				value = this.prePdf.get(i) + prePdf.get(i);
+				newGlobalCDF.add(i, value);
+			}
+			for (int i = prePdf.size(); i < this.prePdf.size(); i++){
+				value = this.prePdf.get(i);
+				newGlobalCDF.add(i, value);
+			}
+
+		}else{
+			Integer value = 0;
+			for (int i = 0; i < this.prePdf.size(); i++) {
+				value = this.prePdf.get(i) + prePdf.get(i);
+				newGlobalCDF.add(i, value);
+
+			}
+			for (int i = this.prePdf.size(); i < prePdf.size(); i++){
+				value = prePdf.get(i);
+				newGlobalCDF.add(i, value);
+			}
+		}
+		this.prePdf = newGlobalCDF;
+	}
 }

@@ -265,10 +265,11 @@ public class HelloVirus {
 			Statistics.accumulateInfectedCost(stats.getInfectedCost());
 			Statistics.accumulateSamplingCost(stats.getSamplingCost());
 			Statistics.accumulateTotalCost(stats.getTotalCost());
-			Statistics.accumulatePDF(stats.getCDF());
+			Statistics.accumulatePrePDF(stats.getPrePDF());
 		}
 
-		printer.printGlobalCDF(file, r4, Statistics.getGlobalAveragePDF());
+
+		printer.printGlobalCDF(file, r4, Statistics.getGlobalCDF());
 		Statistics.resetGlobalStatistics();
 //		Statistics.GetIntervaloDeConfianca(r4);
 
