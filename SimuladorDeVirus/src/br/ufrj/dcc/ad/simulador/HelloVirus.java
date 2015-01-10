@@ -138,7 +138,7 @@ public class HelloVirus {
 		boolean printCSV = true;
 		Printer printer = new Printer();
 
-		FileUtil file = new FileUtil("EndogenousRingCostAnalysis.csv", "r4;piO;piP;piR;piF;cV;cS;cT");
+		FileUtil file = new FileUtil("EndogenousRingCostAnalysis.csv", "r4;piO;ic;pi;ic;piR;ic;piF;ic;cV;ic;cS;ic;cT;ic");
 		DecimalFormat dc = new DecimalFormat(",000.000000000");
 
 		while (r4 >= min_r4) {
@@ -172,13 +172,14 @@ public class HelloVirus {
 
 	static void runRingCostAnalysis() {
 		boolean printCSV = true;
-		Printer printer = new Printer();
+		Printer printer = new Printer(new PrintOptions[]{PrintOptions.CSV});
+		double bestR4 = r4;
+		double bestTotalCost = REALY_LARGE_NUM;
 
-		FileUtil file = new FileUtil("RingCostAnalysis.csv", "r4;piO;piP;piR;piF;cV;cS;cT");
+		FileUtil file = new FileUtil("RingCostAnalysis.csv", "r4;piO;ic;pi;ic;piR;ic;piF;ic;cV;ic;cS;ic;cT;ic");
 		DecimalFormat dc = new DecimalFormat(",000.000000000");
 
 		while (r4 >= min_r4) {
-
 			for (int i = 0; i < MAX_SIMULATION; i++) {
 				Rates r = new Rates(r1, r2, r3, r4, LAMBDA, BETA);
 				Statistics stats = null;
@@ -198,11 +199,16 @@ public class HelloVirus {
 			}
 
 			printer.printGlobalStats(file, r4);
+			if ( Statistics.getGlobalAverageTotalCost() < bestTotalCost ) {
+				bestR4 = r4;
+				bestTotalCost = Statistics.getGlobalAverageTotalCost();
+			}
 			Statistics.resetGlobalStatistics();
 			Statistics.GetIntervaloDeConfianca(r4);
 			r4 -= delta;
 		}
 
+		runRingTimeAnalysis(bestR4);
 	}
 
 	static void runMeshCostAnalysis() {
@@ -210,7 +216,7 @@ public class HelloVirus {
 		double bestR4 = r4;
 		double bestTotalCost = REALY_LARGE_NUM;
 
-		FileUtil file = new FileUtil("MeshCostAnalysis.csv", "r4;piO;piP;piR;piF;cV;cS;cT");
+		FileUtil file = new FileUtil("MeshCostAnalysis.csv", "r4;piO;ic;pi;ic;piR;ic;piF;ic;cV;ic;cS;ic;cT;ic");
 		DecimalFormat dc = new DecimalFormat(",000.000000000");
 
 		while (r4 >= min_r4) {
@@ -251,7 +257,7 @@ public class HelloVirus {
 	static void runEndogenousMeshCostAnalysis() {
 		boolean printCSV = true;
 		Printer printer = new Printer();
-		FileUtil file = new FileUtil("EndogenousMeshCostAnalysis.csv", "r4;piO;piP;piR;piF;cV;cS;cT");
+		FileUtil file = new FileUtil("EndogenousMeshCostAnalysis.csv", "r4;piO;ic;pi;ic;piR;ic;piF;ic;cV;ic;cS;ic;cT;ic");
 		DecimalFormat dc = new DecimalFormat(",000.000000000");
 
 		while (r4 >= min_r4) {
@@ -282,7 +288,7 @@ public class HelloVirus {
 	}
 
 	static void runMeshOnce(){
-		FileUtil file = new FileUtil("CostAnalysis.csv", "r4;piO;cV;cS;cT");
+		FileUtil file = new FileUtil("CostAnalysis.csv", "R4;piO;cV;cS;cT");
 		Rates r = new Rates(r1, BETA, r3, r4, LAMBDA);
 		simulation = new VirusMeshSimulation(maxEvents, r, file);
 		Printer printer = new Printer();
@@ -349,19 +355,35 @@ public class HelloVirus {
 			Statistics.accumulatePrePDF(stats.getPrePDF(), stats.getTotalCount());
 		}
 
-		printer.printGlobalCDF(file, r4, Statistics.getGlobalCDF());
+		printer.printGlobalCDF(file, bestR4, Statistics.getGlobalCDF());
 		Statistics.resetGlobalStatistics();
-//		Statistics.GetIntervaloDeConfianca(r4);
 
 	}
 
 	static void runRingTimeAnalysis(double bestR4) {
-//		Printer printer = new Printer(new PrintOptions[]{PrintOptions.CDF});
-//
-//		Rates r = new Rates(r1, r2, r3, bestR4, LAMBDA);
-//		simulation = new VirusRingSimulation(maxEvents, r, printer);
-//		simulation.setUpSimulation();
-//		simulation.runFullSimulation();
+		Printer printer = new Printer(new PrintOptions[]{PrintOptions.CDF});
+		FileUtil file = new FileUtil("RingCDFAnalysis.csv", "time;density;r4");
+
+		for (int i = 0; i < MAX_SIMULATION; i++) {
+			Rates r = new Rates(r1, r2, r3, bestR4, LAMBDA, BETA);
+			Statistics stats = null;
+			simulation = new VirusRingSimulation(maxEvents, r,10);
+			simulation.setUpSimulation();
+			stats = simulation.runFullSimulation();
+
+			Statistics.incrementSimulation();
+			Statistics.accumulatePiO(stats.getPiO());
+			Statistics.accumulatePiP(stats.getPiP());
+			Statistics.accumulatePiR(stats.getPiR());
+			Statistics.accumulatePiF(stats.getPiF());
+			Statistics.accumulateInfectedCost(stats.getInfectedCost());
+			Statistics.accumulateSamplingCost(stats.getSamplingCost());
+			Statistics.accumulateTotalCost(stats.getTotalCost());
+			Statistics.accumulatePrePDF(stats.getPrePDF(), stats.getTotalCount());
+		}
+
+		printer.printGlobalCDF(file, bestR4, Statistics.getGlobalCDF());
+		Statistics.resetGlobalStatistics();
 	}
 
 

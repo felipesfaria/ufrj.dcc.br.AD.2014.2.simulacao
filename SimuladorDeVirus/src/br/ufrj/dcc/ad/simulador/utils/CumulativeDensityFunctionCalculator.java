@@ -10,7 +10,7 @@ public class CumulativeDensityFunctionCalculator {
 	
 	private double timeToRecuparation;
 	int totalCount = 0;
-	double PRECISION = 0.01;
+	double PRECISION = 0.5;
 
 
 	public List<Integer> getmPrePdf() {

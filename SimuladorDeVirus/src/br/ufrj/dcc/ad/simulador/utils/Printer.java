@@ -154,12 +154,19 @@ public class Printer {
 			file.saveInFile(
 					dc.format(r4),
 					dc.format(Statistics.getGlobalAveragePiO()),
+					dc.format(Statistics.GetIntervalosDeConfianca(r4).get("pi0")),
 					dc.format(Statistics.getGlobalAveragePiP()),
+					dc.format(Statistics.GetIntervalosDeConfianca(r4).get("piP")),
 					dc.format(Statistics.getGlobalAveragePiR()),
+					dc.format(Statistics.GetIntervalosDeConfianca(r4).get("piR")),
 					dc.format(Statistics.getGlobalAveragePiF()),
+					dc.format(Statistics.GetIntervalosDeConfianca(r4).get("piF")),
 					dc.format(Statistics.getGlobalAverageInfectedCost()),
+					dc.format(Statistics.GetIntervalosDeConfianca(r4).get("CustoInfectado")),
 					dc.format(Statistics.getGlobalAverageSamplingCost()),
-					dc.format(Statistics.getGlobalAverageTotalCost()));
+					dc.format(Statistics.GetIntervalosDeConfianca(r4).get("CustoAmostragem")),
+					dc.format(Statistics.getGlobalAverageTotalCost()),
+					dc.format(Statistics.GetIntervalosDeConfianca(r4).get("CustoTotal")));
 		}
 	}
 
