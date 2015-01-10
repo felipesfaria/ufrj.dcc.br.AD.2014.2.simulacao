@@ -1,14 +1,13 @@
 package br.ufrj.dcc.ad.simulador.utils;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import br.ufrj.dcc.ad.simulador.model.Rates;
 import br.ufrj.dcc.ad.simulador.model.Result;
 import br.ufrj.dcc.ad.simulador.model.State;
+
+import javax.print.attribute.standard.DocumentName;
 
 public class Statistics {
 	
@@ -20,6 +19,9 @@ public class Statistics {
 	static Double globalAcumulatedInfectedCost=0.0;
 	static Double globalAcumulatedSamplingCost=0.0;
 	static Double globalAcumulatedTotalCost=0.0;
+	static List<Double> globalCDFResult = new ArrayList<Double>();
+
+
 
 	Double r4;
 	Double timeInO=0.0;
@@ -30,6 +32,7 @@ public class Statistics {
 	Double piP;
 	Double piR;
 	Double piF;
+	List<Double> mCDFResult;
 	//Pra cada r4 tem um arraylist dos resultados da simula��o
 	static Map<Double,ArrayList<Result>> completeResults = new HashMap<Double,ArrayList<Result>>();
 	Result result;
@@ -45,7 +48,7 @@ public class Statistics {
 
 	private DecimalFormat dc = new DecimalFormat(",000.000000000");
 	private int counter=0;
-	
+
 	public Statistics(Rates r, final Double infectedWeight, final Double samplingWeight) {
 		rates = r;
 		this.infectedWeight = infectedWeight;
@@ -91,6 +94,7 @@ public class Statistics {
 	public Double getInfectedCost() { return infectedCost; }
 	public Double getSamplingCost() { return samplingCost; }
 	public Double getTotalCost() { return totalCost; }
+	public List<Double> getCDF() { return mCDFResult; }
 		
 	public int getCounter() {
 		return counter;
@@ -280,6 +284,34 @@ public class Statistics {
 	public static void accumulateTotalCost(Double TotalCost){
 		globalAcumulatedTotalCost+=TotalCost;
 	}
+	public static void accumulatePDF(List<Double> cdf) {
+		List<Double> newGlobalCDF = new ArrayList<Double>();
+
+		if( globalCDFResult.size() > cdf.size() ){
+			Double value = 0.0;
+			for (int i = 0; i < cdf.size(); i++) {
+				value = globalCDFResult.get(i) + cdf.get(i);
+				newGlobalCDF.add(i, value);
+			}
+			for (int i = cdf.size(); i < globalCDFResult.size(); i++){
+				value = globalCDFResult.get(i);
+				newGlobalCDF.add(i, value);
+			}
+
+		}else{
+			Double value = 0.0;
+			for (int i = 0; i < globalCDFResult.size(); i++) {
+				value = globalCDFResult.get(i) + cdf.get(i);
+				newGlobalCDF.add(i, value);
+
+			}
+			for (int i = globalCDFResult.size(); i < cdf.size(); i++){
+				value = cdf.get(i);
+				newGlobalCDF.add(i, value);
+			}
+		}
+		globalCDFResult = newGlobalCDF;
+	}
 
 	public static Double getGlobalAverageInfectedCost(){
 		return globalAcumulatedInfectedCost/simulations;
@@ -289,6 +321,15 @@ public class Statistics {
 	}
 	public static Double getGlobalAverageTotalCost(){
 		return globalAcumulatedTotalCost/simulations;
+	}
+	public static List<Double> getGlobalAveragePDF(){
+		List<Double> newGlobalCDF = new ArrayList<Double>();
+		Double value = 0.0;
+		for (int i = 0; i < globalCDFResult.size(); i++) {
+			value = globalCDFResult.get(i)/simulations;
+			newGlobalCDF.add(i, value);
+		}
+		return newGlobalCDF;
 	}
 	
 	public static void incrementSimulation(){
@@ -303,6 +344,12 @@ public class Statistics {
 		globalAcumulatedInfectedCost=0.0;
 		globalAcumulatedSamplingCost=0.0;
 		globalAcumulatedTotalCost=0.0;
+		globalCDFResult = new ArrayList<>();
+	}
+
+
+	public void addCDFResults(CumulativeDensityFunctionCalculator cdfCalc) {
+		mCDFResult = cdfCalc.getCDF();
 	}
 
 

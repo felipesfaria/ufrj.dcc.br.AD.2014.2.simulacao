@@ -162,6 +162,16 @@ public class Printer {
 					dc.format(Statistics.getGlobalAverageTotalCost()));
 		}
 	}
+
+	public void printGlobalCDF(FileUtil file, Double r4,  List<Double> cdf){
+		double PRECISION = 0.01;
+		for ( int i = 0; i < cdf.size();i++) {
+			file.saveInFile(i * PRECISION + "",
+					cdf.get(i) + "",
+					r4 + "");
+		}
+	}
+
 	
 	public void printCDF(VirusSimulation vSim) {
 		if (printCDF) { vSim.getCDFCalculator().printCDF(vSim.getRates().getR4()); }

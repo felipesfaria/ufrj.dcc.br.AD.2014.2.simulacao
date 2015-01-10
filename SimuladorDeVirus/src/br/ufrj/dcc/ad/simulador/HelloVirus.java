@@ -248,13 +248,10 @@ public class HelloVirus {
 
 	static void runMeshTimeAnalysis(double bestR4) {
 		Printer printer = new Printer(new PrintOptions[]{PrintOptions.CDF});
-//
-//		Rates r = new Rates(r1, r2, r3, bestR4, LAMBDA);
-//		simulation = new VirusMeshSimulation(maxEvents, r, printer);
-//		simulation.setUpSimulation();
-//		simulation.runFullSimulation();
+		FileUtil file = new FileUtil("MeshCDFAnalysis.csv", "time;density;r4");
+
 		for (int i = 0; i < MAX_SIMULATION; i++) {
-			Rates r = new Rates(r1, r2, r3, r4, LAMBDA, BETA);
+			Rates r = new Rates(r1, r2, r3, bestR4, LAMBDA, BETA);
 			Statistics stats = null;
 			simulation = new VirusMeshSimulation(maxEvents, r,10);
 			simulation.setUpSimulation();
@@ -268,7 +265,13 @@ public class HelloVirus {
 			Statistics.accumulateInfectedCost(stats.getInfectedCost());
 			Statistics.accumulateSamplingCost(stats.getSamplingCost());
 			Statistics.accumulateTotalCost(stats.getTotalCost());
+			Statistics.accumulatePDF(stats.getCDF());
 		}
+
+		printer.printGlobalCDF(file, r4, Statistics.getGlobalAveragePDF());
+		Statistics.resetGlobalStatistics();
+//		Statistics.GetIntervaloDeConfianca(r4);
+
 	}
 
 	static void runRingTimeAnalysis(double bestR4) {
