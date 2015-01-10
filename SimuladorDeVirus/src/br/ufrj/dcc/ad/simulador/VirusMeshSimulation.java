@@ -135,7 +135,7 @@ public class VirusMeshSimulation implements VirusSimulation{
 		printer.printCDF(this);
 		printer.printPDF(this);
 
-		stats.setPrePDF(cdfCalc.getmPrePdf());
+		stats.setPrePDF(cdfCalc.getmPrePdf(), cdfCalc.getTotalCount());
 
 		return stats;
 	}

@@ -43,12 +43,13 @@ public class HelloVirus {
 		
 //		runRingCostAnalysis();
 //		runMeshOnce();
-		runMeshCostAnalysis();
+//		runMeshCostAnalysis();
+		runMeshTimeAnalysis(0.009999999999999247);
 //      runEndogenousMeshCostAnalysis();
 //		runEndogenousRingCostAnalysis();
 //		runSingleNodeCostAnalysis();
 //		runSingleNodeTimeAnalysis();
-		
+
 		System.out.println("Finished");
 	}
 

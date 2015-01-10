@@ -17,11 +17,12 @@ public class Statistics {
 	static Double globalAcumulatedInfectedCost=0.0;
 	static Double globalAcumulatedSamplingCost=0.0;
 	static Double globalAcumulatedTotalCost=0.0;
-	static CumulativeDensityFunctionCalculator mCDFCalc;
+	static CumulativeDensityFunctionCalculator mCDFCalc = new CumulativeDensityFunctionCalculator();
 	//static List<Double> globalCDFResult = new ArrayList<Double>();
 
 
 	List<Integer> mPrePDF;
+	int mtotalCounter;
 
 	Double r4;
 	Double timeInO=0.0;
@@ -100,7 +101,10 @@ public class Statistics {
 	}
 
 	public List<Integer> getPrePDF(){ return mPrePDF; }
-	public void setPrePDF(List<Integer> prePdf) { mPrePDF = prePdf; }
+	public void setPrePDF(List<Integer> prePdf, int totalCounter) {
+		mPrePDF = prePdf;
+		mtotalCounter = totalCounter;
+	}
 
 	public Double getR4() {
 		return rates.getR4();
@@ -317,6 +321,6 @@ public class Statistics {
 	}
 
 	public int getTotalCount() {
-		return mCDFCalc.getTotalCount();
+		return mtotalCounter;
 	}
 }
