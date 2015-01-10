@@ -99,6 +99,7 @@ public class Statistics {
 	}
 
 	public List<Integer> getPrePDF(){ return mPrePDF; }
+	public void setPrePDF(List<Integer> prePdf) { mPrePDF = prePdf; }
 
 	public Double getR4() {
 		return rates.getR4();
@@ -288,34 +289,6 @@ public class Statistics {
 	public static void accumulatePrePDF(List<Integer> prePDF){
 		mCDFCalc.accumulatePrePDF(prePDF);
 	}
-	public static void accumulatePDF(List<Double> cdf) {
-//		List<Double> newGlobalCDF = new ArrayList<Double>();
-//
-//		if( globalCDFResult.size() > cdf.size() ){
-//			Double value = 0.0;
-//			for (int i = 0; i < cdf.size(); i++) {
-//				value = globalCDFResult.get(i) + cdf.get(i);
-//				newGlobalCDF.add(i, value);
-//			}
-//			for (int i = cdf.size(); i < globalCDFResult.size(); i++){
-//				value = globalCDFResult.get(i);
-//				newGlobalCDF.add(i, value);
-//			}
-//
-//		}else{
-//			Double value = 0.0;
-//			for (int i = 0; i < globalCDFResult.size(); i++) {
-//				value = globalCDFResult.get(i) + cdf.get(i);
-//				newGlobalCDF.add(i, value);
-//
-//			}
-//			for (int i = globalCDFResult.size(); i < cdf.size(); i++){
-//				value = cdf.get(i);
-//				newGlobalCDF.add(i, value);
-//			}
-//		}
-//		globalCDFResult = newGlobalCDF;
-	}
 
 	public static Double getGlobalAverageInfectedCost(){
 		return globalAcumulatedInfectedCost/simulations;
@@ -327,17 +300,6 @@ public class Statistics {
 		return globalAcumulatedTotalCost/simulations;
 	}
 
-	public static List<Double> getGlobalAverageCDF(){
-//		List<Double> newGlobalCDF = new ArrayList<Double>();
-//		Double value = 0.0;
-//		for (int i = 0; i < globalCDFResult.size(); i++) {
-//			value = globalCDFResult.get(i)/simulations;
-//			newGlobalCDF.add(i, value);
-//		}
-//		return newGlobalCDF;
-		return null;
-	}
-	
 	public static void incrementSimulation(){
 		simulations++;
 	}
@@ -351,20 +313,6 @@ public class Statistics {
 		globalAcumulatedSamplingCost=0.0;
 		globalAcumulatedTotalCost=0.0;
 		mCDFCalc = new CumulativeDensityFunctionCalculator();
-//		globalCDFResult = new ArrayList<>();
 	}
 
-
-//	public void addCDFResults(CumulativeDensityFunctionCalculator cdfCalc) {
-//		mCDFResult = cdfCalc.getPrePdf();
-//	}
-
-
-	public void addCDFData(CumulativeDensityFunctionCalculator cdfCalc) {
-		mCDFCalc.accumulatePrePDF( cdfCalc.getPrePdf() );
-	}
-
-	public void setPrePDF(List<Integer> prePdf) {
-		mPrePDF = prePdf;
-	}
 }

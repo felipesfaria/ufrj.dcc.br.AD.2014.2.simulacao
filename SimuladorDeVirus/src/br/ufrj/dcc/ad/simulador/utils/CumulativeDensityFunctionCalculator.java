@@ -5,15 +5,15 @@ import java.util.List;
 
 public class CumulativeDensityFunctionCalculator {
 
-	private List<Integer> prePdf = new ArrayList<>();
+	private List<Integer> mPrePdf = new ArrayList<>();
 	private List<Double> cdf = new ArrayList<>();
 	
 	private double timeToRecuparation;
 	int totalCount = 0;
 	double PRECISION = 0.01;
 
-	public List<Integer> getPrePdf() {
-		return prePdf;
+	public List<Integer> getmPrePdf() {
+		return mPrePdf;
 	}
 
 	public List<Double> getCDF() {
@@ -31,8 +31,8 @@ public class CumulativeDensityFunctionCalculator {
 
 	public List<Double> getPDF() {
 		List<Double> pdf = new ArrayList<>();
-		for (int i = 0; i < prePdf.size(); i++) {
-			pdf.add((prePdf.get(i) * 1.0) / totalCount);
+		for (int i = 0; i < mPrePdf.size(); i++) {
+			pdf.add((mPrePdf.get(i) * 1.0) / totalCount);
 		}
 		return pdf;
 	}
@@ -44,10 +44,10 @@ public class CumulativeDensityFunctionCalculator {
 	public void recupered(Double value) {
 		Long index = Math.round(timeToRecuparation / PRECISION);
 		int i = index.intValue();
-		while (prePdf.size() <= i)
-			prePdf.add(0);
+		while (mPrePdf.size() <= i)
+			mPrePdf.add(0);
 
-		prePdf.set(i, (prePdf.get(i) + 1));
+		mPrePdf.set(i, (mPrePdf.get(i) + 1));
 		
 		timeToRecuparation = 0;
 		totalCount++;
@@ -87,29 +87,29 @@ public class CumulativeDensityFunctionCalculator {
 	public void accumulatePrePDF(List<Integer> prePdf) {
 		List<Integer> newGlobalCDF = new ArrayList<Integer>();
 
-		if( this.prePdf.size() > prePdf.size() ){
+		if( this.mPrePdf.size() > prePdf.size() ){
 			Integer value = 0;
 			for (int i = 0; i < prePdf.size(); i++) {
-				value = this.prePdf.get(i) + prePdf.get(i);
+				value = this.mPrePdf.get(i) + prePdf.get(i);
 				newGlobalCDF.add(i, value);
 			}
-			for (int i = prePdf.size(); i < this.prePdf.size(); i++){
-				value = this.prePdf.get(i);
+			for (int i = prePdf.size(); i < this.mPrePdf.size(); i++){
+				value = this.mPrePdf.get(i);
 				newGlobalCDF.add(i, value);
 			}
 
 		}else{
 			Integer value = 0;
-			for (int i = 0; i < this.prePdf.size(); i++) {
-				value = this.prePdf.get(i) + prePdf.get(i);
+			for (int i = 0; i < this.mPrePdf.size(); i++) {
+				value = this.mPrePdf.get(i) + prePdf.get(i);
 				newGlobalCDF.add(i, value);
 
 			}
-			for (int i = this.prePdf.size(); i < prePdf.size(); i++){
+			for (int i = this.mPrePdf.size(); i < prePdf.size(); i++){
 				value = prePdf.get(i);
 				newGlobalCDF.add(i, value);
 			}
 		}
-		this.prePdf = newGlobalCDF;
+		this.mPrePdf = newGlobalCDF;
 	}
 }
