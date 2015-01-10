@@ -47,6 +47,7 @@ public class Statistics {
 
 	private DecimalFormat dc = new DecimalFormat(",000.000000000");
 	private int counter=0;
+	private int totalCount;
 
 	public Statistics(Rates r, final Double infectedWeight, final Double samplingWeight) {
 		rates = r;
@@ -286,8 +287,8 @@ public class Statistics {
 	public static void accumulateTotalCost(Double TotalCost){
 		globalAcumulatedTotalCost+=TotalCost;
 	}
-	public static void accumulatePrePDF(List<Integer> prePDF){
-		mCDFCalc.accumulatePrePDF(prePDF);
+	public static void accumulatePrePDF(List<Integer> prePDF, int totalCount){
+		mCDFCalc.accumulatePrePDF(prePDF, totalCount);
 	}
 
 	public static Double getGlobalAverageInfectedCost(){
@@ -315,4 +316,7 @@ public class Statistics {
 		mCDFCalc = new CumulativeDensityFunctionCalculator();
 	}
 
+	public int getTotalCount() {
+		return mCDFCalc.getTotalCount();
+	}
 }

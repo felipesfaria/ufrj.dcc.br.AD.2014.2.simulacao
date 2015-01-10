@@ -265,7 +265,7 @@ public class HelloVirus {
 			Statistics.accumulateInfectedCost(stats.getInfectedCost());
 			Statistics.accumulateSamplingCost(stats.getSamplingCost());
 			Statistics.accumulateTotalCost(stats.getTotalCost());
-			Statistics.accumulatePrePDF(stats.getPrePDF());
+			Statistics.accumulatePrePDF(stats.getPrePDF(), stats.getTotalCount());
 		}
 
 

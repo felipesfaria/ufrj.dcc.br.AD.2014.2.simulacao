@@ -12,6 +12,7 @@ public class CumulativeDensityFunctionCalculator {
 	int totalCount = 0;
 	double PRECISION = 0.01;
 
+
 	public List<Integer> getmPrePdf() {
 		return mPrePdf;
 	}
@@ -84,7 +85,8 @@ public class CumulativeDensityFunctionCalculator {
 		
 	}
 
-	public void accumulatePrePDF(List<Integer> prePdf) {
+	public void accumulatePrePDF(List<Integer> prePdf, int tCount) {
+
 		List<Integer> newGlobalCDF = new ArrayList<Integer>();
 
 		if( this.mPrePdf.size() > prePdf.size() ){
@@ -110,6 +112,11 @@ public class CumulativeDensityFunctionCalculator {
 				newGlobalCDF.add(i, value);
 			}
 		}
+		totalCount += tCount;
 		this.mPrePdf = newGlobalCDF;
+	}
+
+	public int getTotalCount() {
+		return totalCount;
 	}
 }
