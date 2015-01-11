@@ -435,6 +435,6 @@ public class Statistics {
 		if(finished)
 			return result.toString();
 		else
-			return "timeInO:"+timeInO;
+			return "tO:"+timeInO+"tP:"+timeInP+"tR:"+timeInR+"tF:"+timeInF;
 	}
 }

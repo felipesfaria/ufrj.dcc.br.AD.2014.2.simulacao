@@ -134,6 +134,6 @@ public class Result {
 
 	@Override
 	public String toString() {
-		return "piO:"+piO+"piP:"+piP+piR+piF+infectedCost+samplingCost+totalCost;
+		return "piO:"+piO+"piP:"+piP+"piR:"+piR+"piF:"+piF+"cV:"+infectedCost+"cS:"+samplingCost+"cT:"+totalCost;
 	}
 }

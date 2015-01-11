@@ -173,7 +173,7 @@ public class HelloVirus {
 	}
 
 	static void runRingCostAnalysis() {
-		Printer printer = new Printer(new PrintOptions[]{PrintOptions.CSV});
+		Printer printer = new Printer(new PrintOptions[]{PrintOptions.CSV,PrintOptions.steps,PrintOptions.results});
 		double bestR4 = max_r4;
 		double bestTotalCost = REALY_LARGE_NUM;
 

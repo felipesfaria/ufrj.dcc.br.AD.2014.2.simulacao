@@ -185,6 +185,8 @@ public class VirusRingSimulation implements VirusSimulation{
 			break;
 		case R_TO_O:
 		case F_TO_O:
+			if(isObservedNode)
+				stats.addTimePerState(timeSpentInThisState, cState);
 			// We need to remove all infections created by this person, he is
 			// cured now.
 			removeOutgoingInfections(cNode);
@@ -196,8 +198,6 @@ public class VirusRingSimulation implements VirusSimulation{
 			}
 			
 			cdfCalc.recupered(timeSpentInThisState);
-			//TODO Felipe: Porque esse 'count++;' estava aqui?
-			// Bruno: por que ele da return logo abaixo e não break
 			stats.count();
 			return;
 		default:

@@ -12,13 +12,13 @@ import br.ufrj.dcc.ad.simulador.model.PrintOptions;
 import br.ufrj.dcc.ad.simulador.model.Rates;
 
 public class Printer {
-	private Boolean printSteps;
-	private Boolean printResult;
-	private Boolean printCSV;
-	private Boolean printCDF;
-	private Boolean printQueue;
-	private Boolean printPDF;
-	private Boolean printStates;
+	private static Boolean printSteps=false;
+	private static Boolean printResult=false;
+	private static Boolean printCSV=false;
+	private static Boolean printCDF=false;
+	private static Boolean printQueue=false;
+	private static Boolean printPDF=false;
+	private static Boolean printStates=false;
 	
 	private static int progressCounter=0;
 
@@ -29,13 +29,6 @@ public class Printer {
 	}
 
 	public Printer(PrintOptions args[]){
-		printSteps = false;
-		printResult = false;
-		printCSV = false;
-		printCDF = false;
-		printQueue = false;
-		printPDF = false;
-		printStates = false;
 		setPrintOptions(args);
 	}
 	

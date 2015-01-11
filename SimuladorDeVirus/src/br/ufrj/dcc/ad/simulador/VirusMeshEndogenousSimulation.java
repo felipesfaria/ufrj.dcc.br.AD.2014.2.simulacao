@@ -176,6 +176,8 @@ public class VirusMeshEndogenousSimulation implements VirusSimulation{
 			break;
 		case R_TO_O:
 		case F_TO_O:
+			if(isObservedNode)
+				stats.addTimePerState(timeSpentInThisState, cState);
 			// We need to remove all infections created by this person, he is
 			// cured now.
 			removeOutgoingInfections(cNode);
