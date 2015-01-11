@@ -321,6 +321,7 @@ public class Statistics {
 	}
 
 	public static void resetGlobalStatistics() {
+		simulations = 0;
 		globalAcumulatedPiO=0.0;
 		globalAcumulatedPiP=0.0;
 		globalAcumulatedPiR=0.0;
