@@ -156,19 +156,19 @@ public class Printer {
 			file.saveInFile(
 					dc.format(r4),
 					dc.format(Statistics.getGlobalAveragePiO()),
-					dc.format(Statistics.GetIntervalosDeConfianca(r4).get("piO")),
+					dc.format(Statistics.GetIntervalosDeConfianca().get("piO")),
 					dc.format(Statistics.getGlobalAveragePiP()),
-					dc.format(Statistics.GetIntervalosDeConfianca(r4).get("piP")),
+					dc.format(Statistics.GetIntervalosDeConfianca().get("piP")),
 					dc.format(Statistics.getGlobalAveragePiR()),
-					dc.format(Statistics.GetIntervalosDeConfianca(r4).get("piR")),
+					dc.format(Statistics.GetIntervalosDeConfianca().get("piR")),
 					dc.format(Statistics.getGlobalAveragePiF()),
-					dc.format(Statistics.GetIntervalosDeConfianca(r4).get("piF")),
+					dc.format(Statistics.GetIntervalosDeConfianca().get("piF")),
 					dc.format(Statistics.getGlobalAverageInfectedCost()),
-					dc.format(Statistics.GetIntervalosDeConfianca(r4).get("CustoInfectado")),
+					dc.format(Statistics.GetIntervalosDeConfianca().get("CustoInfectado")),
 					dc.format(Statistics.getGlobalAverageSamplingCost()),
-					dc.format(Statistics.GetIntervalosDeConfianca(r4).get("CustoAmostragem")),
+					dc.format(Statistics.GetIntervalosDeConfianca().get("CustoAmostragem")),
 					dc.format(Statistics.getGlobalAverageTotalCost()),
-					dc.format(Statistics.GetIntervalosDeConfianca(r4).get("CustoTotal")));
+					dc.format(Statistics.GetIntervalosDeConfianca().get("CustoTotal")));
 		}
 	}
 
@@ -181,7 +181,6 @@ public class Printer {
 		}
 	}
 
-	
 	public void printCDF(VirusSimulation vSim) {
 		if (printCDF) { vSim.getCDFCalculator().printCDF(vSim.getRates().getR4()); }
 	}
@@ -208,6 +207,7 @@ public class Printer {
 			System.out.println(toPrint);
 		}
 	}
+	
 	public void printProgress(double maxR4,double r4, double minr4){
 		double t1 = (r4-minr4)/(maxR4-minr4);
 		double t2 = (1-progressCounter/10.0);
