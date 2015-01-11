@@ -171,7 +171,7 @@ public class VirusSingleSimulation implements VirusSimulation {
 		else if( cState == State.P && nState == State.F) {return Transition.P_TO_F;}
 		else if( cState == State.R && nState == State.O) {return Transition.R_TO_O;}
 		else if( cState == State.F && nState == State.O) {return Transition.F_TO_O;}
-		return null;
+		return Transition.ILEGAL;
 	}
 
 	private Event chooseMin(Event pEvent, Event fEvent) {

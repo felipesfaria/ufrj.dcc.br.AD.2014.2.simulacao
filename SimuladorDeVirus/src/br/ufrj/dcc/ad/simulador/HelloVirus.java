@@ -27,7 +27,6 @@ import br.ufrj.dcc.ad.simulador.utils.Printer;
 import br.ufrj.dcc.ad.simulador.utils.Statistics;
 
 import java.text.DecimalFormat;
-import java.util.Map;
 import java.util.Scanner;
 
 public class HelloVirus {
@@ -84,7 +83,8 @@ public class HelloVirus {
 					 					"\n 4 - runEndogenousMeshCostAnalysis" +
 					 					"\n 5 - runEndogenousRingCostAnalysis" +
 					 					"\n 6 - runSingleNodeCostAnalysis" +
-					 					"\n 7 - runSingleNodeTimeAnalysis"
+					 					"\n 7 - runSingleNodeTimeAnalysisWithConfidenceInterval" +
+							            "\n 8 - runSingleNodeTimeAnalysis"
 					 					); 
 					analysis_type = keyboard.nextInt();
 					ready = true;
@@ -123,7 +123,10 @@ public class HelloVirus {
 		case 6:
 			runSingleNodeCostAnalysis();
 			break;
-		case 7:
+        case 7:
+			runSingleNodeTimeAnalysisWithConfidenceInterval();
+				break;
+		case 8:
 			runSingleNodeTimeAnalysis(r4);
 			break;	
 		default:
@@ -245,7 +248,7 @@ public class HelloVirus {
 				bestTotalCost = Statistics.getGlobalAverageTotalCost();
 			}
 			Statistics.resetGlobalStatistics();
-			Map<String,Double> intervaloDeConfianca = Statistics.GetIntervalosDeConfianca(r4);
+//			Map<String,Double> intervaloDeConfianca = Statistics.GetIntervalosDeConfianca(r4);
 
 			r4 -= delta;
 		}
@@ -322,6 +325,42 @@ public class HelloVirus {
 		simulation = null;
 
 		runSingleNodeTimeAnalysis(bestR4);
+	}
+
+	static void runSingleNodeTimeAnalysisWithConfidenceInterval(){
+		FileUtil file = new FileUtil("SingleNodeCostAnalysis.csv", "r4;piO;ic;pi;ic;piR;ic;piF;ic;cV;ic;cS;ic;cT;ic");
+		double bestR4 = r4;
+		double bestTotalCost = REALY_LARGE_NUM;
+		while (r4 >= min_r4) {
+			Rates r = new Rates(r1, r2, r3, r4, LAMBDA);
+
+//			Printer printer = new Printer(new PrintOptions[] { PrintOptions.CSV });
+			Printer printer = new Printer(new PrintOptions[] {});
+
+			simulation = new VirusSingleSimulation(maxEvents, r, file, printer);
+			simulation.setUpSimulation();
+			Statistics stats = simulation.runFullSimulation();
+
+			Statistics.incrementSimulation();
+			Statistics.accumulatePiO(stats.getPiO());
+			Statistics.accumulatePiP(stats.getPiP());
+			Statistics.accumulatePiR(stats.getPiR());
+			Statistics.accumulatePiF(stats.getPiF());
+			Statistics.accumulateInfectedCost(stats.getInfectedCost());
+			Statistics.accumulateSamplingCost(stats.getSamplingCost());
+			Statistics.accumulateTotalCost(stats.getTotalCost());
+			printer = new Printer(new PrintOptions[] { PrintOptions.CSV });
+
+			printer.printGlobalStats(file, r4);
+			if ( Statistics.getGlobalAverageTotalCost() < bestTotalCost ) {
+				bestR4 = r4;
+				bestTotalCost = Statistics.getGlobalAverageTotalCost();
+			}
+			Statistics.resetGlobalStatistics();
+			r4 -= delta;
+		}
+
+
 	}
 
 	static void runSingleNodeTimeAnalysis(double bestR4) {

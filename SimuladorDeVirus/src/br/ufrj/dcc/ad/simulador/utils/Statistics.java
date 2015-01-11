@@ -248,13 +248,24 @@ public class Statistics {
 			variancias.put("CustoAmostragem",variancias.get("CustoAmostragem")+Math.pow(result.getSamplingCost()-medias.get("CustoAmostragem"),2));
 			variancias.put("CustoTotal",variancias.get("CustoTotal")+Math.pow(result.getTotalCost()-medias.get("CustoTotal"),2));
 		}
-		variancias.put("piO",variancias.get("piO")/(n-1));
-		variancias.put("piP",variancias.get("piP")/(n-1));
-		variancias.put("piR",variancias.get("piR")/(n-1));
-		variancias.put("piF",variancias.get("piF")/(n-1));
-		variancias.put("CustoInfectado",variancias.get("CustoInfectado")/(n-1));
-		variancias.put("CustoAmostragem",variancias.get("CustoAmostragem")/(n-1));
-		variancias.put("CustoTotal",variancias.get("CustoTotal")/(n-1));
+		if(n <=1){
+			//TODO ver o q fazer qnd n <= 1
+//			variancias.put("piO", variancias.get("piO"));
+//			variancias.put("piP", variancias.get("piP"));
+//			variancias.put("piR", variancias.get("piR"));
+//			variancias.put("piF", variancias.get("piF"));
+//			variancias.put("CustoInfectado", variancias.get("CustoInfectado"));
+//			variancias.put("CustoAmostragem", variancias.get("CustoAmostragem"));
+//			variancias.put("CustoTotal", variancias.get("CustoTotal"));
+		}else {
+			variancias.put("piO", variancias.get("piO") / (n - 1));
+			variancias.put("piP", variancias.get("piP") / (n - 1));
+			variancias.put("piR", variancias.get("piR") / (n - 1));
+			variancias.put("piF", variancias.get("piF") / (n - 1));
+			variancias.put("CustoInfectado", variancias.get("CustoInfectado") / (n - 1));
+			variancias.put("CustoAmostragem", variancias.get("CustoAmostragem") / (n - 1));
+			variancias.put("CustoTotal", variancias.get("CustoTotal") / (n - 1));
+		}
 		return variancias;
 	}
 	

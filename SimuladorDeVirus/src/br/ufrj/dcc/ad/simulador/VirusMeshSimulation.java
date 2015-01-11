@@ -214,8 +214,6 @@ public class VirusMeshSimulation implements VirusSimulation{
 			}
 			
 			cdfCalc.recupered(timeSpentInThisState);
-			//TODO Felipe: Porque esse 'count++;' estava aqui?
-			// Bruno: por que ele da return logo abaixo e não break
 			stats.count();
 			return;
 		default:

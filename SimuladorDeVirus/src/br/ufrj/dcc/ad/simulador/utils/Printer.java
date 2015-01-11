@@ -140,7 +140,7 @@ public class Printer {
 			Rates rates = vSim.getRates();
 			Statistics stats = vSim.getStats();
 			file1.saveInFile(
-					dc.format(rates.getR4()), 
+					dc.format(rates.getR4()),
 					dc.format(stats.getPiO()),
 					dc.format(stats.getInfectedCost()),
 					dc.format(stats.getSamplingCost()),
