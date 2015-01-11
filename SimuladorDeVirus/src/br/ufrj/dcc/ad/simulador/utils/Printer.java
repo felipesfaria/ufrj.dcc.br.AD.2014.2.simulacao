@@ -19,6 +19,8 @@ public class Printer {
 	private Boolean printQueue;
 	private Boolean printPDF;
 	private Boolean printStates;
+	
+	private static int progressCounter=0;
 
 	private DecimalFormat dc = new DecimalFormat(",000.000000000");
 	
@@ -205,6 +207,19 @@ public class Printer {
 			}
 			System.out.println(toPrint);
 		}
+	}
+	public void printProgress(double maxR4,double r4, double minr4){
+		double t1 = (r4-minr4)/(maxR4-minr4);
+		double t2 = (1-progressCounter/10.0);
+		
+		if(t1<t2){
+			System.out.print(progressCounter+"0%, ");
+			progressCounter++;
+		}
+	}
+
+	public void printProgressCompletion() {
+		System.out.println("100%");
 	}
 
 }

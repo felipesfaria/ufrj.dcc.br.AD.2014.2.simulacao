@@ -41,6 +41,7 @@ public class HelloVirus {
 	public static final double LAMBDA = 1.0 / (12.0 * 24.0 * 30.0);
 	public static final double BETA = 0.08;
 	
+	static Double max_r4 = 1.0;
 	static Double r4 = 1.0;
 	static Double delta = 0.01;
 	static Double min_r4 = 0.0;
@@ -54,7 +55,7 @@ public class HelloVirus {
 		
 		if (args.length == 4) {
 			try {
-				r4 = Double.parseDouble(args[0]);
+				max_r4 = Double.parseDouble(args[0]);
 				delta = Double.parseDouble(args[1]);
 				min_r4 = Double.parseDouble(args[2]);
 				analysis_type = Integer.parseInt(args[4]);
@@ -71,7 +72,7 @@ public class HelloVirus {
 			while (!ready) {
 				try {
 					System.out.println("Please chose your maximum r4 **double value** (eg: 1,0) :");
-					r4 = keyboard.nextDouble();
+					max_r4 = keyboard.nextDouble();
 					System.out.println("Now chose your delta **double value** (eg: 0,01) :");
 					delta = keyboard.nextDouble();
 					System.out.println("Now chose your minimum r4 **double value** (eg: 0,0) :");
@@ -98,7 +99,7 @@ public class HelloVirus {
 			keyboard.close();
 		}
 		System.out.println("Parameters...");
-		System.out.println("r4 : " + r4);
+		System.out.println("r4 : " + max_r4);
 		System.out.println("delta : " + delta);
 		System.out.println("min_r4 : " + min_r4);
 		System.out.println("analysis_type: " + analysis_type);
@@ -141,14 +142,14 @@ public class HelloVirus {
 		Printer printer = new Printer();
 
 		FileUtil file = new FileUtil("EndogenousRingCostAnalysis.csv", "r4;piO;ic;pi;ic;piR;ic;piF;ic;cV;ic;cS;ic;cT;ic");
-
+		r4 = max_r4;
 		while (r4 >= min_r4) {
-
+			printer.printProgress(max_r4, r4, min_r4);
 			for (int i = 0; i < MAX_SIMULATION; i++) {
 				Rates r = new Rates(r1, r2, r3, r4, LAMBDA, BETA);
 				Statistics stats = null;
 				simulation = new VirusRingSimulation(maxEvents, r,file,10);
-				//printer.setPrintOptions(new PrintOptions[]{PrintOptions.CSV});
+				printer.setPrintOptions(new PrintOptions[]{PrintOptions.CSV});
 				simulation.setUpSimulation();
 				stats = simulation.runFullSimulation();
 				
@@ -167,17 +168,20 @@ public class HelloVirus {
 			Statistics.resetGlobalStatistics();
 			r4 -= delta;
 		}
+		printer.printProgressCompletion();
 
 	}
 
 	static void runRingCostAnalysis() {
 		Printer printer = new Printer(new PrintOptions[]{PrintOptions.CSV});
-		double bestR4 = r4;
+		double bestR4 = max_r4;
 		double bestTotalCost = REALY_LARGE_NUM;
 
 		FileUtil file = new FileUtil("RingCostAnalysis.csv", "r4;piO;ic;pi;ic;piR;ic;piF;ic;cV;ic;cS;ic;cT;ic");
 
+		r4 = max_r4;
 		while (r4 >= min_r4) {
+			printer.printProgress(max_r4, r4, min_r4);
 			for (int i = 0; i < MAX_SIMULATION; i++) {
 				Rates r = new Rates(r1, r2, r3, r4, LAMBDA, BETA);
 				Statistics stats = null;
@@ -205,18 +209,20 @@ public class HelloVirus {
 			Statistics.GetIntervaloDeConfianca(r4);
 			r4 -= delta;
 		}
-
+		printer.printProgressCompletion();
 		runRingTimeAnalysis(bestR4);
 	}
 
 	static void runMeshCostAnalysis() {
 		Printer printer = new Printer(new PrintOptions[]{PrintOptions.CSV});
+		r4 = max_r4;
 		double bestR4 = r4;
 		double bestTotalCost = REALY_LARGE_NUM;
 
 		FileUtil file = new FileUtil("MeshCostAnalysis.csv", "r4;piO;ic;pi;ic;piR;ic;piF;ic;cV;ic;cS;ic;cT;ic");
 
 		while (r4 >= min_r4) {
+			printer.printProgress(max_r4, r4, min_r4);
 
 			for (int i = 0; i < MAX_SIMULATION; i++) {
 				Rates r = new Rates(r1, r2, r3, r4, LAMBDA, BETA);
@@ -246,6 +252,7 @@ public class HelloVirus {
 			r4 -= delta;
 		}
 
+		printer.printProgressCompletion();
 		runMeshTimeAnalysis(bestR4);
 
 	}
@@ -253,8 +260,10 @@ public class HelloVirus {
 	static void runEndogenousMeshCostAnalysis() {
 		Printer printer = new Printer();
 		FileUtil file = new FileUtil("EndogenousMeshCostAnalysis.csv", "r4;piO;ic;pi;ic;piR;ic;piF;ic;cV;ic;cS;ic;cT;ic");
+		r4 = max_r4;
 
 		while (r4 >= min_r4) {
+			printer.printProgress(max_r4, r4, min_r4);
 
 			for (int i = 0; i < MAX_SIMULATION; i++) {
 				Rates r = new Rates(r1, r2, r3, r4, LAMBDA, BETA);
@@ -278,10 +287,12 @@ public class HelloVirus {
 			Statistics.resetGlobalStatistics();
 			r4 -= delta;
 		}
+		printer.printProgressCompletion();
 	}
 
 	static void runMeshOnce(){
 		FileUtil file = new FileUtil("CostAnalysis.csv", "R4;piO;cV;cS;cT");
+		r4 = max_r4;
 		Rates r = new Rates(r1, BETA, r3, r4, LAMBDA);
 		simulation = new VirusMeshSimulation(maxEvents, r, file);
 		Printer printer = new Printer();
@@ -293,13 +304,15 @@ public class HelloVirus {
 
 
 	static void runSingleNodeCostAnalysis() {
+		Printer printer = new Printer(new PrintOptions[] { PrintOptions.CSV });
 		FileUtil file = new FileUtil("SingleNodeCostAnalysis.csv", "R4;piO;cV;cS;cT");
+		r4 = max_r4;
 		double bestR4 = r4;
 		double bestTotalCost = REALY_LARGE_NUM;
 		while (r4 >= min_r4) {
+			printer.printProgress(max_r4, r4, min_r4);
 			Rates r = new Rates(r1, r2, r3, r4, LAMBDA);
 
-			Printer printer = new Printer(new PrintOptions[] { PrintOptions.CSV });
 
 			simulation = new VirusSingleSimulation(maxEvents, r, file, printer);
 			simulation.setUpSimulation();
@@ -314,18 +327,21 @@ public class HelloVirus {
 
 		simulation = null;
 
+		printer.printProgressCompletion();
 		runSingleNodeTimeAnalysis(bestR4);
 	}
 
 	static void runSingleNodeTimeAnalysisWithConfidenceInterval(){
+		Printer printer = new Printer(new PrintOptions[] {});
 		FileUtil file = new FileUtil("SingleNodeCostAnalysis.csv", "r4;piO;ic;pi;ic;piR;ic;piF;ic;cV;ic;cS;ic;cT;ic");
+		r4 = max_r4;
 		double bestR4 = r4;
 		double bestTotalCost = REALY_LARGE_NUM;
 		while (r4 >= min_r4) {
+			printer.printProgress(max_r4, r4, min_r4);
 			Rates r = new Rates(r1, r2, r3, r4, LAMBDA);
 
 //			Printer printer = new Printer(new PrintOptions[] { PrintOptions.CSV });
-			Printer printer = new Printer(new PrintOptions[] {});
 
 			simulation = new VirusSingleSimulation(maxEvents, r, file, printer);
 			simulation.setUpSimulation();
@@ -352,6 +368,7 @@ public class HelloVirus {
 
 		simulation = null;
 
+		printer.printProgressCompletion();
 		runSingleNodeTimeAnalysis(bestR4);	}
 
 	static void runSingleNodeTimeAnalysis(double bestR4) {
