@@ -154,7 +154,7 @@ public class Printer {
 			file.saveInFile(
 					dc.format(r4),
 					dc.format(Statistics.getGlobalAveragePiO()),
-					dc.format(Statistics.GetIntervalosDeConfianca(r4).get("pi0")),
+					dc.format(Statistics.GetIntervalosDeConfianca(r4).get("piO")),
 					dc.format(Statistics.getGlobalAveragePiP()),
 					dc.format(Statistics.GetIntervalosDeConfianca(r4).get("piP")),
 					dc.format(Statistics.getGlobalAveragePiR()),

@@ -300,7 +300,7 @@ public class HelloVirus {
 
 
 	static void runSingleNodeCostAnalysis() {
-		FileUtil file = new FileUtil("CostAnalysis.csv", "R4;piO;cV;cS;cT");
+		FileUtil file = new FileUtil("SingleNodeCostAnalysis.csv", "R4;piO;cV;cS;cT");
 		double bestR4 = r4;
 		double bestTotalCost = REALY_LARGE_NUM;
 		while (r4 >= min_r4) {

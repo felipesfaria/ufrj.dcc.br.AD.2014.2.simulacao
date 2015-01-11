@@ -66,7 +66,7 @@ public class CumulativeDensityFunctionCalculator {
 
 	public void printCDF(double r4){
 		List<Double> cdf = getCDF();
-		FileUtil file = new FileUtil("CDF.csv", "time;density;r4");
+		FileUtil file = new FileUtil("SingleNodeCDF.csv", "time;density;r4");
 		for ( int i = 0; i < cdf.size();i++) {
 			file.saveInFile(i * PRECISION + "",
 					cdf.get(i) + "",
