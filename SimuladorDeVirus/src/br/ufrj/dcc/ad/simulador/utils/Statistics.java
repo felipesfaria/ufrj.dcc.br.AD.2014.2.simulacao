@@ -18,6 +18,7 @@ public class Statistics {
 	static Double globalAcumulatedSamplingCost=0.0;
 	static Double globalAcumulatedTotalCost=0.0;
 	static CumulativeDensityFunctionCalculator mCDFCalc = new CumulativeDensityFunctionCalculator();
+	static Map<String,Double> globalIntervalosDeConfianca;
 	//static List<Double> globalCDFResult = new ArrayList<Double>();
 
 
@@ -149,17 +150,19 @@ public class Statistics {
 	}
 	
 	public static Map<String,Double>  GetIntervalosDeConfianca(Double r4){
-		Map<String,Double> intervalosDeConfianca = new HashMap<String, Double>();
-		Map<String,Double> variancias = GetVariancias(r4);
-		intervalosDeConfianca.put("piO",2*1.96*Math.sqrt(variancias.get("piO"))/Math.sqrt(completeResults.get(r4).size()));
-		intervalosDeConfianca.put("piP",2*1.96*Math.sqrt(variancias.get("piP"))/Math.sqrt(completeResults.get(r4).size()));
-		intervalosDeConfianca.put("piR",2*1.96*Math.sqrt(variancias.get("piR"))/Math.sqrt(completeResults.get(r4).size()));
-		intervalosDeConfianca.put("piF",2*1.96*Math.sqrt(variancias.get("piF"))/Math.sqrt(completeResults.get(r4).size()));
-		intervalosDeConfianca.put("CustoInfectado",2*1.96*Math.sqrt(variancias.get("CustoInfectado"))/Math.sqrt(completeResults.get(r4).size()));
-		intervalosDeConfianca.put("CustoAmostragem",2*1.96*Math.sqrt(variancias.get("CustoAmostragem"))/Math.sqrt(completeResults.get(r4).size()));
-		intervalosDeConfianca.put("CustoTotal",2*1.96*Math.sqrt(variancias.get("CustoTotal"))/Math.sqrt(completeResults.get(r4).size()));
-		
-		return intervalosDeConfianca;
+		if(globalIntervalosDeConfianca==null){
+			Map<String,Double> intervalosDeConfianca = new HashMap<String, Double>();
+			Map<String,Double> variancias = GetVariancias(r4);
+			intervalosDeConfianca.put("piO",2*1.96*Math.sqrt(variancias.get("piO"))/Math.sqrt(completeResults.get(r4).size()));
+			intervalosDeConfianca.put("piP",2*1.96*Math.sqrt(variancias.get("piP"))/Math.sqrt(completeResults.get(r4).size()));
+			intervalosDeConfianca.put("piR",2*1.96*Math.sqrt(variancias.get("piR"))/Math.sqrt(completeResults.get(r4).size()));
+			intervalosDeConfianca.put("piF",2*1.96*Math.sqrt(variancias.get("piF"))/Math.sqrt(completeResults.get(r4).size()));
+			intervalosDeConfianca.put("CustoInfectado",2*1.96*Math.sqrt(variancias.get("CustoInfectado"))/Math.sqrt(completeResults.get(r4).size()));
+			intervalosDeConfianca.put("CustoAmostragem",2*1.96*Math.sqrt(variancias.get("CustoAmostragem"))/Math.sqrt(completeResults.get(r4).size()));
+			intervalosDeConfianca.put("CustoTotal",2*1.96*Math.sqrt(variancias.get("CustoTotal"))/Math.sqrt(completeResults.get(r4).size()));
+			globalIntervalosDeConfianca = intervalosDeConfianca;
+		}
+		return globalIntervalosDeConfianca;
 	}
 	
 	public static double GetMedia(Double r4){
@@ -329,6 +332,7 @@ public class Statistics {
 		globalAcumulatedInfectedCost=0.0;
 		globalAcumulatedSamplingCost=0.0;
 		globalAcumulatedTotalCost=0.0;
+		globalIntervalosDeConfianca = null;
 		mCDFCalc = new CumulativeDensityFunctionCalculator();
 	}
 

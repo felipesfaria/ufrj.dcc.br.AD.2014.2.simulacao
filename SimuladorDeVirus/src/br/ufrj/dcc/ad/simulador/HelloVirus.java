@@ -70,11 +70,11 @@ public class HelloVirus {
 			System.out.println("WARNING! You did not start your program with the right parameters!");
 			while (!ready) {
 				try {
-					System.out.println("Please chose your r4 **double value** (eg: 1,0) :");
+					System.out.println("Please chose your maximum r4 **double value** (eg: 1,0) :");
 					r4 = keyboard.nextDouble();
 					System.out.println("Now chose your delta **double value** (eg: 0,01) :");
 					delta = keyboard.nextDouble();
-					System.out.println("Now chose your min_r4 **double value** (eg: 0,0) :");
+					System.out.println("Now chose your minimum r4 **double value** (eg: 0,0) :");
 					min_r4 = keyboard.nextDouble();
 					System.out.println("And for last, your analysis_type (choose an integer number): " + 
 										"\n 1 - runRingCostAnalysis" +
@@ -138,11 +138,9 @@ public class HelloVirus {
 	}
 
 	static void runEndogenousRingCostAnalysis() {
-		boolean printCSV = true;
 		Printer printer = new Printer();
 
 		FileUtil file = new FileUtil("EndogenousRingCostAnalysis.csv", "r4;piO;ic;pi;ic;piR;ic;piF;ic;cV;ic;cS;ic;cT;ic");
-		DecimalFormat dc = new DecimalFormat(",000.000000000");
 
 		while (r4 >= min_r4) {
 
@@ -167,20 +165,17 @@ public class HelloVirus {
 
 			printer.printGlobalStats(file, r4);
 			Statistics.resetGlobalStatistics();
-			Statistics.GetIntervaloDeConfianca(r4);
 			r4 -= delta;
 		}
 
 	}
 
 	static void runRingCostAnalysis() {
-		boolean printCSV = true;
 		Printer printer = new Printer(new PrintOptions[]{PrintOptions.CSV});
 		double bestR4 = r4;
 		double bestTotalCost = REALY_LARGE_NUM;
 
 		FileUtil file = new FileUtil("RingCostAnalysis.csv", "r4;piO;ic;pi;ic;piR;ic;piF;ic;cV;ic;cS;ic;cT;ic");
-		DecimalFormat dc = new DecimalFormat(",000.000000000");
 
 		while (r4 >= min_r4) {
 			for (int i = 0; i < MAX_SIMULATION; i++) {
@@ -220,7 +215,6 @@ public class HelloVirus {
 		double bestTotalCost = REALY_LARGE_NUM;
 
 		FileUtil file = new FileUtil("MeshCostAnalysis.csv", "r4;piO;ic;pi;ic;piR;ic;piF;ic;cV;ic;cS;ic;cT;ic");
-		DecimalFormat dc = new DecimalFormat(",000.000000000");
 
 		while (r4 >= min_r4) {
 
@@ -248,7 +242,6 @@ public class HelloVirus {
 				bestTotalCost = Statistics.getGlobalAverageTotalCost();
 			}
 			Statistics.resetGlobalStatistics();
-//			Map<String,Double> intervaloDeConfianca = Statistics.GetIntervalosDeConfianca(r4);
 
 			r4 -= delta;
 		}
@@ -258,10 +251,8 @@ public class HelloVirus {
 	}
 
 	static void runEndogenousMeshCostAnalysis() {
-		boolean printCSV = true;
 		Printer printer = new Printer();
 		FileUtil file = new FileUtil("EndogenousMeshCostAnalysis.csv", "r4;piO;ic;pi;ic;piR;ic;piF;ic;cV;ic;cS;ic;cT;ic");
-		DecimalFormat dc = new DecimalFormat(",000.000000000");
 
 		while (r4 >= min_r4) {
 
@@ -285,7 +276,6 @@ public class HelloVirus {
 
 			printer.printGlobalStats(file, r4);
 			Statistics.resetGlobalStatistics();
-			Statistics.GetIntervaloDeConfianca(r4);
 			r4 -= delta;
 		}
 	}
