@@ -32,7 +32,7 @@ import java.util.Scanner;
 public class HelloVirus {
 
 	private static final int REALY_LARGE_NUM = 10000000;
-	private static final int MAX_SIMULATION = 1000;
+	private static final int MAX_SIMULATION = 10000;
 	public static VirusSimulation simulation;
 
 	public static final double r1 = 2.0;
@@ -206,7 +206,6 @@ public class HelloVirus {
 				bestTotalCost = Statistics.getGlobalAverageTotalCost();
 			}
 			Statistics.resetGlobalStatistics();
-			Statistics.GetIntervaloDeConfianca(r4);
 			r4 -= delta;
 		}
 		printer.printProgressCompletion();

@@ -131,4 +131,9 @@ public class Result {
 	public static void setStaticID(int staticID) {
 		Result.staticID = staticID;
 	}
+
+	@Override
+	public String toString() {
+		return "piO:"+piO+"piP:"+piP+piR+piF+infectedCost+samplingCost+totalCost;
+	}
 }

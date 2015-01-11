@@ -40,6 +40,8 @@ public class Statistics {
 	
 	Result result;
 	
+	boolean finished = false;
+	
 	Double infectedWeight=10.0;//CV
 	Double samplingWeight=9.0;//CS
 	Double infectedCost;
@@ -122,6 +124,7 @@ public class Statistics {
 	}
 	
 	public void finish(){
+		finished = true;
 		totalTime = timeInO+timeInP+timeInR+timeInF;
 		piO=timeInO/totalTime;
 		piP=timeInP/totalTime;
@@ -425,5 +428,13 @@ public class Statistics {
 
 	public int getTotalCount() {
 		return mtotalCounter;
+	}
+
+	@Override
+	public String toString() {
+		if(finished)
+			return result.toString();
+		else
+			return "timeInO:"+timeInO;
 	}
 }
