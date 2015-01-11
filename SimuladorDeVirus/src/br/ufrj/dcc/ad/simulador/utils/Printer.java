@@ -130,17 +130,6 @@ public class Printer {
 	}
 	
 	public void printCSV(VirusSimulation vSim) {
-		if (printCSV) {
-			FileUtil file1 = vSim.getFile();
-			Rates rates = vSim.getRates();
-			Statistics stats = vSim.getStats();
-			file1.saveInFile(
-					dc.format(rates.getR4()),
-					dc.format(stats.getPiO()),
-					dc.format(stats.getInfectedCost()),
-					dc.format(stats.getSamplingCost()),
-					dc.format(stats.getTotalCost()));
-		}
 		
 	}
 	
