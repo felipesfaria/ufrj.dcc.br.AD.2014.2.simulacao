@@ -33,7 +33,9 @@ public class HelloVirus {
 
 	private static final int REALY_LARGE_NUM = 10000000;
 
-	private static final int MAX_SIMULATION = 10000;
+	private static final int MAX_SIMULATION = 100000;
+	
+	private static final double PRECISAO = 0.002; 
 
 	public static VirusSimulation simulation;
 
@@ -203,6 +205,8 @@ public class HelloVirus {
 				Statistics.accumulateInfectedCost(stats.getInfectedCost());
 				Statistics.accumulateSamplingCost(stats.getSamplingCost());
 				Statistics.accumulateTotalCost(stats.getTotalCost());
+				if(Statistics.GetIntervalosDeConfianca().get("CustoTotal")<PRECISAO)
+					break;
 			}
 
 			printer.printGlobalStats(file, r4);
@@ -245,6 +249,8 @@ public class HelloVirus {
 				Statistics.accumulateInfectedCost(stats.getInfectedCost());
 				Statistics.accumulateSamplingCost(stats.getSamplingCost());
 				Statistics.accumulateTotalCost(stats.getTotalCost());
+				if(Statistics.GetIntervalosDeConfianca().get("CustoTotal")<PRECISAO)
+					break;
 			}
 
 			printer.printGlobalStats(file, r4);
@@ -286,6 +292,8 @@ public class HelloVirus {
 				Statistics.accumulateInfectedCost(stats.getInfectedCost());
 				Statistics.accumulateSamplingCost(stats.getSamplingCost());
 				Statistics.accumulateTotalCost(stats.getTotalCost());
+				if(Statistics.GetIntervalosDeConfianca().get("CustoTotal")<PRECISAO)
+					break;
 			}
 
 			printer.printGlobalStats(file, r4);
@@ -333,11 +341,13 @@ public class HelloVirus {
 				Statistics.accumulateInfectedCost(stats.getInfectedCost());
 				Statistics.accumulateSamplingCost(stats.getSamplingCost());
 				Statistics.accumulateTotalCost(stats.getTotalCost());
+				if(Statistics.GetIntervalosDeConfianca().get("CustoTotal")<PRECISAO)
+					break;
 	
-				if ( stats.getTotalCost() < bestTotalCost ) {
-					bestR4 = r4;
-					bestTotalCost = stats.getTotalCost();
-				}
+			}
+			if ( Statistics.getGlobalAverageTotalCost() < bestTotalCost ) {
+				bestR4 = r4;
+				bestTotalCost = Statistics.getGlobalAverageTotalCost();
 			}
 
 			printer.printGlobalStats(file, r4);
