@@ -33,9 +33,9 @@ public class HelloVirus {
 
 	private static final int REALY_LARGE_NUM = 10000000;
 
-	private static final int MAX_SIMULATION = 10000000;
-	
-	private static final double PRECISAO = 0.002; 
+	private static final int MAX_SIMULATION = 1000000;
+
+	private static final double PRECISAO = 0.002;
 
 	public static VirusSimulation simulation;
 
@@ -259,7 +259,7 @@ public class HelloVirus {
 				bestTotalCost = Statistics.getGlobalAverageTotalCost();
 			}
 			Statistics.resetGlobalStatistics();
-			numOfSims -= numOfSims*0.07;
+			numOfSims -= numOfSims*0.2;
 			r4 -= delta;
 		}
 
