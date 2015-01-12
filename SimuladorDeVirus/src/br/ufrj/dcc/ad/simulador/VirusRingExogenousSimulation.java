@@ -69,6 +69,7 @@ public class VirusRingExogenousSimulation implements VirusSimulation{
 		MAX_EVENTS = me;
 		rates = r;
 		genR1 = new ExponentialGenerator(rates.getR1());
+		genR2 = new ExponentialGenerator(rates.getR2());
 		genR3 = new ExponentialGenerator(rates.getR3());
 		genR4 = new ExponentialGenerator(rates.getR4());
 		genLambda = new ExponentialGenerator(rates.getLAMBDA());
@@ -193,7 +194,7 @@ public class VirusRingExogenousSimulation implements VirusSimulation{
 			// Now we have to schedule incoming infections
 			scheduleIncomingInfections(cNode,now);
 
-			scheduleEndogenousInfections(cNode,now);
+			scheduleExogenousInfections(cNode,now);
 			
 			if( eventQueue.isEmpty() && !isObservedNode){
 				stats.addTimePerState(timeSpentInThisState, nodes.get(0).getState());
@@ -276,8 +277,8 @@ public class VirusRingExogenousSimulation implements VirusSimulation{
 		}
 	}
 
-	private void scheduleEndogenousInfections(Node cNode, Double now) {
-			Event evt = generateEndogenousInfectionEvent(cNode, now);
+	private void scheduleExogenousInfections(Node cNode, Double now) {
+			Event evt = generateExogenousInfectionEvent(cNode, now);
 			eventQueue.add(evt);
 	}
 
@@ -290,7 +291,7 @@ public class VirusRingExogenousSimulation implements VirusSimulation{
 		return new Event(cNode, infectAgent, State.P, now + nextPEventTime, nextPEventTime);
 	}
 
-	private Event generateEndogenousInfectionEvent(Node cNode, Double now) {
+	private Event generateExogenousInfectionEvent(Node cNode, Double now) {
 		double nextPEventTime = genR2.generate();
 		return new Event(cNode, cNode, State.P, now + nextPEventTime, nextPEventTime);
 	}

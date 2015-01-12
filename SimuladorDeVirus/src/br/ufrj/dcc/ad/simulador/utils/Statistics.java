@@ -435,4 +435,30 @@ public class Statistics {
 		else
 			return "tO:"+timeInO+"tP:"+timeInP+"tR:"+timeInR+"tF:"+timeInF;
 	}
+
+	
+	public static Double GetIntervalosDeConfiancaDeCustoTotal() {
+		int n=0;
+		Map<String,Double> medias = new HashMap<String, Double>();
+		medias.put("CustoTotal",0.0);
+		ArrayList<Result> results = partialResults;
+		for(Result result : results){
+			n++;
+			medias.put("CustoTotal",medias.get("CustoTotal")+result.getTotalCost());
+		}
+		medias.put("CustoTotal",medias.get("CustoTotal")/n);
+		n=0;
+		Map<String,Double> variancias = new HashMap<String, Double>();
+		variancias.put("CustoTotal",0.0);
+		for(Result result : results){
+			n++;
+			variancias.put("CustoTotal",variancias.get("CustoTotal")+Math.pow(result.getTotalCost()-medias.get("CustoTotal"),2));
+		}
+		if(n <=1){
+			System.out.println("Error: Can't calculate confidence interval with only one simulation.");
+		}else {
+			variancias.put("CustoTotal", variancias.get("CustoTotal") / (n - 1));
+		}
+		return 2*1.96*Math.sqrt(variancias.get("CustoTotal"))/Math.sqrt(partialResults.size());
+	}
 }

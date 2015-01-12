@@ -33,9 +33,9 @@ public class HelloVirus {
 
 	private static final int REALY_LARGE_NUM = 10000000;
 
-	private static final int MAX_SIMULATION = 10000000;
+	private static final int MAX_SIMULATION = 50000;
 	
-	private static final double PRECISAO = 0.002; 
+	private static final double PRECISAO = 0.01; 
 
 	public static VirusSimulation simulation;
 
@@ -144,7 +144,7 @@ public class HelloVirus {
 
 	static void runExogenousRingCostAnalysis() {
 		System.out.println("====================== Starting Exogenous Ring Cost Analysis ==============");
-		Printer printer = new Printer();
+		Printer printer = new Printer(new PrintOptions[]{PrintOptions.CSV});
 
 		FileUtil file = new FileUtil("ExogenousRingCostAnalysis.csv", "r4;piO;ic;pi;ic;piR;ic;piF;ic;cV;ic;cS;ic;cT;ic");
 		r4 = max_r4;
@@ -153,8 +153,7 @@ public class HelloVirus {
 			for (int i = 0; i < MAX_SIMULATION; i++) {
 				Rates r = new Rates(r1, r2, r3, r4, LAMBDA, BETA);
 				Statistics stats = null;
-				simulation = new VirusRingSimulation(maxEvents, r,file,10);
-				printer.setPrintOptions(new PrintOptions[]{PrintOptions.CSV});
+				simulation = new VirusRingExogenousSimulation(maxEvents, r,file,10);
 				simulation.setUpSimulation();
 				stats = simulation.runFullSimulation();
 				
@@ -166,6 +165,8 @@ public class HelloVirus {
 				Statistics.accumulateInfectedCost(stats.getInfectedCost());
 				Statistics.accumulateSamplingCost(stats.getSamplingCost());
 				Statistics.accumulateTotalCost(stats.getTotalCost());
+				if(i>1000&&Statistics.GetIntervalosDeConfiancaDeCustoTotal()<PRECISAO)
+					break;
 			}
 			
 

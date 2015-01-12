@@ -184,7 +184,7 @@ public class VirusMeshExogenousSimulation implements VirusSimulation{
 			// Now we have to schedule incoming infections
 			scheduleIncomingInfections(cNode,now);
 
-			scheduleEndogenousInfections(cNode,now);
+			scheduleExogenousInfections(cNode,now);
 
 			if( eventQueue.isEmpty() && !isObservedNode){
 				stats.addTimePerState(timeSpentInThisState, nodes.get(0).getState());
@@ -258,8 +258,8 @@ public class VirusMeshExogenousSimulation implements VirusSimulation{
 		}
 	}
 
-	private void scheduleEndogenousInfections(Node cNode, Double now) {
-			Event evt = generateEndogenousInfectionEvent(cNode, now);
+	private void scheduleExogenousInfections(Node cNode, Double now) {
+			Event evt = generateExogenousInfectionEvent(cNode, now);
 			eventQueue.add(evt);
 	}
 	
@@ -281,7 +281,7 @@ public class VirusMeshExogenousSimulation implements VirusSimulation{
 		return new Event(cNode, infectAgent, State.P, now + nextPEventTime, nextPEventTime);
 	}
 
-	private Event generateEndogenousInfectionEvent(Node cNode, Double now) {
+	private Event generateExogenousInfectionEvent(Node cNode, Double now) {
 		double nextPEventTime = genR2.generate();
 		return new Event(cNode, cNode, State.P, now + nextPEventTime, nextPEventTime);
 	}
