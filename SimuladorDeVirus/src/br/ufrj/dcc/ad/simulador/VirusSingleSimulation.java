@@ -104,8 +104,8 @@ public class VirusSingleSimulation implements VirusSimulation {
 		printer.printResults(this);
 
 		printer.printCSV(this);
-		//printer.printCDF(this);
-		//printer.printPDF(this);
+		printer.printCDF(this);
+		printer.printPDF(this);
 
 		return stats;
 	}

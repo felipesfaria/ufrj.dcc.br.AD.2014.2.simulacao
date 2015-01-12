@@ -123,6 +123,16 @@ public class Printer {
 		}
 	}
 	
+	public void resetPrintOptions(){
+		 printSteps=false;
+		 printResult=false;
+		 printCSV=false;
+		 printCDF=false;
+		 printQueue=false;
+		 printPDF=false;
+		 printStates=false;
+	}
+	
 	public void printResults(VirusSimulation vSim) {
 		if (printResult) {
 			vSim.getStats().printResult();

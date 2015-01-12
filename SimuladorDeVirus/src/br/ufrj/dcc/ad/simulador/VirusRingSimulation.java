@@ -114,8 +114,8 @@ public class VirusRingSimulation implements VirusSimulation{
 		
 		//printer.printCSV(this);
 
-		//printer.printCDF(this);
-		//printer.printPDF(this); 
+		printer.printCDF(this);
+		printer.printPDF(this); 
 		
 		stats.setPrePDF(cdfCalc.getmPrePdf(), cdfCalc.getTotalCount());
 
