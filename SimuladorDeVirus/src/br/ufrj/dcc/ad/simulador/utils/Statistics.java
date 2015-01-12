@@ -173,7 +173,6 @@ public class Statistics {
 	}
 	
 	public static Map<String,Double> GetIntervalosDeConfianca(){
-		if(globalIntervalosDeConfianca==null){
 			Map<String,Double> intervalosDeConfianca = new HashMap<String, Double>();
 			Map<String,Double> variancias = GetVariancias();
 			intervalosDeConfianca.put("piO",2*1.96*Math.sqrt(variancias.get("piO"))/Math.sqrt(partialResults.size()));
@@ -184,7 +183,6 @@ public class Statistics {
 			intervalosDeConfianca.put("CustoAmostragem",2*1.96*Math.sqrt(variancias.get("CustoAmostragem"))/Math.sqrt(partialResults.size()));
 			intervalosDeConfianca.put("CustoTotal",2*1.96*Math.sqrt(variancias.get("CustoTotal"))/Math.sqrt(partialResults.size()));
 			globalIntervalosDeConfianca = intervalosDeConfianca;
-		}
 		return globalIntervalosDeConfianca;
 	}
 	
