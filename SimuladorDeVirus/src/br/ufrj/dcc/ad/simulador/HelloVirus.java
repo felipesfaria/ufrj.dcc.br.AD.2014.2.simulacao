@@ -139,7 +139,7 @@ public class HelloVirus {
 	}
 
 	static void runExogenousRingCostAnalysis() {
-		System.out.println("====================== Strating Exogenous Ring Cost Analysis ==============");
+		System.out.println("====================== Starting Exogenous Ring Cost Analysis ==============");
 		Printer printer = new Printer();
 
 		FileUtil file = new FileUtil("ExogenousRingCostAnalysis.csv", "r4;piO;ic;pi;ic;piR;ic;piF;ic;cV;ic;cS;ic;cT;ic");
@@ -174,7 +174,7 @@ public class HelloVirus {
 	}
 
 	static void runRingCostAnalysis() {
-		System.out.println("====================== Strating Ring Cost Analysis =========================");
+		System.out.println("====================== Starting Ring Cost Analysis =========================");
 		Printer printer = new Printer(new PrintOptions[]{PrintOptions.CSV});
 		double bestR4 = max_r4;
 		double bestTotalCost = REALY_LARGE_NUM;
@@ -215,7 +215,7 @@ public class HelloVirus {
 	}
 
 	static void runMeshCostAnalysis() {
-		System.out.println("====================== Strating Mesh Cost Analysis =========================");
+		System.out.println("====================== Starting Mesh Cost Analysis =========================");
 		Printer printer = new Printer(new PrintOptions[]{PrintOptions.CSV});
 		r4 = max_r4;
 		double bestR4 = r4;
@@ -383,6 +383,7 @@ public class HelloVirus {
 	}
 
 	static void runMeshTimeAnalysis(double bestR4) {
+		System.out.println("====================== Starting Mesh Time Analysis =========================");
 		Printer printer = new Printer(new PrintOptions[]{PrintOptions.CDF});
 		FileUtil file = new FileUtil("MeshCDFAnalysis.csv", "time;density;r4");
 
@@ -410,7 +411,7 @@ public class HelloVirus {
 	}
 
 	static void runRingTimeAnalysis(double bestR4) {
-		System.out.println("====================== Strating Ring Time Analysis =========================");
+		System.out.println("====================== Starting Ring Time Analysis =========================");
 		Printer printer = new Printer(new PrintOptions[]{PrintOptions.CDF});
 		FileUtil file = new FileUtil("RingCDFAnalysis.csv", "time;density;r4");
 

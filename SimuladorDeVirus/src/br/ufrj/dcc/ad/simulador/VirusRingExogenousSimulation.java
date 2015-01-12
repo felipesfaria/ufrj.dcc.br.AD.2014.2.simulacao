@@ -116,8 +116,8 @@ public class VirusRingExogenousSimulation implements VirusSimulation{
 		
 		printer.printCSV(this);
 
-		printer.printCDF(this);
-		printer.printPDF(this); 
+		//printer.printCDF(this);
+		//printer.printPDF(this); 
 
 		return stats;
 	}
