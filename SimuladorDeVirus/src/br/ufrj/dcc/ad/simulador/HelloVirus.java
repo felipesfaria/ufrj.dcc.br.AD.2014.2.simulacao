@@ -33,7 +33,7 @@ public class HelloVirus {
 
 	private static final int REALY_LARGE_NUM = 10000000;
 
-	private static final int MAX_SIMULATION = 100000;
+	private static final int MAX_SIMULATION = 10000000;
 	
 	private static final double PRECISAO = 0.002; 
 
@@ -205,7 +205,7 @@ public class HelloVirus {
 				Statistics.accumulateInfectedCost(stats.getInfectedCost());
 				Statistics.accumulateSamplingCost(stats.getSamplingCost());
 				Statistics.accumulateTotalCost(stats.getTotalCost());
-				if(Statistics.GetIntervalosDeConfianca().get("CustoTotal")<PRECISAO)
+				if(i>1000&&Statistics.GetIntervalosDeConfianca().get("CustoTotal")<PRECISAO)
 					break;
 			}
 
@@ -249,7 +249,7 @@ public class HelloVirus {
 				Statistics.accumulateInfectedCost(stats.getInfectedCost());
 				Statistics.accumulateSamplingCost(stats.getSamplingCost());
 				Statistics.accumulateTotalCost(stats.getTotalCost());
-				if(Statistics.GetIntervalosDeConfianca().get("CustoTotal")<PRECISAO)
+				if(i>1000&&Statistics.GetIntervalosDeConfianca().get("CustoTotal")<PRECISAO)
 					break;
 			}
 
@@ -292,7 +292,7 @@ public class HelloVirus {
 				Statistics.accumulateInfectedCost(stats.getInfectedCost());
 				Statistics.accumulateSamplingCost(stats.getSamplingCost());
 				Statistics.accumulateTotalCost(stats.getTotalCost());
-				if(Statistics.GetIntervalosDeConfianca().get("CustoTotal")<PRECISAO)
+				if(i>1000&&Statistics.GetIntervalosDeConfianca().get("CustoTotal")<PRECISAO)
 					break;
 			}
 
@@ -341,7 +341,7 @@ public class HelloVirus {
 				Statistics.accumulateInfectedCost(stats.getInfectedCost());
 				Statistics.accumulateSamplingCost(stats.getSamplingCost());
 				Statistics.accumulateTotalCost(stats.getTotalCost());
-				if(Statistics.GetIntervalosDeConfianca().get("CustoTotal")<PRECISAO)
+				if(i>1000&&Statistics.GetIntervalosDeConfianca().get("CustoTotal")<PRECISAO)
 					break;
 	
 			}
