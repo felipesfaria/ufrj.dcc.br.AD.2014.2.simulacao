@@ -32,7 +32,9 @@ import java.util.Scanner;
 public class HelloVirus {
 
 	private static final int REALY_LARGE_NUM = 10000000;
-	private static final int MAX_SIMULATION = 10000;
+
+	private static final int MAX_SIMULATION = 100000;
+
 	public static VirusSimulation simulation;
 
 	public static final double r1 = 2.0;
@@ -167,6 +169,7 @@ public class HelloVirus {
 
 			printer.printGlobalStats(file, r4);
 			Statistics.resetGlobalStatistics();
+			System.gc();
 			r4 -= delta;
 		}
 		printer.printProgressCompletion();
@@ -223,10 +226,11 @@ public class HelloVirus {
 
 		FileUtil file = new FileUtil("MeshCostAnalysis.csv", "r4;piO;ic;pi;ic;piR;ic;piF;ic;cV;ic;cS;ic;cT;ic");
 
+		int numOfSims = MAX_SIMULATION;
 		while (r4 >= min_r4) {
 			printer.printProgress(max_r4, r4, min_r4);
 
-			for (int i = 0; i < MAX_SIMULATION; i++) {
+			for (int i = 0; i < numOfSims; i++) {
 				Rates r = new Rates(r1, r2, r3, r4, LAMBDA, BETA);
 				Statistics stats = null;
 				simulation = new VirusMeshSimulation(maxEvents, r,10);
@@ -250,7 +254,7 @@ public class HelloVirus {
 				bestTotalCost = Statistics.getGlobalAverageTotalCost();
 			}
 			Statistics.resetGlobalStatistics();
-
+			numOfSims -= numOfSims*0.07;
 			r4 -= delta;
 		}
 
