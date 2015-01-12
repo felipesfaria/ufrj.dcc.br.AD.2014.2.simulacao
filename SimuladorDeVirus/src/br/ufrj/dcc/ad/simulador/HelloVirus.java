@@ -167,6 +167,7 @@ public class HelloVirus {
 
 			printer.printGlobalStats(file, r4);
 			Statistics.resetGlobalStatistics();
+			System.gc();
 			r4 -= delta;
 		}
 		printer.printProgressCompletion();
@@ -223,10 +224,11 @@ public class HelloVirus {
 
 		FileUtil file = new FileUtil("MeshCostAnalysis.csv", "r4;piO;ic;pi;ic;piR;ic;piF;ic;cV;ic;cS;ic;cT;ic");
 
+		int numOfSims = MAX_SIMULATION;
 		while (r4 >= min_r4) {
 			printer.printProgress(max_r4, r4, min_r4);
 
-			for (int i = 0; i < MAX_SIMULATION; i++) {
+			for (int i = 0; i < numOfSims; i++) {
 				Rates r = new Rates(r1, r2, r3, r4, LAMBDA, BETA);
 				Statistics stats = null;
 				simulation = new VirusMeshSimulation(maxEvents, r,10);
@@ -250,7 +252,7 @@ public class HelloVirus {
 				bestTotalCost = Statistics.getGlobalAverageTotalCost();
 			}
 			Statistics.resetGlobalStatistics();
-
+			numOfSims -= numOfSims*0.07;
 			r4 -= delta;
 		}
 
@@ -306,6 +308,7 @@ public class HelloVirus {
 
 
 	static void runSingleNodeCostAnalysis() {
+		System.out.println("====================== Starting Single Node Cost Analysis ==================");
 		Printer printer = new Printer(new PrintOptions[] { PrintOptions.CSV });
 		FileUtil file = new FileUtil("SingleNodeCostAnalysis.csv", "R4;piO;cV;cS;cT");
 		r4 = max_r4;
@@ -313,17 +316,31 @@ public class HelloVirus {
 		double bestTotalCost = REALY_LARGE_NUM;
 		while (r4 >= min_r4) {
 			printer.printProgress(max_r4, r4, min_r4);
-			Rates r = new Rates(r1, r2, r3, r4, LAMBDA);
+			for (int i = 0; i < MAX_SIMULATION; i++) {
+				Rates r = new Rates(r1, r2, r3, r4, LAMBDA);
+	
+	
+				simulation = new VirusSingleSimulation(maxEvents, r, file, printer);
+				simulation.setUpSimulation();
+				Statistics stats = simulation.runFullSimulation();
 
-
-			simulation = new VirusSingleSimulation(maxEvents, r, file, printer);
-			simulation.setUpSimulation();
-			Statistics stats = simulation.runFullSimulation();
-
-			if ( stats.getTotalCost() < bestTotalCost ) {
-				bestR4 = r4;
-				bestTotalCost = stats.getTotalCost();
+				Statistics.incrementSimulation();
+				Statistics.accumulatePiO(stats.getPiO());
+				Statistics.accumulatePiP(stats.getPiP());
+				Statistics.accumulatePiR(stats.getPiR());
+				Statistics.accumulatePiF(stats.getPiF());
+				Statistics.accumulateInfectedCost(stats.getInfectedCost());
+				Statistics.accumulateSamplingCost(stats.getSamplingCost());
+				Statistics.accumulateTotalCost(stats.getTotalCost());
+	
+				if ( stats.getTotalCost() < bestTotalCost ) {
+					bestR4 = r4;
+					bestTotalCost = stats.getTotalCost();
+				}
 			}
+
+			printer.printGlobalStats(file, r4);
+			Statistics.resetGlobalStatistics();
 			r4 -= delta;
 		}
 
@@ -334,7 +351,7 @@ public class HelloVirus {
 	}
 
 	static void runSingleNodeTimeAnalysisWithConfidenceInterval(){
-		Printer printer = new Printer(new PrintOptions[] {});
+		Printer printer = new Printer(new PrintOptions[] { PrintOptions.CSV });
 		FileUtil file = new FileUtil("SingleNodeCostAnalysis.csv", "r4;piO;ic;pi;ic;piR;ic;piF;ic;cV;ic;cS;ic;cT;ic");
 		r4 = max_r4;
 		double bestR4 = r4;
@@ -342,8 +359,6 @@ public class HelloVirus {
 		while (r4 >= min_r4) {
 			printer.printProgress(max_r4, r4, min_r4);
 			Rates r = new Rates(r1, r2, r3, r4, LAMBDA);
-
-//			Printer printer = new Printer(new PrintOptions[] { PrintOptions.CSV });
 
 			simulation = new VirusSingleSimulation(maxEvents, r, file, printer);
 			simulation.setUpSimulation();
@@ -357,7 +372,6 @@ public class HelloVirus {
 			Statistics.accumulateInfectedCost(stats.getInfectedCost());
 			Statistics.accumulateSamplingCost(stats.getSamplingCost());
 			Statistics.accumulateTotalCost(stats.getTotalCost());
-			printer = new Printer(new PrintOptions[] { PrintOptions.CSV });
 
 			printer.printGlobalStats(file, r4);
 			if ( Statistics.getGlobalAverageTotalCost() < bestTotalCost ) {
@@ -374,6 +388,7 @@ public class HelloVirus {
 		runSingleNodeTimeAnalysis(bestR4);	}
 
 	static void runSingleNodeTimeAnalysis(double bestR4) {
+		System.out.println("====================== Starting Single Node Time Analysis ==================");
 		Printer printer = new Printer(new PrintOptions[]{PrintOptions.CDF});
 
 		Rates r = new Rates(r1, r2, r3, bestR4, LAMBDA);
