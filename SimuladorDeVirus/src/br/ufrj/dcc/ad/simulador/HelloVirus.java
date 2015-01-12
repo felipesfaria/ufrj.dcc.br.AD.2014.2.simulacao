@@ -9,8 +9,8 @@
  * 1 - runRingCostAnalysis();
  * 2 - runMeshOnce();
  * 3 - runMeshCostAnalysis();
- * 4 - runEndogenousMeshCostAnalysis();
- * 5 - runEndogenousRingCostAnalysis();
+ * 4 - runExogenousMeshCostAnalysis();
+ * 5 - runExogenousRingCostAnalysis();
  * 6 - runSingleNodeCostAnalysis();
  * 7 - runSingleNodeTimeAnalysis();
  * 
@@ -81,8 +81,8 @@ public class HelloVirus {
 										"\n 1 - runRingCostAnalysis" +
 					 					"\n 2 - runMeshOnce" +
 					 					"\n 3 - runMeshCostAnalysis" +
-					 					"\n 4 - runEndogenousMeshCostAnalysis" +
-					 					"\n 5 - runEndogenousRingCostAnalysis" +
+					 					"\n 4 - runExogenousMeshCostAnalysis" +
+					 					"\n 5 - runExogenousRingCostAnalysis" +
 					 					"\n 6 - runSingleNodeCostAnalysis" +
 					 					"\n 7 - runSingleNodeTimeAnalysisWithConfidenceInterval" +
 							            "\n 8 - runSingleNodeTimeAnalysis"
@@ -116,10 +116,10 @@ public class HelloVirus {
 			runMeshCostAnalysis();
 			break;
 		case 4:
-			runEndogenousMeshCostAnalysis();
+			runExogenousMeshCostAnalysis();
 			break;
 		case 5:
-			runEndogenousRingCostAnalysis();
+			runExogenousRingCostAnalysis();
 			break;
 		case 6:
 			runSingleNodeCostAnalysis();
@@ -138,10 +138,11 @@ public class HelloVirus {
 		System.out.println("================================= Finished =================================");
 	}
 
-	static void runEndogenousRingCostAnalysis() {
+	static void runExogenousRingCostAnalysis() {
+		System.out.println("====================== Strating Exogenous Ring Cost Analysis ==============");
 		Printer printer = new Printer();
 
-		FileUtil file = new FileUtil("EndogenousRingCostAnalysis.csv", "r4;piO;ic;pi;ic;piR;ic;piF;ic;cV;ic;cS;ic;cT;ic");
+		FileUtil file = new FileUtil("ExogenousRingCostAnalysis.csv", "r4;piO;ic;pi;ic;piR;ic;piF;ic;cV;ic;cS;ic;cT;ic");
 		r4 = max_r4;
 		while (r4 >= min_r4) {
 			printer.printProgress(max_r4, r4, min_r4);
@@ -173,6 +174,7 @@ public class HelloVirus {
 	}
 
 	static void runRingCostAnalysis() {
+		System.out.println("====================== Strating Ring Cost Analysis =========================");
 		Printer printer = new Printer(new PrintOptions[]{PrintOptions.CSV});
 		double bestR4 = max_r4;
 		double bestTotalCost = REALY_LARGE_NUM;
@@ -213,6 +215,7 @@ public class HelloVirus {
 	}
 
 	static void runMeshCostAnalysis() {
+		System.out.println("====================== Strating Mesh Cost Analysis =========================");
 		Printer printer = new Printer(new PrintOptions[]{PrintOptions.CSV});
 		r4 = max_r4;
 		double bestR4 = r4;
@@ -256,9 +259,9 @@ public class HelloVirus {
 
 	}
 
-	static void runEndogenousMeshCostAnalysis() {
+	static void runExogenousMeshCostAnalysis() {
 		Printer printer = new Printer();
-		FileUtil file = new FileUtil("EndogenousMeshCostAnalysis.csv", "r4;piO;ic;pi;ic;piR;ic;piF;ic;cV;ic;cS;ic;cT;ic");
+		FileUtil file = new FileUtil("ExogenousMeshCostAnalysis.csv", "r4;piO;ic;pi;ic;piR;ic;piF;ic;cV;ic;cS;ic;cT;ic");
 		r4 = max_r4;
 
 		while (r4 >= min_r4) {
@@ -267,7 +270,7 @@ public class HelloVirus {
 			for (int i = 0; i < MAX_SIMULATION; i++) {
 				Rates r = new Rates(r1, r2, r3, r4, LAMBDA, BETA);
 				Statistics stats = null;
-				simulation = new VirusMeshEndogenousSimulation(maxEvents, r,10);
+				simulation = new VirusMeshExogenousSimulation(maxEvents, r,10);
 				//printer.setPrintOptions(new PrintOptions[]{PrintOptions.steps,PrintOptions.states,PrintOptions.results,PrintOptions.states});
 				simulation.setUpSimulation();
 				stats = simulation.runFullSimulation();
@@ -407,6 +410,7 @@ public class HelloVirus {
 	}
 
 	static void runRingTimeAnalysis(double bestR4) {
+		System.out.println("====================== Strating Ring Time Analysis =========================");
 		Printer printer = new Printer(new PrintOptions[]{PrintOptions.CDF});
 		FileUtil file = new FileUtil("RingCDFAnalysis.csv", "time;density;r4");
 

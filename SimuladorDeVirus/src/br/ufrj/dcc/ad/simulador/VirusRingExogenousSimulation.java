@@ -18,7 +18,7 @@ import br.ufrj.dcc.ad.simulador.utils.FileUtil;
 import br.ufrj.dcc.ad.simulador.utils.Printer;
 import br.ufrj.dcc.ad.simulador.utils.Statistics;
 
-public class VirusRingEndogenousSimulation implements VirusSimulation{
+public class VirusRingExogenousSimulation implements VirusSimulation{
 	private int NUM_OF_NODES = 10;
 	
 	public ExponentialGenerator genR1;
@@ -44,11 +44,11 @@ public class VirusRingEndogenousSimulation implements VirusSimulation{
 	
 	Printer printer = new Printer();
 
-	public VirusRingEndogenousSimulation(long me, Rates r) {
+	public VirusRingExogenousSimulation(long me, Rates r) {
 		this( me, r, 10);
 	}
 
-	public VirusRingEndogenousSimulation(long me, Rates r, int numberOfNodes) {
+	public VirusRingExogenousSimulation(long me, Rates r, int numberOfNodes) {
 		NUM_OF_NODES = numberOfNodes;
 		MAX_EVENTS = me;
 		rates = r;
@@ -60,11 +60,11 @@ public class VirusRingEndogenousSimulation implements VirusSimulation{
 		genBeta = new ExponentialGenerator(rates.getBETA());
 	}
 
-	public VirusRingEndogenousSimulation(long me, Rates r, FileUtil file) {
+	public VirusRingExogenousSimulation(long me, Rates r, FileUtil file) {
 		this(me, r, file, 10);
 	}
 	
-	public VirusRingEndogenousSimulation(long me, Rates r, FileUtil file, int numberOfNodes) {
+	public VirusRingExogenousSimulation(long me, Rates r, FileUtil file, int numberOfNodes) {
 		NUM_OF_NODES = numberOfNodes;
 		MAX_EVENTS = me;
 		rates = r;

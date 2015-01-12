@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class VirusMeshEndogenousSimulation implements VirusSimulation{
+public class VirusMeshExogenousSimulation implements VirusSimulation{
 	private int NUM_OF_NODES = 10;
 
 	public ExponentialGenerator genR1;
@@ -35,11 +35,11 @@ public class VirusMeshEndogenousSimulation implements VirusSimulation{
 
 	Printer printer = new Printer();
 
-	public VirusMeshEndogenousSimulation(long me, Rates r) {
+	public VirusMeshExogenousSimulation(long me, Rates r) {
 		this( me, r, 10);
 	}
 
-	public VirusMeshEndogenousSimulation(long me, Rates r, int numberOfNodes) {
+	public VirusMeshExogenousSimulation(long me, Rates r, int numberOfNodes) {
 		NUM_OF_NODES = numberOfNodes;
 		MAX_EVENTS = me;
 		rates = r;
@@ -51,11 +51,11 @@ public class VirusMeshEndogenousSimulation implements VirusSimulation{
 		genBeta = new ExponentialGenerator(rates.getBETA());
 	}
 
-	public VirusMeshEndogenousSimulation(long me, Rates r, FileUtil file) {
+	public VirusMeshExogenousSimulation(long me, Rates r, FileUtil file) {
 		this(me, r, file, 10);
 	}
 
-	public VirusMeshEndogenousSimulation(long me, Rates r, FileUtil file, int numberOfNodes) {
+	public VirusMeshExogenousSimulation(long me, Rates r, FileUtil file, int numberOfNodes) {
 		NUM_OF_NODES = numberOfNodes;
 		MAX_EVENTS = me;
 		rates = r;
