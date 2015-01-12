@@ -33,7 +33,7 @@ public class HelloVirus {
 
 	private static final int REALY_LARGE_NUM = 10000000;
 
-	private static final int MAX_SIMULATION = 100000;
+	private static final int MAX_SIMULATION = 10000;
 
 	public static VirusSimulation simulation;
 
@@ -234,7 +234,6 @@ public class HelloVirus {
 				Rates r = new Rates(r1, r2, r3, r4, LAMBDA, BETA);
 				Statistics stats = null;
 				simulation = new VirusMeshSimulation(maxEvents, r,10);
-				//printer.setPrintOptions(new PrintOptions[]{PrintOptions.steps,PrintOptions.states,PrintOptions.results,PrintOptions.states});
 				simulation.setUpSimulation();
 				stats = simulation.runFullSimulation();
 				
@@ -401,7 +400,6 @@ public class HelloVirus {
 
 	static void runMeshTimeAnalysis(double bestR4) {
 		System.out.println("====================== Starting Mesh Time Analysis =========================");
-		Printer printer = new Printer(new PrintOptions[]{PrintOptions.CDF});
 		FileUtil file = new FileUtil("MeshCDFAnalysis.csv", "time;density;r4");
 
 		for (int i = 0; i < MAX_SIMULATION; i++) {
@@ -422,6 +420,7 @@ public class HelloVirus {
 			Statistics.accumulatePrePDF(stats.getPrePDF(), stats.getTotalCount());
 		}
 
+		Printer printer = new Printer(new PrintOptions[]{PrintOptions.CDF});
 		printer.printGlobalCDF(file, bestR4, Statistics.getGlobalCDF());
 		Statistics.resetGlobalStatistics();
 
@@ -429,7 +428,7 @@ public class HelloVirus {
 
 	static void runRingTimeAnalysis(double bestR4) {
 		System.out.println("====================== Starting Ring Time Analysis =========================");
-		Printer printer = new Printer(new PrintOptions[]{PrintOptions.CDF});
+		Printer printer = new Printer();
 		FileUtil file = new FileUtil("RingCDFAnalysis.csv", "time;density;r4");
 
 		for (int i = 0; i < MAX_SIMULATION; i++) {
@@ -450,6 +449,7 @@ public class HelloVirus {
 			Statistics.accumulatePrePDF(stats.getPrePDF(), stats.getTotalCount());
 		}
 
+		printer.setPrintOptions(new PrintOptions[]{PrintOptions.CDF});
 		printer.printGlobalCDF(file, bestR4, Statistics.getGlobalCDF());
 		Statistics.resetGlobalStatistics();
 	}
